@@ -40,6 +40,8 @@ function GoodsReceiptNote() {
         po: false
     });
 
+
+    const [deletionArr, setdeletionArr] = useState([]); // to add items in selected if row is deleted
     const [pos, setPos] = useState([]); //initially set pos empty
     const [mats, setMats] = useState([]);
     const [l, setloggedin] = useState(true)
@@ -145,9 +147,9 @@ function GoodsReceiptNote() {
         {
             title: 'Action',
             key: 'action',
-            render: (text, record) => (
+            render: (record, index) => (
                 <Space size="middle">
-                    <Button onClick={() => { updatecol(record) }} type="button">Select</Button>
+                    <Button onClick={() => { updatecol(record, index) }} type="button">Select</Button>
                 </Space>
             ),
         },
@@ -158,6 +160,11 @@ function GoodsReceiptNote() {
     // Dynamic Table ADD/DELETE
 
     const addHandler = () => {
+        var len = inputFields.length;
+        if ((len !== 0) && (inputFields[len - 1].mat_name === "----")) {
+            message.error("Please update exissting row before adding another row");
+            return;
+        }
         setInputField([...inputFields, {
             mat_id: "",
             mat_name: "----",
@@ -170,17 +177,51 @@ function GoodsReceiptNote() {
 
     const deleteRowHandler = (index) => {
         const values = [...inputFields];
+        if (values[index].mat_name !== "----") {
+            const values_updated = [...deletionArr];
+            setMats([...mats, values_updated[index]]);
+            values_updated.splice(index, 1);
+            setdeletionArr(values_updated);
+        }
         values.splice(index, 1);
         setInputField(values);
         setQuery({ ...query, initialItemRow: values });
+        setSearch({ ...searchstates, isSearchVisible: false });
     }
 
     // --------------------------------------------------------------------
     // Form change handlers
 
     const handleProjectChange = (value, index) => {
-        setVisibility({...visibility, project: true})
-        setQuery({ ...query, project_id: value });
+        setVisibility({ ...visibility, project: true })
+        // setQuery({ ...query, project_id: value });
+
+        axios.get(baseUrl.concat("grn/?project_id=" + value))
+            .then(res => {
+                var len = res.data.length;
+                if (len !== 0) {
+                    var proj_string = res.data[len - 1].grn_id.substring(0, 9);
+                    var id_string = res.data[len - 1].grn_id.substring(9);
+                    id_string = parseInt(id_string) + 1;
+                    len = 5 - id_string.toString().length
+                    while (len !== 0) {
+                        proj_string = proj_string + 0;
+                        len--;
+                    }
+                    id_string = proj_string + id_string;
+                    setQuery({ ...query, project_id: value, grn_id: id_string })
+                } else {
+                    console.log(len)
+                    axios.get(baseUrl.concat("projects/" + value + "/"))
+                        .then(res => {
+                            var id_string = res.data.identifier + "-GRN-00001";
+                            setQuery({ ...query, project_id: value, grn_id: id_string })
+                        })
+                }
+
+            })
+
+
     }
 
     const formChangeHandler = (event) => {  //for outer form
@@ -198,13 +239,13 @@ function GoodsReceiptNote() {
     // Visibility handlers 
 
     const showMaterial = (index) => {
-        if(visibility.project && visibility.po) {
+        if (visibility.project && visibility.po) {
             if (searchstates.isSearchVisible) {
                 setSearch({ ...searchstates, isSearchVisible: false });
             } else {
                 setSearch({ ...searchstates, isSearchVisible: true, idx: index });
             }
-        } else if(visibility.project && !visibility.po){
+        } else if (visibility.project && !visibility.po) {
             message.error("Please Select a Purchase Order ")
         } else {
             message.error("Please Select a Project ")
@@ -223,7 +264,7 @@ function GoodsReceiptNote() {
     // Update Rows 
 
     const updatePOID = (record) => {
-        setVisibility({...visibility, po: true})
+        setVisibility({ ...visibility, po: true })
         setQuery({ ...query, po_id: record.po_id })
         setSearch({ ...searchstates, isSearchVisiblePO: false });
         window.scrollTo({
@@ -234,7 +275,8 @@ function GoodsReceiptNote() {
         setMats(record.initialItemRow)
     }
 
-    const updatecol = (record) => {
+    const updatecol = (record, indexrow) => {
+        setdeletionArr([...deletionArr, record]);
         const values = [...inputFields];
         const index = searchstates.idx;
         values[index].mat_id = record.mat_id;
@@ -242,6 +284,9 @@ function GoodsReceiptNote() {
         values[index].item_rate = record.item_rate;
         values[index].quantity = record.quantity;
         values[index].unit = record.unit;
+        var temp_limit = mats;
+        temp_limit.splice(indexrow, 1)
+        setMats(temp_limit);
         setInputField(values);
         setQuery({ ...query, initialItemRow: values })
         setSearch({ ...searchstates, isSearchVisible: false })
@@ -250,6 +295,7 @@ function GoodsReceiptNote() {
             left: 0,
             behavior: 'smooth'
         });
+
     }
 
     // --------------------------------------------------------------------
@@ -258,6 +304,11 @@ function GoodsReceiptNote() {
     const submitHandler = (e) => {
         e.preventDefault();
         console.log(query)
+        var len = inputFields.length;
+        if (inputFields[len - 1].mat_name === "----") {
+            message.error("Material not selected in last row!")
+            return;
+        }
         axios.post(baseUrl.concat("grn/"), query)
             .then(response => {
 
@@ -297,7 +348,7 @@ function GoodsReceiptNote() {
                                 update.recieved = parseFloat(update.recieved) + parseFloat(current);
                                 update.quantity = parseFloat(update.quantity) + parseFloat(current);
                                 var id = response.data[0].id
-                                axios.put(baseUrl.concat("stock/" + id + "/"), update)
+                                axios.patch(baseUrl.concat("stock/" + id + "/"), update)
                                     .then(response => {
                                         console.log(response)
                                     })
@@ -312,9 +363,20 @@ function GoodsReceiptNote() {
                         })
                 }
 
+
+                var proj_string = query.grn_id.substring(0, 9);
+                var id_string = query.grn_id.substring(9);
+                id_string = parseInt(id_string) + 1;
+                var len = 5 - id_string.toString().length
+                while (len !== 0) {
+                    proj_string = proj_string + 0;
+                    len--;
+                }
+                id_string = proj_string + id_string;
                 // clearing fields
-                setQuery({...query,
-                    grn_id: "",
+                setQuery({
+                    ...query,
+                    grn_id: id_string,
                     po_id: "",
                     initialItemRow: [],
                 })
@@ -328,7 +390,7 @@ function GoodsReceiptNote() {
                         unit: "---",
                     },
                 ])
-                setVisibility({...query, po:false});
+                setVisibility({ ...visibility, po: false });
                 setMats([]);
             })
             .catch(error => {
@@ -336,6 +398,8 @@ function GoodsReceiptNote() {
                 if (error.response.status === 401) {
                     localStorage.removeItem('token')
                     setloggedin(false);
+                } else if (error.response.status === 400) {
+                    message.error("Please fill all the details !")
                 }
             })
     }
@@ -374,7 +438,7 @@ function GoodsReceiptNote() {
                         ))}
                     </Select>
 
-                    <Input type="text" value={query.grn_id} placeholder="grn_id" name="grn_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp;
+                    {/* <Input type="text" value={query.grn_id} placeholder="grn_id" name="grn_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp; */}
 
                     <Input disabled="true" placeholder="Purchase Order ID" name="po_id" value={query.po_id} className="col-md-2" /> &nbsp;
 
@@ -422,7 +486,7 @@ function GoodsReceiptNote() {
                     <Button type="submit" onClick={submitHandler}>Submit</Button>
                 </form>
                 <br /><br />
-                { searchstates.isSearchVisible ?
+                {searchstates.isSearchVisible ?
                     (<div>
                         <br /><br />
                         <div className="row">
@@ -435,7 +499,7 @@ function GoodsReceiptNote() {
                     )
                 }
 
-                { searchstates.isSearchVisiblePO ?
+                {searchstates.isSearchVisiblePO ?
                     (<div>
                         <br /><br />
                         <div className="row">

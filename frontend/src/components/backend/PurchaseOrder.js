@@ -294,20 +294,22 @@ function PurchaseOrder() {
             })
     }
 
-    const addHandler = () => {
-        var len = inputFields.length;
-        if ((len !== 0) && (inputFields[len - 1].mat_name === "----")) {
-            message.error("Please update exissting row before adding another row");
-            return;
-        }
-        setInputField([...inputFields, {
-            mat_id: "",
-            mat_name: "----",
-            quantity: "",
-            unit: "---",
-            item_rate: "",
-        }])
-    }
+
+    // This function is not necessary for POs
+    // const addHandler = () => {
+    //     var len = inputFields.length;
+    //     if ((len !== 0) && (inputFields[len - 1].mat_name === "----")) {
+    //         message.error("Please update exissting row before adding another row");
+    //         return;
+    //     }
+    //     setInputField([...inputFields, {
+    //         mat_id: "",
+    //         mat_name: "----",
+    //         quantity: "",
+    //         unit: "---",
+    //         item_rate: "",
+    //     }])
+    // }
 
     const deleteRowHandler = (index) => {
         const values = [...inputFields];
@@ -472,7 +474,7 @@ function PurchaseOrder() {
                     <TextArea rows={4} placeholder="Delivery Location" style={{ width: 300 }} value={query.delivery_loc} name="delivery_loc" onChange={event => formChangeHandler(event)} />
                     {/* <Input type="text" value={query.supp_id} placeholder="Supplier" name="supp_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> */}
                     <br /><br /><br /><br />
-                    <Button type="button" onClick={addHandler}>Add</Button><br /><br />
+                    {/* <Button type="button" onClick={addHandler}>Add</Button><br /><br /> */}
 
                     <div className="row">
                         <div className="col-md-1"><p> </p></div>
