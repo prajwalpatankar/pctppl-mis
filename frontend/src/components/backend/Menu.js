@@ -11,8 +11,8 @@ function Menu() {
 
     const baseUrl = 'http://localhost:8000/';
 
-    const [gg, setgg] = useState(false);
-    const [wp, setwp] = useState(false);
+    const [adm, setadm] = useState(false);
+    const [po, setPO] = useState(false);
     const [l, setloggedin] = useState(true);
     
     
@@ -26,9 +26,9 @@ function Menu() {
                 .then(res => {
     
                     if (res.data[0].role === "admin") {
-                        setgg(true)
-                    } else if (res.data[0].role === "Project Manager") {
-                        setwp(true)
+                        setadm(true);
+                    } else if (res.data[0].role === "Purchase Officer") {
+                        setPO(true);
                     }
                 })
                 .catch(error => {
@@ -61,10 +61,12 @@ function Menu() {
                                     <h4>Purchse Requisitions</h4>
                                     <li><Link to="/1req">New Purchase Requisition</Link></li>
                                     <li><Link to="/1viewreq">View Purchase Requisition</Link></li>
-                                    {gg ? <li><Link to="/1master">Approve Purchase requisitions</Link></li> : wp ? <li><Link to="/1reqsite">Approve Purchase requisitions</Link></li> : <p></p> }
+                                    {/* {adm ? <li><Link to="/1master">Approve Purchase requisitions</Link></li> : wp ? <li><Link to="/1reqsite">Approve Purchase requisitions</Link></li> : <p></p> } */}
+                                    {adm ? <li><Link to="/1master">Approve Purchase requisitions</Link></li> : <p></p> }
                                 </ul>                                
                             </td>
                         </tr>
+                        { (adm || po ) ? 
                         <tr>
                             <td>
                                 <ul>
@@ -74,6 +76,8 @@ function Menu() {
                                 </ul>                                
                             </td>
                         </tr>
+                        : <p></p> }
+
                         <tr>
                             <td>
                                 <ul>
@@ -101,14 +105,15 @@ function Menu() {
                                 </ul>                                
                             </td>
                         </tr>
-                        <tr>
+                        {/* <tr>
                             <td>
                                 <ul>
                                     <h4>Material Master</h4>
                                     <li><Link to="/1material">Add New Material</Link></li>
                                 </ul>                                
                             </td>
-                        </tr>
+                        </tr> */}
+                        { (adm || po ) ? 
                         <tr>
                             <td>
                                 <ul>
@@ -118,14 +123,15 @@ function Menu() {
                                 </ul>                                
                             </td>
                         </tr>
-                        {gg ? 
+                        : <p></p> }
+                        {adm ? 
                         <tr>
                             <td>
-                                <ul>
-                                    
+                                <ul>                                   
                                     <h4>Admin Panel</h4>
                                     <li><Link to="/1projects">New Project</Link></li>                                    
                                     <li><Link to="/1newuser">New User</Link></li>
+                                    <li><Link to="/1projectData">Update Requisition Limit</Link></li>
                                </ul>                                
                             </td>
                         </tr>

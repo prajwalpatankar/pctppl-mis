@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select } from 'antd';
+import { Button, message, Input, Table, Space, Select, Modal } from 'antd';
 import NotFound from './../NotFound';
 import BackFooter from './BackFooter';
 import jwt_decode from "jwt-decode";
@@ -17,10 +17,18 @@ function ProjectData() {
 
     const [projects, setProjects] = useState([]);
     const [l, setloggedin] = useState(true);
+    const [visibility, setVisibility] = useState(false);
+    const [req, setReq] = useState([]);
+    const [button, setButton] = useState(-1); //set as -1 init, change to index 
     const [query, setQuery] = useState({
+        id: "",
+        mat_id: "",
+        mat_name: "",
+        utilized: "",
+        quantity: "",
+        unit: "",
         project_id: "",
-        exc_file: "",
-    })
+    });
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -33,7 +41,6 @@ function ProjectData() {
                             .then(res => {
                                 setProjects(res.data);
                             })
-
                     }
                 })
                 .catch(error => {
@@ -51,18 +58,42 @@ function ProjectData() {
             return 0;
         }, 200);
     }, [])
-    
+
+    // --------------------------------------------------------------------
+    // Modal
+
+    const [ModalDetails, setModalDetails] = useState(false)
+
+    const handleCancelDetails = () => {
+        setModalDetails(false)
+    }
+
+    const showModalDetails = (index) => {
+        setModalDetails(true)
+        setQuery(req[index]);
+    }
+
+
 
     // --------------------------------------------------------------------
     // Form change handlers
 
     const handleProjectChange = (value, index) => {
-        setQuery({ ...query, project_id: value });
+        axios.get(baseUrl.concat("reqlimit/?project_id=" + value))
+            .then(res => {
+                setReq(res.data);
+                setVisibility(true);
+            })
     }
 
-    const handleImageChange = (e) => {
-        setQuery({ ...query, exc_file: e.target.files[0]})
+    const showInput = (index) => {
+        console.log(index);
+        setButton(index);
+        setQuery(req[index]);
+    }
 
+    const handleFormChange = (event) => {
+        setQuery({ ...query, quantity: event.target.value });
     }
 
     // --------------------------------------------------------------------
@@ -71,9 +102,21 @@ function ProjectData() {
     const submitHandler = (e) => {
         e.preventDefault();
         console.log(query);
-        
-    }
+        var id = query.id;
+        axios.patch(baseUrl.concat("reqlimit/" + id + "/"), query)
+            .then(res => {
+                console.log(res);
+                message.success(`Limit for ${query.mat_name} updated successfully `);
+                axios.get(baseUrl.concat("reqlimit/?project_id=" + query.project_id))
+                    .then(res => {
+                        setReq(res.data);
+                    })
+            })
+            .catch(err => {
+                console.log(err);
+            })
 
+    }
 
     // --------------------------------------------------------------------
     // Extras
@@ -102,10 +145,45 @@ function ProjectData() {
                     </Select>
                     <br /><br />
 
-                    <Input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"  onChange={handleImageChange} style={{ width: 300 }} required/>
-                    <br /><br />
+                    {visibility ?
+                        <div className="row">
+                            <div className="col-md-1"><p></p></div>
+                            <div className="table-responsive col-md-10">
+                                <table className="table table-hover table-bordered">
+                                    <thead className="row">
+                                        <th className="col-md-2">Material ID</th>
+                                        <th className="col-md-2">Material Name</th>
+                                        <th className="col-md-2">Utilized Quantity (Cumulative)</th>
+                                        <th className="col-md-2">Quantity Limit</th>
+                                        <th className="col-md-2">Unit</th>
+                                        <th className="col-md-2">Action</th>
+                                    </thead>
+                                    <tbody>
+                                        {req.map((r, index) => (
+                                            <tr key={index} className="row">
+                                                <td className="col-md-2">{r.mat_id}</td>
+                                                <td className="col-md-2">{r.mat_name}</td>
+                                                <td className="col-md-2">{r.utilized}</td>
+                                                <td className="col-md-2">{r.quantity}</td>
+                                                <td className="col-md-2">{r.unit}</td>
+                                                {(index === button) ?
+                                                    <td className="col-md-2"><Button type="button" onClick={() => submitHandler}>Submit</Button></td>
+                                                    :
+                                                    <td className="col-md-2"><Button type="button" onClick={() => showModalDetails(index)}>Change</Button></td>}
 
-                    <Button type="submit" onClick={submitHandler}>Submit</Button>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="col-md-1"><p></p></div>
+                        </div>
+
+
+                        : <p></p>}
+
+
+                    <br /><br />
                 </form>
                 <br /><br />
 
@@ -117,6 +195,38 @@ function ProjectData() {
                 </div>
                 <br /><br /><br /><br />
                 <BackFooter />
+
+
+                <Modal
+                    title="Change Item Details"
+                    footer={[
+                        <Button type="button" key="back" onClick={handleCancelDetails}>Go back</Button>,
+                        <Button type="primary" key="submit" onClick={submitHandler}>Submit</Button>,
+                    ]}
+                    visible={ModalDetails} onCancel={handleCancelDetails}
+                >
+                    <table className="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <td>Material ID</td>
+                                <td>Material Name</td>
+                                <td>Utitlized</td>
+                                <td>Quantity Limit</td>
+                                <td>Unit</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{query.mat_id}</td>
+                                <td>{query.mat_name}</td>
+                                <td>{query.utilized}</td>
+                                <td><Input value={query.quantity} onChange={event => handleFormChange(event)} type="text" /></td>
+                                <td>{query.unit}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </Modal>
+
             </div>
         )
 
