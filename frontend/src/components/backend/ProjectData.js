@@ -19,7 +19,6 @@ function ProjectData() {
     const [l, setloggedin] = useState(true);
     const [visibility, setVisibility] = useState(false);
     const [req, setReq] = useState([]);
-    const [button, setButton] = useState(-1); //set as -1 init, change to index 
     const [query, setQuery] = useState({
         id: "",
         mat_id: "",
@@ -84,12 +83,6 @@ function ProjectData() {
                 setReq(res.data);
                 setVisibility(true);
             })
-    }
-
-    const showInput = (index) => {
-        console.log(index);
-        setButton(index);
-        setQuery(req[index]);
     }
 
     const handleFormChange = (event) => {
@@ -166,10 +159,8 @@ function ProjectData() {
                                                 <td className="col-md-2">{r.utilized}</td>
                                                 <td className="col-md-2">{r.quantity}</td>
                                                 <td className="col-md-2">{r.unit}</td>
-                                                {(index === button) ?
-                                                    <td className="col-md-2"><Button type="button" onClick={() => submitHandler}>Submit</Button></td>
-                                                    :
-                                                    <td className="col-md-2"><Button type="button" onClick={() => showModalDetails(index)}>Change</Button></td>}
+                                                <td className="col-md-2"><Button type="button" onClick={() => showModalDetails(index)}>Change</Button></td>
+                                                
 
                                             </tr>
                                         ))}

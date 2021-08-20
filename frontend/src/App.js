@@ -22,6 +22,8 @@ import Material from './components/backend/Material';
 import Supplier from './components/backend/Suppliers';
 import UpdateSupplier from './components/backend/UpdateSupplier';
 import ProjectData from './components/backend/ProjectData';
+import RequisitionPrint from './components/backend/print_templates/RequisitionPrint';
+import POPrint from './components/backend/print_templates/POPrint';
 
 
 function App() {
@@ -42,7 +44,7 @@ function App() {
 
     <BrowserRouter>
       <div className="App-mis">
-        <NavbarMis />
+        {/* <NavbarMis /> */}
         <Switch >
           <Route exact path='/' component={Login} />
           <Route path='/1req' component={Requisition} />
@@ -61,6 +63,13 @@ function App() {
           <Route path='/1supplier' component={Supplier} />
           <Route path='/1supplierUpdate' component={UpdateSupplier} />
           <Route path='/1projectData' component={ProjectData} />
+
+
+          {/* Printing */}
+
+          <Route path='/purchaserequisition:id' component={RequisitionPrint} />
+          <Route path='/po:id' component={POPrint} />
+
           <Route component={PageNotFound} />
         </Switch>
       </div>

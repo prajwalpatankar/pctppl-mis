@@ -19,6 +19,7 @@ function Requisition() {
   const [inputFields, setInputField] = useState([
     {
       mat_id: "",
+      hsn_id: "",
       mat_name: "----",
       quantity: "",
       description: "",
@@ -52,8 +53,10 @@ function Requisition() {
 
       axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
         .then(res => {
-
-          setQuery({ ...query, made_by: res.data[0].user })
+          axios.get(baseUrl.concat("user/"+ res.data[0].user))
+          .then(res => {
+            setQuery({ ...query, made_by: res.data.username })
+          })
 
           if (res.data[0].role === "admin") {
             axios.get(baseUrl.concat("projects"))
@@ -140,6 +143,7 @@ function Requisition() {
     }
     setInputField([...inputFields, {
       mat_id: "",
+      hsn_id: "",
       mat_name: "----",
       quantity: "",
       description: "",
@@ -168,6 +172,7 @@ function Requisition() {
     setLimitToUpdate([]);
     setInputField([{
       mat_id: "",
+      hsn_id: "",
       mat_name: "----",
       quantity: "",
       description: "",
@@ -248,6 +253,7 @@ function Requisition() {
     const index = searchstates.idx;
     console.log(record);
     values[index].mat_id = record.mat_id;
+    values[index].hsn_id = record.hsn_id;
     // values[index].mat_name = record.desc;  //check once later
     values[index].mat_name = record.mat_name
     values[index].unit = record.unit;
@@ -320,6 +326,7 @@ function Requisition() {
         setInputField([
         {
           mat_id: "",
+          hsn_id: "",
           mat_name: "----",
           quantity: "",
           description: "",
@@ -327,7 +334,7 @@ function Requisition() {
           required_date: "",
         },
         ])
-        setTimeout(refreshHandler,200);
+        // window.open('/purchaserequisition:' + response.data.id)
       })
       .catch(error => {
         console.log(error.response.status)

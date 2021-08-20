@@ -188,7 +188,7 @@
 # General
 --------------------------------------------------------------*/
 body {
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Noto Sans HK', sans-serif;
   color: #444444;
 }
 
@@ -201,9 +201,6 @@ a:hover {
   text-decoration: none;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Raleway", sans-serif;
-}
 
 /*--------------------------------------------------------------
 # Back to top button
@@ -1472,6 +1469,64 @@ section {
 .App-mis {
   /* text-align: center; */
   font-family: 'Noto Sans HK', sans-serif;
-  background-color: rgb(253, 253, 253);
-  overflow-x: hidden; 
+  background-color: #fff;
+
+}
+
+.wrapper {
+  z-index: 99;
+  border: 2px solid black;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  
+}
+
+.wrapper .row {
+  margin-bottom: -10px;
+}
+
+.border_bottom  {
+  border-bottom: 2px solid black;
+}
+
+.border_top  {
+  border-top: 2px solid black;
+}
+
+.border_left  {
+  border-left: 2px solid black;
+}
+
+.border_right  {
+  border-right: 2px solid black;
+}
+
+
+
+.print-center {
+  text-align: center;
+}
+
+.print-left {
+  text-align: left;
+}
+
+
+.logoPrint img {
+  max-height: 60px;
+  margin-bottom: -10px;
+}
+
+@media screen {
+  div.divFooter {
+    display: none;
+  }
+}
+@media print {
+  @page { margin-bottom: 0; margin-top: 0;}
+  div.wrapper { margin-top: 10mm; }
+  div.divFooter {
+    position: fixed;
+    bottom: 0;
+  }
 }

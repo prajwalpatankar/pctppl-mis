@@ -11,10 +11,12 @@ function PurchaseOrder() {
     const [inputFields, setInputField] = useState([
         {
             mat_id: "",
+            hsn_id: "",
             mat_name: "----",
             quantity: "",
             unit: "---",
             item_rate: "",
+            discount: "",
         },
     ]);
 
@@ -22,8 +24,13 @@ function PurchaseOrder() {
         po_id: "",
         project_id: "",
         initialItemRow: [],
-        delivery_loc: "",
         supp_id: "",
+        contact_person: "",
+        payment_terms: "",
+        other_terms: "",
+        delivery_schedule: "",
+        transport: "",
+        other_charges: "",
     });
 
     const [suppliers, setSuppliers] = useState([]);
@@ -128,7 +135,7 @@ function PurchaseOrder() {
             dataIndex: 'created_date_time',
             key: 'created_date_time',
             render: (text) => (
-                <p>{text.substring(0,10).toString().split("-").reverse().join("/")}</p>
+                <p>{text.substring(0, 10).toString().split("-").reverse().join("/")}</p>
             ),
         },
         {
@@ -230,7 +237,7 @@ function PurchaseOrder() {
         record.completed = "Y";
         axios.patch(baseUrl.concat("requisition/" + record.id + "/"), record)
             .then(res => {
-                message.success("Purchase Requisition Complete");
+                message.success("Purchase Requisition Granted");
             })
         const values = [...reqs];
         values.splice(index, 1);
@@ -242,12 +249,12 @@ function PurchaseOrder() {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        console.log(query)
         var len = inputFields.length;
-        if(inputFields[len-1].mat_name === "----" ){
+        if (inputFields[len - 1].mat_name === "----") {
             message.error("Material not selected in last row!")
             return;
         }
+        console.log(query)
         axios.post(baseUrl.concat("po/"), query)
             .then(response => {
                 message.open({
@@ -271,17 +278,25 @@ function PurchaseOrder() {
                     ...query,
                     po_id: id_string,
                     initialItemRow: [],
-                    delivery_loc: "",
+                    contact_person: "",
+                    payment_terms: "",
+                    other_terms: "",
+                    delivery_schedule: "",
+                    transport: "",
+                    other_charges: "",
                 })
                 setInputField([
                     {
                         mat_id: "",
+                        hsn_id: "",
                         mat_name: "----",
                         quantity: "",
                         unit: "---",
                         item_rate: "",
+                        discount: "",
                     },
                 ])
+                window.open('/po:' + response.data.id)
             })
             .catch(error => {
                 console.log(error.response.status)
@@ -304,6 +319,7 @@ function PurchaseOrder() {
     //     }
     //     setInputField([...inputFields, {
     //         mat_id: "",
+    //         hsn_id: "", 
     //         mat_name: "----",
     //         quantity: "",
     //         unit: "---",
@@ -361,6 +377,7 @@ function PurchaseOrder() {
     //     const values = [...inputFields];
     //     const index = searchstates.idx;
     //     values[index].mat_id = record.mat_id;
+    // values[index].hsn_id = record.hsn_id;                        
     //     values[index].mat_name = record.desc;  //check once later
     //     values[index].unit = record.unit;
     //     setInputField(values);
@@ -408,19 +425,22 @@ function PurchaseOrder() {
         if (inputFields.length === 1 && inputFields[0].mat_name === "----") {
             setInputField([{
                 mat_id: record.mat_id,
+                hsn_id: record.hsn_id,
                 mat_name: record.mat_name,
                 quantity: record.quantity,
                 unit: record.unit,
                 item_rate: "",
+                discount: "",
             }])
         } else {
             setInputField([...inputFields, {
                 mat_id: record.mat_id,
+                hsn_id: record.hsn_id,
                 mat_name: record.mat_name,
                 quantity: record.quantity,
                 unit: record.unit,
                 item_rate: "",
-
+                discount: "",
             }])
         }
 
@@ -470,9 +490,11 @@ function PurchaseOrder() {
                             <Option value={supp.id}>{supp.supp_name}</Option>
                         ))}
                     </Select>
-                    <br /><br />
-                    <TextArea rows={4} placeholder="Delivery Location" style={{ width: 300 }} value={query.delivery_loc} name="delivery_loc" onChange={event => formChangeHandler(event)} />
-                    {/* <Input type="text" value={query.supp_id} placeholder="Supplier" name="supp_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> */}
+                    <Input type="text" value={query.contact_person} placeholder="Contact Person" name="contact_person" onChange={event => formChangeHandler(event)} className="col-md-2" />
+                    <Input type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} className="col-md-2" />
+                    <Input type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} className="col-md-2" />
+                    <Input type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} className="col-md-2" />
+
                     <br /><br /><br /><br />
                     {/* <Button type="button" onClick={addHandler}>Add</Button><br /><br /> */}
 
@@ -485,7 +507,8 @@ function PurchaseOrder() {
                                         <div className="row">
                                             {/* <th className="col-md-2">Select Material</th> */}
                                             <th className="col-md-3">Material Name</th>
-                                            <th className="col-md-4">Rate</th>
+                                            <th className="col-md-2">Rate</th>
+                                            <th className="col-md-2">Discount</th>
                                             <th className="col-md-1">Quantity</th>
                                             <th className="col-md-1">Unit</th>
                                             <th className="col-md-1">Delete</th>
@@ -498,7 +521,8 @@ function PurchaseOrder() {
                                             <div className="row">
                                                 {/* <td className="col-md-2"><Button type="button" onClick={() => showMaterial(index)}>Select Material</Button></td> */}
                                                 <td className="col-md-3">{inputField.mat_name}</td>
-                                                <td className="col-md-4"><Input type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                                <td className="col-md-2"><Input type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                                <td className="col-md-2"><Input type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
                                                 <td className="col-md-1"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                                                 <td className="col-md-1">{inputField.unit}</td>
                                                 <td className="col-md-1"><Button danger="true" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
@@ -510,7 +534,10 @@ function PurchaseOrder() {
                         </div>
                         <div className="col-md-1"><p> </p></div>
                     </div> <br />
+                    <Input type="text" value={query.transport} placeholder="Transport Charges" name="transport" onChange={event => formChangeHandler(event)} className="col-md-2" />
+                    <Input type="text" value={query.other_charges} placeholder="Other Charges" name="other_charges" onChange={event => formChangeHandler(event)} className="col-md-2" />
 
+                    <br /><br />
                     <Button type="submit" onClick={submitHandler}>Submit</Button>
                 </form>
                 <br /><br />
@@ -559,7 +586,7 @@ function PurchaseOrder() {
                 </div>
 
                 <h5>Select Items from Purchase Requisitions</h5>
-                <Table dataSource={reqs} columns={columns1}/>
+                <Table dataSource={reqs} columns={columns1} />
 
 
                 {/* <Table dataSource={pos} columns={columspo} /> */}
