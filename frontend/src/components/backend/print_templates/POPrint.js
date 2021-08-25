@@ -1,9 +1,8 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
-import PurchaseOrder from '../PurchaseOrder';
 
-
+const numWords = require('num-words');
 
 const POPrint = (props) => {
     const baseUrl = 'http://localhost:8000/';
@@ -27,7 +26,7 @@ const POPrint = (props) => {
     });
 
     const [supplier, setSupplier] = useState({
-        supp_name: "",
+        supp_name: "--",
         supp_address: "",
     });
 
@@ -38,6 +37,8 @@ const POPrint = (props) => {
     const [finalAmount, setFinalAmount] = useState({
         total_value: 0.00,
         gross_value: 0.00,
+        cgst: 0.00,
+        taxable_value: 0.00,
     })
 
     var rate = {
@@ -60,17 +61,15 @@ const POPrint = (props) => {
                                 .then(res => {
                                     setPo(res.data)
                                     setRows(res.data.initialItemRow)
-                                    totalValue(res.data, response.data);
 
                                     axios.get(baseUrl.concat("projects/" + res.data.project_id))
                                         .then(res1 => {
                                             setProject(res1.data);
 
                                             axios.get(baseUrl.concat("supplier/" + res.data.supp_id))
-                                                .then(res => {
-                                                    setSupplier(res.data);
-
-                                                    // window.print()
+                                                .then(res2 => {
+                                                    setSupplier(res2.data);
+                                                    totalValue(res.data, response.data);
                                                 })
 
 
@@ -92,20 +91,12 @@ const POPrint = (props) => {
         }, 200);
     }, [])
 
-    const str = "asdjbkaksdja asid basdajhsbdj asda s gdas gdahgsdad asud asy duaysduasud ausdvasv duav dsuavsdasv duavdua sdvasudvasu au dasud ausvuav duausd avsudv ausdv ausvduasvdua suy vufuaduawvduawv du asdvahgfhgefy  "
-
-
-    const taxRate = (record, index) => {
-        var rate = hsn.find(({ hsn_id }) => hsn_id === record.hsn_id)
-        if (rate) {
-            return rate.tax_rate
-        }
-        return;
-    }
 
     const totalValue = (purchase, taxes) => {
         let mats = purchase.initialItemRow;
         var sum = 0;        
+        var taxable = 0;
+        var gst = 0;
         for (var i = 0; i < mats.length; i++) {
             rate = taxes.find(({ hsn_id }) => hsn_id === mats[i].hsn_id);
             console.log(rate.tax_rate)
@@ -113,13 +104,19 @@ const POPrint = (props) => {
             amounts[i]["taxable_value"] = ( parseFloat(mats[i].quantity) * parseFloat(mats[i].item_rate) ) - parseFloat(mats[i].discount)
             amounts[i]["cgst"] = amounts[i]["taxable_value"] *  amounts[i]["tax_rate"] * 0.5 / 100;
             amounts[i]["amount"] = amounts[i]["taxable_value"] + amounts[i]["cgst"] + amounts[i]["cgst"];
+            taxable += amounts[i]["taxable_value"];
+            gst += amounts[i]["cgst"];
             sum += amounts[i]["amount"];
             amounts = [...amounts, { tax_rate: "", taxable_value: "", cgst: "", amount: "" }]
         }
         setBilling(amounts);
         var gross = sum + parseFloat(purchase.transport) + parseFloat(purchase.other_charges);
-        setFinalAmount({total_value: sum, gross_value: gross});
+        setFinalAmount({total_value: sum, gross_value: gross, cgst: gst, taxable_value: taxable});
         setComplete(true);
+        setTimeout(() => {
+            window.print();
+        }, 300);
+        
     }
 
     // --------------------------------------------------------------------
@@ -210,7 +207,7 @@ const POPrint = (props) => {
                         </b>
                         {rows.map((r, index) => (
                             <tr className="row" key="index">
-                                <td className="col-sm-1 border border-dark">{r.mat_id}<br /></td>
+                                <td className="col-sm-1 border border-dark">{r.mat_id}<br />{r.hsn_id}</td>
                                 <td className="col-sm-3 border border-dark">{r.mat_name}</td>
                                 <td className="col-sm-1 border border-dark">{r.unit}</td>
                                 <td className="col-sm-1 border border-dark">{parseFloat(r.quantity).toFixed(2)}</td>
@@ -228,6 +225,11 @@ const POPrint = (props) => {
                                 <td className="col-sm-2 border border-dark">{ parseFloat(finalAmount.total_value).toFixed(2) }</td>
                             </tr>
                         </b>
+                        <tr className="row">
+                                <td className="col-sm-8 border-left border-top border-dark"> </td>
+                                <td className="col-sm-2 border border-dark"><b>Total Taxable Value:<br />CGST<br />SGST</b><br />&nbsp;</td>
+                                <td className="col-sm-2 border border-dark">{ parseFloat(finalAmount.taxable_value).toFixed(2) }<br />{ parseFloat(finalAmount.cgst).toFixed(2) }<br />{ parseFloat(finalAmount.cgst).toFixed(2) }<br />&nbsp;</td>
+                        </tr>
 
                         <tr className="row">
                             <td className="col-sm-8 border-left border-dark"><b>Transport     :</b></td>
@@ -248,7 +250,7 @@ const POPrint = (props) => {
                         </b>
                         <b>
                             <tr className="row">
-                                <td className="col-sm-8 border border-dark"> </td>
+                                <td className="col-sm-8 border border-dark">Rs. { numWords(parseInt(finalAmount.gross_value))} Only</td>
                                 <td className="col-sm-2 border border-dark">Gross Value</td>
                                 <td className="col-sm-2 border border-dark">{ parseFloat(finalAmount.gross_value).toFixed(2)}</td>
                             </tr>
@@ -264,6 +266,12 @@ const POPrint = (props) => {
                             <td className="col-sm-12"><b>Other Terms &#38; Conditions :</b>{po.other_terms}</td>
                         </tr>
                         <br /><br /><br />
+                        <tr className="row">
+                                <td className="col-sm-3 border-bottom border-dark">{po.made_by}</td>
+                                <td className="col-sm-3 border-bottom border-dark"></td>
+                                <td className="col-sm-3 border-bottom border-dark"></td>
+                                <td className="col-sm-3 border-bottom border-dark">{supplier.supp_name}</td>
+                            </tr>
                         <b>
                             <tr className="row">
                                 <td className="col-sm-3 border-top border-bottom border-dark">Prepared By</td>
@@ -285,7 +293,7 @@ const POPrint = (props) => {
 
                     </tbody>
                 </table>
-                <div class="divFooter">{po.created_date_time.substring(8, 10)}-{po.created_date_time.substring(5, 7)}-{po.created_date_time.substring(0, 4)}&nbsp;&nbsp;&nbsp;{po.created_date_time.substring(11,19)}</div>
+                <div className="divFooter">{po.created_date_time.substring(8, 10)}-{po.created_date_time.substring(5, 7)}-{po.created_date_time.substring(0, 4)}&nbsp;&nbsp;&nbsp;{po.created_date_time.substring(11,19)}</div>
             </div>
         )
     } else {

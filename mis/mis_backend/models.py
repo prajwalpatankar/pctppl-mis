@@ -5,10 +5,9 @@ from django.db.models.constraints import Deferrable
 from django.db.models.lookups import LessThan, LessThanOrEqual
 from django.utils import timezone
 from django.db.models.query import prefetch_related_objects
+from rest_framework import serializers
 
-# Create your models here.
-
-
+# Use Model
 class UserModel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=30, default="")
@@ -38,12 +37,30 @@ class Projects(models.Model):
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
-class HSAN(models.Model):
-    hsan_id = models.IntegerField()
-    tax = models.FloatField()
+class Req_Limit(models.Model): 
+    project_id = models.ForeignKey(Projects, on_delete=models.CASCADE)
+    mat_id = models.CharField(default="", max_length=200)
+    hsn_id = models.CharField(max_length=10)
+    mat_name =  models.CharField(max_length=250,default="")
+    utilized = models.IntegerField(default=0)
+    quantity = models.IntegerField(default=0)
+    unit = models.CharField(max_length=50,default="N")
+
+class HSN(models.Model):
+    hsn_id = models.CharField(max_length=10)
+    tax_rate = models.CharField(max_length=6)
+
+class Supplier(models.Model):
+    supp_name = models.CharField(max_length=200, default="")
+    supp_address = models.CharField(max_length=200, default="")
+    contact_person = models.CharField(max_length=13, default="")
+    contact = models.CharField(max_length=15, default="")
+    state = models.CharField(max_length=30, default="")
+    gst =  models.CharField(max_length=20, default="")
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
+#  Extras, might remove
 class Material_category(models.Model):
     cat_id = models.CharField(max_length=50)
     cat_name = models.CharField(max_length=50)
@@ -61,6 +78,8 @@ class Material_master(models.Model):
     unit = models.CharField(max_length=50,default="N")
     hsan_id = models.IntegerField(default=0) #FK
 
+
+# Projectwise stock
 class Stock_mst(models.Model): # monthly, overall statements  (FK date)
     project_id = models.ForeignKey(Projects, on_delete=models.CASCADE)
     mat_id = models.CharField(default="", max_length=200)
@@ -71,12 +90,12 @@ class Stock_mst(models.Model): # monthly, overall statements  (FK date)
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
-
+# Requisition Model
 class Purchase_Requisition_mst(models.Model): # delivery date
     req_id = models.CharField(max_length=13)
     message = models.CharField(default="", max_length=200)
     project_id = models.ForeignKey(Projects, default=7, on_delete=models.CASCADE)
-    made_by = models.ForeignKey(User, default=1,on_delete=models.CASCADE)
+    made_by = models.CharField(max_length=20, default="")
     # isapproved_site = models.CharField(default="N",max_length=3) # y=approved n=defualt r=rejected
     completed = models.CharField(default="N",max_length=3) 
     isapproved_master = models.CharField(default="N",max_length=3) 
@@ -87,77 +106,66 @@ class Purchase_Requisition_mst(models.Model): # delivery date
 class Purchase_Requisition_details(models.Model):
     header_ref_id = models.ForeignKey("Purchase_Requisition_mst", default=0, verbose_name="Header Ref ID", on_delete=models.CASCADE, related_name='initialItemRow')
     mat_id = models.CharField(default="", max_length=200)
+    hsn_id = models.CharField(max_length=10)
     mat_name =  models.CharField(max_length=250,default="")
     quantity = models.FloatField(default=0)
     description = models.CharField(default="", max_length=200)  #change to brand, not compulsory
     unit = models.CharField(max_length=50,default="N")
     required_date = models.DateTimeField()
 
-class Supplier(models.Model):
-    supp_name = models.CharField(max_length=200, default="")
-    supp_address = models.CharField(max_length=200, default="")
-    contact_person = models.CharField(max_length=13, default="")
-    contact = models.CharField(max_length=15, default="")
-    state = models.CharField(max_length=30, default="")
-    gst =  models.CharField(max_length=20, default="")
-    created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
-    updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
-    
+# PO model 
 class Purchase_Order_mst(models.Model): 
-    # + billing_address (fixed, no manual entry required, add default)
-    # contact_person (ours) 
-    # FOr printing : [ + billing_address (fixed, no manual entry required, add default) ] , [GST both] , [state (both)] 
     po_id = models.CharField(max_length=13)
     project_id = models.ForeignKey(Projects, on_delete=models.CASCADE, related_name="project_id")
-    # project_name = models.CharField(max_length=200, default="")
-    delivery_loc = models.CharField(max_length=200, default="")
     supp_id = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name="ssup_id")
     complete = models.CharField(max_length=3, default="N")
+    contact_person = models.CharField(default=" ", max_length=30)
+    payment_terms = models.CharField(default=" ", max_length=100)
+    other_terms = models.CharField(default=" ", max_length=100)
+    delivery_schedule = models.CharField(default=" ", max_length=20)
+    transport = models.FloatField(default=0)
+    other_charges = models.FloatField(default=0)
+    made_by = models.CharField(max_length=20, default="")
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
-    # total amount = sum of all items in PO 
-    # add breakup of gst and basic ( print only) 
-    # + discount total
-    # + other charges ( if any) 
-    # gross value
-    # + gross amount in words ( print)
-    # deliver_schedule (date) 
-    # payment terms
-    # other terms
+
 
 class Purchase_Order_details(models.Model):
-    #  + discount
-    #  + total_basic_amount = rate* quantity
-    #  tax_rate_amounts -> CGST + SGST (ref hsan )
-    #  total = total_basic_amount + tax_rate_amounts
     header_ref_id = models.ForeignKey("Purchase_Order_mst", default=0, verbose_name="Header Ref ID", on_delete=models.CASCADE, related_name='initialItemRow')
     mat_id = models.CharField(default="", max_length=200)
+    hsn_id = models.CharField(max_length=10)
     mat_name =  models.CharField(max_length=250,default="")
     quantity = models.IntegerField(default=0)
     unit = models.CharField(max_length=50,default="N")
     item_rate = models.FloatField(default=0)
+    discount = models.FloatField(default=0)
     complete = models.CharField(max_length=3, default="N")
-    created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
-    updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
+# GRN model
 class Goods_Receipt_Note_mst(models.Model):
-    grn_id = models.IntegerField()
-    po_id = models.IntegerField()
-    project_id = models.IntegerField()
+    grn_id = models.CharField(max_length=14)
+    po_id = models.CharField(max_length=13)
+    project_id = models.ForeignKey(Projects, on_delete=models.CASCADE, related_name="project_id_grn")
+    supp_id = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name="ssup_id_grn")
+    vehicle_no = models.CharField(max_length=15)
+    challan_no = models.CharField(max_length=15)
+    challan_date = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
+    made_by = models.CharField(max_length=20, default="")
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
 class Goods_Receipt_Note_details(models.Model):
     header_ref_id = models.ForeignKey("Goods_Receipt_Note_mst", default=0, verbose_name="Header Ref ID", on_delete=models.CASCADE, related_name='initialItemRow')
     mat_id = models.CharField(default="", max_length=200)
+    hsn_id = hsn_id = models.CharField(max_length=10)
     mat_name =  models.CharField(max_length=250,default="")
-    quantity = models.IntegerField(default=0)
-    rec_quant = models.IntegerField(default=0) # challan & accepted
+    quantity = models.FloatField(default=0)
+    rec_quant = models.FloatField(default=0) # challan & accepted
+    accepted =  models.FloatField(default=0)
     unit = models.CharField(max_length=50,default="N")
     item_rate = models.FloatField(default=0)
-    created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
-    updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
+# Issue model
 class Issue(models.Model):
     project_id = models.ForeignKey(Projects, on_delete=models.CASCADE)
     mat_id = models.CharField(default="", max_length=200)
@@ -167,6 +175,7 @@ class Issue(models.Model):
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
+# Material Transfer and Delivery CHallan
 class Delivery_Challan_mst(models.Model):
     from_project = models.ForeignKey(Projects, on_delete=models.CASCADE, related_name="from_project")
     to_project = models.ForeignKey(Projects, on_delete=models.CASCADE, related_name="to_project")
@@ -180,16 +189,3 @@ class Delivery_Challan_details(models.Model):
     quantity = models.IntegerField(default=0)
     unit = models.CharField(max_length=50,default="N")
 
-
-# # Uploading excel 
-# class File_Upload(models.Model):
-#     project_id = models.ForeignKey(Projects, on_delete=models.CASCADE, related_name="project_id")
-#     excel = models.FileField(blank=True, default='')
-
-class Req_Limit(models.Model): 
-    project_id = models.ForeignKey(Projects, on_delete=models.CASCADE)
-    mat_id = models.CharField(default="", max_length=200)
-    mat_name =  models.CharField(max_length=250,default="")
-    utilized = models.IntegerField(default=0)
-    quantity = models.IntegerField(default=0)
-    unit = models.CharField(max_length=50,default="N")

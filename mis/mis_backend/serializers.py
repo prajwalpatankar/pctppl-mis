@@ -47,6 +47,17 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         fields = ('token', 'username', 'password')
 
 
+class CurrentUserDefault(object):
+    def set_context(self, serializer_field):
+        self.username = serializer_field.context['request'].user.username
+
+    def __call__(self):
+        return self.username
+
+    def __repr__(self):
+        return unicode_to_repr('%s()' % self.__class__.__name__)
+
+
 # -----------------------------------------------------------------
 class UserCustomSerializer(serializers.ModelSerializer):
     class Meta:
@@ -87,6 +98,7 @@ class RequisitionSerializerDetails(serializers.ModelSerializer):
 
 class RequisitionSerializerMst(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False) 
+    made_by = serializers.CharField(default=CurrentUserDefault())
 
     initialItemRow = RequisitionSerializerDetails(many=True)
     class Meta:
@@ -120,6 +132,7 @@ class RequisitionSerializerMst(serializers.ModelSerializer):
                 if Purchase_Requisition_details.objects.filter(id=init['id']).exists():
                     det = Purchase_Requisition_details.objects.get(id=init['id'])
                     det.mat_id = init.get('mat_id',det.mat_id)
+                    det.hsn_id = init.get('hsn_id',det.hsn_id)
                     det.mat_name = init.get('mat_name',det.mat_name)
                     det.quantity = init.get('quantity',det.quantity)
                     det.description = init.get('description',det.description)
@@ -155,7 +168,7 @@ class PurchaseOrderDetailsSerializer(serializers.ModelSerializer):
 
 class PurchaseOrderMstSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-
+    made_by = serializers.CharField(default=CurrentUserDefault())
     initialItemRow = PurchaseOrderDetailsSerializer(many=True)
     class Meta:
         model = Purchase_Order_mst
@@ -178,6 +191,7 @@ class GoodsReceiptNoteDetailsSerializer(serializers.ModelSerializer):
 
 class GoodsReceiptNoteMstSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    made_by = serializers.CharField(default=CurrentUserDefault())
 
     initialItemRow = GoodsReceiptNoteDetailsSerializer(many=True)
     class Meta:
@@ -233,4 +247,9 @@ class DeliveryChallanMstSerializer(serializers.ModelSerializer):
 class Req_Limit_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Req_Limit
+        fields = '__all__'
+
+class HSN_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = HSN
         fields = '__all__'

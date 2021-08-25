@@ -24,6 +24,7 @@ import UpdateSupplier from './components/backend/UpdateSupplier';
 import ProjectData from './components/backend/ProjectData';
 import RequisitionPrint from './components/backend/print_templates/RequisitionPrint';
 import POPrint from './components/backend/print_templates/POPrint';
+import GRNPrint from './components/backend/print_templates/GRNPrint';
 
 
 function App() {
@@ -69,6 +70,8 @@ function App() {
 
           <Route path='/purchaserequisition:id' component={RequisitionPrint} />
           <Route path='/po:id' component={POPrint} />
+          <Route path='/grn:id' component={GRNPrint} />
+          
 
           <Route component={PageNotFound} />
         </Switch>

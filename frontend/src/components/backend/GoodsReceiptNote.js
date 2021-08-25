@@ -16,13 +16,16 @@ function GoodsReceiptNote() {
     // states
 
     const [projects, setProjects] = useState([]);
+    const [supplier, setSupplier] = useState([]);
 
     const [inputFields, setInputField] = useState([
         {
             mat_id: "",
+            hsn_id: "",
             mat_name: "----",
             quantity: "",
             rec_quant: "",
+            accepted: "",
             item_rate: "",
             unit: "---"
         },
@@ -31,6 +34,10 @@ function GoodsReceiptNote() {
     const [query, setQuery] = useState({
         grn_id: "",
         po_id: "",
+        vehicle_no: "",
+        challan_no: "",
+        challan_date: "",
+        supp_id: "",
         project_id: "",
         initialItemRow: [],
     });
@@ -70,6 +77,11 @@ function GoodsReceiptNote() {
                                 setProjects(res.data);
                             })
                     }
+
+                    axios.get(baseUrl.concat("supplier"))
+                        .then(res => {
+                            setSupplier(res.data);
+                        })
                 })
                 .catch(error => {
                     console.log(error.response.status)
@@ -167,9 +179,11 @@ function GoodsReceiptNote() {
         }
         setInputField([...inputFields, {
             mat_id: "",
+            hsn_id: "",
             mat_name: "----",
             quantity: "",
             rec_quant: "",
+            accepted: "",
             item_rate: "",
             unit: "---",
         }])
@@ -218,10 +232,12 @@ function GoodsReceiptNote() {
                             setQuery({ ...query, project_id: value, grn_id: id_string })
                         })
                 }
-
             })
+    }
 
-
+    const handleSupplierChange = (value) => {
+        setQuery({ ...query, supp_id: value });
+    
     }
 
     const formChangeHandler = (event) => {  //for outer form
@@ -234,6 +250,12 @@ function GoodsReceiptNote() {
         setInputField(values);
         setQuery({ ...query, initialItemRow: values })
     }
+
+    const changeDateHandler = (event) => {   //inner form
+        let tempdate = event.target.value;
+        tempdate = tempdate + "T12:00";
+        setQuery({ ...query, challan_date: tempdate })
+      }
 
     // --------------------------------------------------------------------
     // Visibility handlers 
@@ -280,6 +302,7 @@ function GoodsReceiptNote() {
         const values = [...inputFields];
         const index = searchstates.idx;
         values[index].mat_id = record.mat_id;
+        values[index].hsn_id = record.hsn_id;
         values[index].mat_name = record.mat_name;
         values[index].item_rate = record.item_rate;
         values[index].quantity = record.quantity;
@@ -378,20 +401,27 @@ function GoodsReceiptNote() {
                     ...query,
                     grn_id: id_string,
                     po_id: "",
+                    vehicle_no: "",
+                    challan_no: "",
+                    challan_date: "",
+                    supp_id: "",
                     initialItemRow: [],
                 })
                 setInputField([
                     {
                         mat_id: "",
+                        hsn_id: "",
                         mat_name: "----",
                         quantity: "",
                         rec_quant: "",
+                        accepted: "",
                         item_rate: "",
                         unit: "---",
                     },
                 ])
                 setVisibility({ ...visibility, po: false });
                 setMats([]);
+                window.open('/grn:' + response.data.id)
             })
             .catch(error => {
                 console.log(error.response.status)
@@ -438,11 +468,22 @@ function GoodsReceiptNote() {
                         ))}
                     </Select>
 
-                    {/* <Input type="text" value={query.grn_id} placeholder="grn_id" name="grn_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp; */}
+                    <Select placeholder="Select Supplier" style={{ width: 300 }} onChange={handleSupplierChange}>
+                        {supplier.map((supp, index) => (
+                            <Option value={supp.id}>{supp.supp_name}</Option>
+                        ))}
+                    </Select>
 
                     <Input disabled="true" placeholder="Purchase Order ID" name="po_id" value={query.po_id} className="col-md-2" /> &nbsp;
 
-                    <Button type="button" onClick={() => showPO()}>Select PO</Button>&nbsp;<br /><br />
+                    <Button type="button" onClick={() => showPO()}>Select PO</Button>&nbsp;<br /><br /><br />
+
+                    <Input type="text" value={query.vehicle_no} placeholder="Vehicle Number" name="vehicle_no" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp;
+
+                    <Input type="text" value={query.challan_no} placeholder="Challan Number" name="challan_no" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp;
+
+                    <Input type="date" placeholder="Challan Date" name="challan_date" onChange={event => changeDateHandler(event)}  className="col-md-2"/> &nbsp;
+                    <br /><br />
 
                     <Button type="button" onClick={addHandler}>Add</Button><br /><br />
 
@@ -454,10 +495,11 @@ function GoodsReceiptNote() {
                                     <tr className="info">
                                         <div className="row">
                                             <th className="col-md-2">Select Material</th>
-                                            <th className="col-md-4">Material Name</th>
+                                            <th className="col-md-2">Material Name</th>
                                             <th className="col-md-1">Rate</th>
                                             <th className="col-md-1">PO Quantity</th>
                                             <th className="col-md-2">Recieved Quantity</th>
+                                            <th className="col-md-2">Accepted Quantity</th>
                                             <th className="col-md-1">Unit</th>
                                             <th className="col-md-1">Delete</th>
                                         </div>
@@ -468,10 +510,11 @@ function GoodsReceiptNote() {
                                         <tr key={index}>
                                             <div className="row">
                                                 <td className="col-md-2"><Button type="button" onClick={() => showMaterial(index)}>Select Material</Button></td>
-                                                <td className="col-md-4">{inputField.mat_name}</td>
+                                                <td className="col-md-2">{inputField.mat_name}</td>
                                                 <td className="col-md-1"><Input type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
                                                 <td className="col-md-1"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
                                                 <td className="col-md-2"><Input type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
+                                                <td className="col-md-2"><Input type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
                                                 <td className="col-md-1">{inputField.unit}</td>
                                                 <td className="col-md-1"><Button danger="true" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                             </div>

@@ -1518,13 +1518,24 @@ section {
 }
 
 @media screen {
+  div.wrapper {
+    display: none;
+  }
   div.divFooter {
     display: none;
   }
 }
 @media print {
+  html, body {
+    height:100%; 
+    margin: 0 !important; 
+    padding: 0 !important;
+    overflow: hidden;
+  }
   @page { margin-bottom: 0; margin-top: 0;}
-  div.wrapper { margin-top: 10mm; }
+  div.wrapper { 
+    display: block;
+    margin-top: 10mm; }
   div.divFooter {
     position: fixed;
     bottom: 0;

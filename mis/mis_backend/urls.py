@@ -25,6 +25,7 @@ router.register(r'supplier', views.Supplier_Viewset)
 router.register(r'sitetransfer', views.Delivery_Challan_mst_Viewset)
 router.register(r'sitetransferdet', views.Delivery_Challan_details_Viewset)
 router.register(r'reqlimit', views.ReqLimitViewSet)
+router.register(r'hsn', views.HSNViewset)
 # router.register(r'fileupload', views.ExcelViewSet)
 # router.register(r'user',views.UserList)
 

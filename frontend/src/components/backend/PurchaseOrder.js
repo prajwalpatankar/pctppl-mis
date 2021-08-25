@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Button, message, Input, Table, Space, Select, Modal } from 'antd';
 import NotFound from './../NotFound';
 import BackFooter from './BackFooter';
+import jwt_decode from 'jwt-decode';
 
 function PurchaseOrder() {
 
@@ -46,34 +47,46 @@ function PurchaseOrder() {
     useEffect(() => {
         if (localStorage.getItem("token")) {
             axios.defaults.headers.common["Authorization"] = `JWT ${localStorage.getItem('token')}`;
+
+            axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
+                .then(res => {
+                    // axios.get(baseUrl.concat("user/" + res.data[0].user))
+                    //     .then(res => {
+                    //         setQuery({ ...query, made_by: res.data.username })
+                    //     })
+
+                    if (res.data[0].role === "admin") {
+                        axios.get(baseUrl.concat("projects"))
+                            .then(res => {
+                                setProjects(res.data);
+                            })
+
+                    } else if (res.data[0].role === "Project Manager") {
+                        axios.get(baseUrl.concat("projects/?pm=" + jwt_decode(localStorage.getItem("token")).user_id))
+                            .then(res => {
+                                setProjects(res.data);
+                            })
+                    } else {
+                        axios.get(baseUrl.concat("projects/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
+                            .then(res => {
+                                setProjects(res.data);
+                            })
+                    }
+                    axios.get(baseUrl.concat("supplier"))
+                        .then(res => {
+                            setSuppliers(res.data);
+                        })
+                })
+                .catch(error => {
+                    if (error.response.status === 401) {
+                        localStorage.removeItem('token')
+                        setloggedin(false);
+                    }
+                })
+
         } else {
             delete axios.defaults.headers.common["Authorization"];
         }
-        axios.get(baseUrl.concat("projects"))
-            .then(res => {
-                setProjects(res.data);
-            })
-            .catch(error => {
-                console.log(error.response.status)
-                if (error.response.status === 401) {
-                    localStorage.removeItem('token')
-                    setloggedin(false);
-                }
-            })
-
-
-
-
-        axios.get(baseUrl.concat("supplier"))
-            .then(res => {
-                setSuppliers(res.data);
-            })
-
-        // axios.get(baseUrl.concat("po"))
-        //     .then(res => {
-        //         setPos(res.data);
-        //     })
-
         setTimeout(() => {
             return 0;
         }, 200);

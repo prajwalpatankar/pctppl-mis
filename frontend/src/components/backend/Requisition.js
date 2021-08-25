@@ -31,7 +31,6 @@ function Requisition() {
   const [query, setQuery] = useState({
     req_id: "",
     project_id: "",
-    made_by: "",
     message: "posted",
     initialItemRow: [],
     completed: "N",
@@ -53,11 +52,6 @@ function Requisition() {
 
       axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
         .then(res => {
-          axios.get(baseUrl.concat("user/"+ res.data[0].user))
-          .then(res => {
-            setQuery({ ...query, made_by: res.data.username })
-          })
-
           if (res.data[0].role === "admin") {
             axios.get(baseUrl.concat("projects"))
               .then(res => {
