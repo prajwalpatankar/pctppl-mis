@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Input, Select, Table } from 'antd';
+import { Input, Select, Table , Spin, Button, Space } from 'antd';
 import BackFooter from './BackFooter';
 import NotFound from '../NotFound';
 import jwt_decode from "jwt-decode";
@@ -12,7 +12,10 @@ function ViewStock() {
     const [stock, setStock] = useState([]);
     const [projects, setProjects] = useState([]);
     const [value, setValue] = useState('');
-    const [loggedin, setloggedin] = useState(true);
+    const [l, setloggedin] = useState(true);
+    const [r, setR] = useState(false);
+    const [printValid, setPrintValid] = useState(false);
+    const [project_id, setProjectID] = useState(0);
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -50,17 +53,21 @@ function ViewStock() {
                 })
 
         } else {
+            setloggedin(false);
             delete axios.defaults.headers.common["Authorization"];
         }
 
         setTimeout(() => {
+            setR(true);
             return 0;
-        }, 200);
+        }, 50);
     }, [])
 
 
     const handleProjectChange = (value) => {
-        console.log(value)
+        setPrintValid(true);
+        console.log(value);
+        setProjectID(value);
         axios.get(baseUrl.concat("stock/?project_id=" + value))
             .then(response => {
                 setStock(response.data)
@@ -73,6 +80,14 @@ function ViewStock() {
                     setloggedin(false);
                 }
             })
+    }
+
+    const handlePrint = () => {
+        window.open('/stock:' + project_id);
+    }
+
+    const handleIndividualPrint = (record) => {
+        window.open('/onestock:' + project_id + "-" + record.mat_id);
     }
 
 
@@ -103,6 +118,15 @@ function ViewStock() {
             dataIndex: 'unit',
             key: 'unit',
         },
+        {
+            title: 'Details',
+            key: 'details',
+            render: (text, record) => (
+                <Space size="middle">
+                    <Button type="link" onClick={() => { handleIndividualPrint(record) }}>Print Details</Button>
+                </Space>
+            ),
+        },
     ];
 
     // --------------------------------------------------------------------
@@ -128,7 +152,7 @@ function ViewStock() {
     // --------------------------------------------------------------------
     // html
 
-    if (loggedin) {
+    if (l && r) {
         return (
             <div>
                 <br /><br /><br /><br /><br /><br /><br />
@@ -162,10 +186,24 @@ function ViewStock() {
                 </div>
                 <br />
                 <Table dataSource={stock} columns={columns} />
-                <br /><br /><br /><br /><br /><br /><br />
+                <br /><br />
+                {printValid?
+                <Button type="primary" onClick={handlePrint}>Download Statement</Button>
+                :<p></p>
+                }
+                <br /><br /><br /><br /><br />
                 <BackFooter />
             </div>
         )
+    }
+    else if(!r) {
+      return (
+        <div className="print-center">
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <Spin tip="Loading..." />
+        </div>
+    )
+  
     }
     else {
         return (

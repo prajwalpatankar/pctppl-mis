@@ -9,8 +9,9 @@ from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django_filters import FilterSet, DateFromToRangeFilter
+from django_filters import FilterSet, DateFromToRangeFilter, CharFilter
 from django.db import models as django_models
+from django.db.models.query import Prefetch
 
 
 from rest_framework.parsers import MultiPartParser
@@ -131,21 +132,30 @@ class Purchase_Order_details_Viewset(viewsets.ModelViewSet):
     queryset = Purchase_Order_details.objects.all()
 
 # Goods Reciept Note
+
 class GrnFilter(FilterSet): #filter for date range
     created_date_time = DateFromToRangeFilter()
     class Meta:
         model = Goods_Receipt_Note_details
         fields  = ['created_date_time', 'mat_id']
 
+
 class Goods_Receipt_Note_mst_Viewset(viewsets.ModelViewSet):
     serializer_class = GoodsReceiptNoteMstSerializer
     queryset = Goods_Receipt_Note_mst.objects.all()
-    filterset_fields = ['project_id']
+    # filter_class = StockIDFilter
+    filterset_fields = ['project_id', 'initialItemRow__mat_id']
 
 class Goods_Receipt_Note_details_Viewset(viewsets.ModelViewSet):
     serializer_class = GoodsReceiptNoteDetailsSerializer
     queryset = Goods_Receipt_Note_details.objects.all()
     filter_class = GrnFilter
+
+
+
+
+
+
 
 # Material Issue
 class Issue_ViewSet(viewsets.ModelViewSet):
@@ -170,3 +180,5 @@ class ReqLimitViewSet(viewsets.ModelViewSet):
 class HSNViewset(viewsets.ModelViewSet):
     queryset = HSN.objects.all()
     serializer_class = HSN_Serializer
+
+

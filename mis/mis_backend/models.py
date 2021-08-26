@@ -152,7 +152,6 @@ class Goods_Receipt_Note_mst(models.Model):
     challan_date = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     made_by = models.CharField(max_length=20, default="")
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
-    updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
 class Goods_Receipt_Note_details(models.Model):
     header_ref_id = models.ForeignKey("Goods_Receipt_Note_mst", default=0, verbose_name="Header Ref ID", on_delete=models.CASCADE, related_name='initialItemRow')
@@ -164,6 +163,7 @@ class Goods_Receipt_Note_details(models.Model):
     accepted =  models.FloatField(default=0)
     unit = models.CharField(max_length=50,default="N")
     item_rate = models.FloatField(default=0)
+    created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
 
 # Issue model
 class Issue(models.Model):

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Input, Select, Button, Space, Table } from 'antd';
+import { Input, Select, Button, Space, Table , Spin } from 'antd';
 import BackFooter from './BackFooter';
 import NotFound from '../NotFound';
 import jwt_decode from "jwt-decode";
@@ -24,7 +24,8 @@ function UpdateSupplier() {
     })
 
     const ind_states = [{ "key": "AN", "name": "Andaman and Nicobar Islands" }, { "key": "AP", "name": "Andhra Pradesh" }, { "key": "AR", "name": "Arunachal Pradesh" }, { "key": "AS", "name": "Assam" }, { "key": "BR", "name": "Bihar" }, { "key": "CG", "name": "Chandigarh" }, { "key": "CH", "name": "Chhattisgarh" }, { "key": "DH", "name": "Dadra and Nagar Haveli" }, { "key": "DD", "name": "Daman and Diu" }, { "key": "DL", "name": "Delhi" }, { "key": "GA", "name": "Goa" }, { "key": "GJ", "name": "Gujarat" }, { "key": "HR", "name": "Haryana" }, { "key": "HP", "name": "Himachal Pradesh" }, { "key": "JK", "name": "Jammu and Kashmir" }, { "key": "JH", "name": "Jharkhand" }, { "key": "KA", "name": "Karnataka" }, { "key": "KL", "name": "Kerala" }, { "key": "LD", "name": "Lakshadweep" }, { "key": "MP", "name": "Madhya Pradesh" }, { "key": "MH", "name": "Maharashtra" }, { "key": "MN", "name": "Manipur" }, { "key": "ML", "name": "Meghalaya" }, { "key": "MZ", "name": "Mizoram" }, { "key": "NL", "name": "Nagaland" }, { "key": "OR", "name": "Odisha" }, { "key": "PY", "name": "Puducherry" }, { "key": "PB", "name": "Punjab" }, { "key": "RJ", "name": "Rajasthan" }, { "key": "SK", "name": "Sikkim" }, { "key": "TN", "name": "Tamil Nadu" }, { "key": "TS", "name": "Telangana" }, { "key": "TR", "name": "Tripura" }, { "key": "UK", "name": "Uttar Pradesh" }, { "key": "UP", "name": "Uttarakhand" }, { "key": "WB", "name": "West Bengal" }]
-    const [loggedin, setloggedin] = useState(true);
+    const [l, setloggedin] = useState(true);
+    const [r, setR] = useState(false);
 
 
     useEffect(() => {
@@ -48,12 +49,14 @@ function UpdateSupplier() {
                 })
 
         } else {
+            setloggedin(false);
             delete axios.defaults.headers.common["Authorization"];
         }
 
         setTimeout(() => {
+            setR(true);
             return 0;
-        }, 200);
+        }, 50);
     }, [])
 
     const columns = [
@@ -170,7 +173,7 @@ function UpdateSupplier() {
     // --------------------------------------------------------------------
     // html
 
-    if (loggedin) {
+    if (l && r) {
         return (
             <div>
                 <br /><br /><br /><br /><br /><br /><br />
@@ -231,6 +234,15 @@ function UpdateSupplier() {
                 <BackFooter />
             </div>
         )
+    }
+    else if(!r) {
+      return (
+        <div className="print-center">
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <Spin tip="Loading..." />
+        </div>
+    )
+  
     }
     else {
         return (

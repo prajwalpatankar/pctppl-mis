@@ -25,6 +25,8 @@ import ProjectData from './components/backend/ProjectData';
 import RequisitionPrint from './components/backend/print_templates/RequisitionPrint';
 import POPrint from './components/backend/print_templates/POPrint';
 import GRNPrint from './components/backend/print_templates/GRNPrint';
+import StockOverallPrint from './components/backend/print_templates/StockOverallPrint';
+import StockIndividualPrint from './components/backend/print_templates/StockIndividualPrint';
 
 
 function App() {
@@ -33,10 +35,8 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("token")) {
       axios.defaults.headers.common["Authorization"] = `JWT ${localStorage.getItem('token')}`;
-      console.log("in")
     } else {
       delete axios.defaults.headers.common["Authorization"];
-      console.log("out")
     }
   });
 
@@ -45,7 +45,7 @@ function App() {
 
     <BrowserRouter>
       <div className="App-mis">
-        {/* <NavbarMis /> */}
+        <NavbarMis />
         <Switch >
           <Route exact path='/' component={Login} />
           <Route path='/1req' component={Requisition} />
@@ -71,7 +71,8 @@ function App() {
           <Route path='/purchaserequisition:id' component={RequisitionPrint} />
           <Route path='/po:id' component={POPrint} />
           <Route path='/grn:id' component={GRNPrint} />
-          
+          <Route path='/stock:id' component={StockOverallPrint} />
+          <Route path='/onestock:id' component={StockIndividualPrint} />
 
           <Route component={PageNotFound} />
         </Switch>

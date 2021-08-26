@@ -1540,4 +1540,7 @@ section {
     position: fixed;
     bottom: 0;
   }
+  div.nav-display {
+    display: none;
+  }
 }

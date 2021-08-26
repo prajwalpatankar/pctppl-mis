@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Input, Button, message, Select } from 'antd';
+import { Input, Button, message, Select , Spin } from 'antd';
 import BackFooter from './BackFooter';
 import NotFound from '../NotFound';
 import PageNotFound from '../PageNotFound';
@@ -8,6 +8,9 @@ import jwt_decode from "jwt-decode";
 
 function NewProjects() {
     const baseUrl = 'http://localhost:8000/';
+
+    const [l, setloggedin] = useState(true);
+    const [r, setR] = useState(false);
 
     const [formvalue, SetFormvalue] = useState({
         project_name: "",
@@ -18,7 +21,7 @@ function NewProjects() {
 
     const [userList, setUserList] = useState([])
     const [isAdmin, setAdmin] = useState(false);
-    const [l, setloggedin] = useState(true);
+
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -50,11 +53,13 @@ function NewProjects() {
                     }
                 })
         } else {
+            setloggedin(false);
             delete axios.defaults.headers.common["Authorization"];
         }
         setTimeout(() => {
+            setR(true);
             return 0;
-        }, 200);
+        }, 50);
     }, [])
 
 
@@ -109,7 +114,7 @@ function NewProjects() {
     const key = 'updatable';
     const { Option } = Select;
 
-    if (l) {
+    if (l&& r) {
         return (
             <div>
                 {isAdmin ?
@@ -174,7 +179,16 @@ function NewProjects() {
             </div>
         )
 
-    } else {
+    } 
+    else if(!r) {
+      return (
+        <div className="print-center">
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <Spin tip="Loading..." />
+        </div>
+    )
+  
+    }else {
         console.log("NOT SIGNED IN")
         return (
             <NotFound />

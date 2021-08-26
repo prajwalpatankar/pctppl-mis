@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import RequisitionTable from './RequisitionTable';
 import NotFound from './../NotFound';
-import { Button, message, Input, Table, Space, Select } from 'antd';
+import { Button, message, Input, Table, Space, Select, Spin } from 'antd';
 import BackFooter from './BackFooter';
 import jwt_decode from 'jwt-decode';
 
@@ -15,6 +15,9 @@ function Requisition() {
 
   // --------------------------------------------------------------------
   // States
+
+  const [l, setloggedin] = useState(true);
+  const [r, setR] = useState(false);
 
   const [inputFields, setInputField] = useState([
     {
@@ -42,7 +45,8 @@ function Requisition() {
   const [limitToUpdate, setLimitToUpdate] = useState([]);
 
   const [projects, setProjects] = useState([]);
-  const [l, setloggedin] = useState(true);
+
+
 
   const [limiter, setLimiter] = useState([]);
 
@@ -69,17 +73,23 @@ function Requisition() {
                 setProjects(res.data);
               })
           }
+
         })
         .catch(error => {
           if (error.response.status === 401) {
             localStorage.removeItem('token')
             setloggedin(false);
+
           }
         })
+    } else {
+      setloggedin(false);
+      delete axios.defaults.headers.common["Authorization"];
     }
     setTimeout(() => {
+      setR(true);
       return 0;
-    }, 200);
+    }, 50);
   }, [])
 
   const [searchstates, setSearch] = useState({
@@ -351,7 +361,7 @@ function Requisition() {
 
   // --------------------------------------------------------------------
   // HTML
-  if (l) {
+  if (l && r) {
     return (
       <div>
         <br /><br /><br /><br /><br /><br /><br /><br /><br />
@@ -427,6 +437,15 @@ function Requisition() {
         <BackFooter />
       </div>
     )
+
+  }
+  else if(!r) {
+    return (
+      <div className="print-center">
+          <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+          <Spin tip="Loading..." />
+      </div>
+  )
 
   } else {
     return (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select } from 'antd';
+import { Button, message, Input, Table, Space, Select , Spin } from 'antd';
 import NotFound from './../NotFound';
 import BackFooter from './BackFooter';
 import jwt_decode from "jwt-decode";
@@ -14,6 +14,9 @@ function GoodsReceiptNote() {
 
     // --------------------------------------------------------------------
     // states
+
+    const [l, setloggedin] = useState(true);
+    const [r, setR] = useState(false);
 
     const [projects, setProjects] = useState([]);
     const [supplier, setSupplier] = useState([]);
@@ -51,7 +54,7 @@ function GoodsReceiptNote() {
     const [deletionArr, setdeletionArr] = useState([]); // to add items in selected if row is deleted
     const [pos, setPos] = useState([]); //initially set pos empty
     const [mats, setMats] = useState([]);
-    const [l, setloggedin] = useState(true)
+
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -103,14 +106,14 @@ function GoodsReceiptNote() {
                     }
                 })
         } else {
+            setloggedin(false);
             delete axios.defaults.headers.common["Authorization"];
         }
 
         setTimeout(() => {
-            // console.log(client)
-            // console.log(projects)
+            setR(true);
             return 0;
-        }, 200);
+        }, 50);
     }, [])
 
     const [searchstates, setSearch] = useState({
@@ -457,7 +460,7 @@ function GoodsReceiptNote() {
 
     // --------------------------------------------------------------------
     // html
-    if (l) {
+    if (l&& r) {
         return (
             <div>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br />
@@ -565,7 +568,16 @@ function GoodsReceiptNote() {
             </div>
         )
 
-    } else {
+    } 
+    else if(!r) {
+      return (
+        <div className="print-center">
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <Spin tip="Loading..." />
+        </div>
+    )
+  
+    }else {
         console.log("NOT SIGNED IN")
         return (
             <NotFound />

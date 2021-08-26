@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select, Modal } from 'antd';
+import { Button, message, Input, Table, Space, Select, Modal , Spin } from 'antd';
 import NotFound from './../NotFound';
 import BackFooter from './BackFooter';
 import jwt_decode from 'jwt-decode';
 
 function PurchaseOrder() {
 
-    const baseUrl = "http://localhost:8000/"
+    const baseUrl = "http://localhost:8000/";
+
+    const [l, setloggedin] = useState(true);
+    const [r, setR] = useState(false);
 
     const [inputFields, setInputField] = useState([
         {
@@ -42,7 +45,7 @@ function PurchaseOrder() {
     // const [categories, setCategories] = useState([]);
     const [reqs, setReqs] = useState([]);
     // const [pos, setPos] = useState([]);
-    const [l, setloggedin] = useState(true);
+
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -85,11 +88,13 @@ function PurchaseOrder() {
                 })
 
         } else {
+            setloggedin(false);
             delete axios.defaults.headers.common["Authorization"];
         }
         setTimeout(() => {
+            setR(true);
             return 0;
-        }, 200);
+        }, 50);
     }, [])
 
 
@@ -476,7 +481,7 @@ function PurchaseOrder() {
 
     // --------------------------------------------------------------------
     // html
-    if (l) {
+    if (l && r) {
         return (
             <div>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br />
@@ -670,7 +675,16 @@ function PurchaseOrder() {
                 <BackFooter />
             </div>
         )
-    } else {
+    } 
+    else if(!r) {
+      return (
+        <div className="print-center">
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <Spin tip="Loading..." />
+        </div>
+    )
+  
+    }else {
         return (
             <NotFound />
         )

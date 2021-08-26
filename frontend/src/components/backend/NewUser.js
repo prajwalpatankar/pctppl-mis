@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Input, Button, message, Select } from 'antd';
+import { Input, Button, message, Select , Spin } from 'antd';
 import BackFooter from './BackFooter';
 import NotFound from './../NotFound';
 import jwt_decode from 'jwt-decode';
@@ -8,6 +8,9 @@ import PageNotFound from '../PageNotFound';
 
 function NewUser() {
     const baseUrl = 'http://localhost:8000/';
+
+    const [l, setloggedin] = useState(true);
+    const [r, setR] = useState(false);
 
     const [formvalue, SetFormvalue] = useState({
         username: "",
@@ -18,7 +21,7 @@ function NewUser() {
 
     const [rolesList, setRolesList] = useState([])
     const [isAdmin, setAdmin] = useState(false);
-    const [l, setloggedin] = useState(true);
+
     useEffect(() => {
         if (localStorage.getItem("token")) {
             axios.defaults.headers.common["Authorization"] = `JWT ${localStorage.getItem('token')}`;
@@ -38,6 +41,7 @@ function NewUser() {
                     }
                 })
         } else {
+            setloggedin(false);
             delete axios.defaults.headers.common["Authorization"];
         }
         axios.get(baseUrl.concat("role/"))
@@ -45,8 +49,9 @@ function NewUser() {
                 setRolesList(res.data);
             })
         setTimeout(() => {
+            setR(true);
             return 0;
-        }, 200);
+        }, 50);
     }, [])
 
     const ChangeHandler = (e) => {
@@ -133,7 +138,7 @@ function NewUser() {
 
 
     const { Option } = Select;
-    if (l) {
+    if (l&& r) {
         return (
             <div>
                 {isAdmin ? 
@@ -172,6 +177,15 @@ function NewUser() {
                                         }
             </div>
         )
+    }
+    else if(!r) {
+      return (
+        <div className="print-center">
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <Spin tip="Loading..." />
+        </div>
+    )
+  
     } else {
         return (
             <NotFound />

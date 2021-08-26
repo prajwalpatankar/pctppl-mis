@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
 
-const numWords = require('num-words');
 
 const GRNPrint = (props) => {
     const baseUrl = 'http://localhost:8000/';

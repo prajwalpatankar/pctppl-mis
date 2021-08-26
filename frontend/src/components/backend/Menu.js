@@ -5,15 +5,19 @@ import NotFound from './../NotFound';
 import BackFooter from './BackFooter';
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
+import { Spin } from 'antd'
 
 
 function Menu() {
 
     const baseUrl = 'http://localhost:8000/';
 
+    const [l, setloggedin] = useState(true);
+    const [r, setR] = useState(false);
+
     const [adm, setadm] = useState(false);
     const [po, setPO] = useState(false);
-    const [l, setloggedin] = useState(true);
+
     
     
     useEffect(() => {
@@ -41,14 +45,16 @@ function Menu() {
     
         } else {
             delete axios.defaults.headers.common["Authorization"];
+            setloggedin(false);
         }
     
         setTimeout(() => {
+            setR(true);
             return 0;
-        }, 200);
+        }, 50);
     }, [])
 
-    if (l) {
+    if (l&& r) {
         return (
             <div>
                 <br /><br /><br /><br />
@@ -141,7 +147,16 @@ function Menu() {
                 <BackFooter />
             </div>
         )
-    } else {
+    } 
+    else if(!r) {
+      return (
+        <div className="print-center">
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <Spin tip="Loading..." />
+        </div>
+    )
+  
+    }else {
         return (
             <NotFound />
         )
