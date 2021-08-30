@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select, Modal , Spin } from 'antd';
-import NotFound from './../NotFound';
-import BackFooter from './BackFooter';
+import { Button, message, Input, Table, Space, Select, Modal, Spin } from 'antd';
+import NotFound from './../../NotFound';
+import BackFooter from './../BackFooter';
 import jwt_decode from 'jwt-decode';
 
 function PurchaseOrder() {
@@ -484,34 +484,66 @@ function PurchaseOrder() {
     if (l && r) {
         return (
             <div>
-                <br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br />
+                <h4 className="page-title">New Purchase Requisition</h4>
+                <br /><br />
                 <form onSubmit={submitHandler}>
-                    <Select style={{ width: 300 }} placeholder="Select Project" onChange={onChangeProject}>
-                        {projects.map((project, index) => (
-                            <Option value={project.id}>{project.project_name}</Option>
-                        ))}
-                    </Select>
-                    {/* <Input type="text" value={query.project_name} placeholder="project_name" name="project_name" onChange={event => formChangeHandler(event)} className="col-md-2" /> */}
-                    &nbsp;
-                    <Select
-                        showSearch
-                        style={{ width: 300 }}
-                        placeholder="Select Supplier"
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                        name="supp_id"
-                        onChange={onChangeSupplier}
-                    >
-                        {suppliers.map((supp, index) => (
-                            <Option value={supp.id}>{supp.supp_name}</Option>
-                        ))}
-                    </Select>
-                    <Input type="text" value={query.contact_person} placeholder="Contact Person" name="contact_person" onChange={event => formChangeHandler(event)} className="col-md-2" />
-                    <Input type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} className="col-md-2" />
-                    <Input type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} className="col-md-2" />
-                    <Input type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} className="col-md-2" />
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-3">
+                            <h6>Select Project</h6>
+                            <Select style={{ width: 300 }} placeholder="Select Project" onChange={onChangeProject}>
+                                {projects.map((project, index) => (
+                                    <Option value={project.id}>{project.project_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Select Supplier</h6>
+                            <Select
+                                showSearch
+                                style={{ width: 300 }}
+                                placeholder="Select Supplier"
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                name="supp_id"
+                                onChange={onChangeSupplier}
+                            >
+                                {suppliers.map((supp, index) => (
+                                    <Option value={supp.id}>{supp.supp_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Contact Person Details</h6>
+                            <Input type="text" value={query.contact_person} placeholder="Contact Person" name="contact_person" onChange={event => formChangeHandler(event)} />
+                        </div>
+                        <div className="col-sm-2"></div>
+                    </div>
+                    <br /><br /><br />
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-3">
+                            <h6>Payment Terms</h6>
+                            <Input type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} />
+
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Other Terms</h6>
+                            <Input type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} />
+
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Delivery Schedule</h6>
+                            <Input type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} />
+
+                        </div>
+                        <div className="col-sm-2"></div>
+                    </div>
+
+
 
                     <br /><br /><br /><br />
                     {/* <Button type="button" onClick={addHandler}>Add</Button><br /><br /> */}
@@ -524,10 +556,10 @@ function PurchaseOrder() {
                                     <tr className="info">
                                         <div className="row">
                                             {/* <th className="col-md-2">Select Material</th> */}
-                                            <th className="col-md-3">Material Name</th>
+                                            <th className="col-md-4">Material Name</th>
                                             <th className="col-md-2">Rate</th>
                                             <th className="col-md-2">Discount</th>
-                                            <th className="col-md-1">Quantity</th>
+                                            <th className="col-md-2">Quantity</th>
                                             <th className="col-md-1">Unit</th>
                                             <th className="col-md-1">Delete</th>
                                         </div>
@@ -538,10 +570,10 @@ function PurchaseOrder() {
                                         <tr key={index}>
                                             <div className="row">
                                                 {/* <td className="col-md-2"><Button type="button" onClick={() => showMaterial(index)}>Select Material</Button></td> */}
-                                                <td className="col-md-3">{inputField.mat_name}</td>
+                                                <td className="col-md-4">{inputField.mat_name}</td>
                                                 <td className="col-md-2"><Input type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
                                                 <td className="col-md-2"><Input type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                                <td className="col-md-1"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                                                <td className="col-md-2"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                                                 <td className="col-md-1">{inputField.unit}</td>
                                                 <td className="col-md-1"><Button danger="true" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                             </div>
@@ -552,11 +584,26 @@ function PurchaseOrder() {
                         </div>
                         <div className="col-md-1"><p> </p></div>
                     </div> <br />
-                    <Input type="text" value={query.transport} placeholder="Transport Charges" name="transport" onChange={event => formChangeHandler(event)} className="col-md-2" />
-                    <Input type="text" value={query.other_charges} placeholder="Other Charges" name="other_charges" onChange={event => formChangeHandler(event)} className="col-md-2" />
+
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-3">
+                            <h6>Transport Charges</h6>
+                            <Input type="text" value={query.transport} placeholder="Transport Charges" name="transport" onChange={event => formChangeHandler(event)} />
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Other Charges</h6>
+                            <Input type="text" value={query.other_charges} placeholder="Other Charges" name="other_charges" onChange={event => formChangeHandler(event)} />
+                        </div>
+                        <div className="col-sm-5"></div>
+                    </div>
+
+
 
                     <br /><br />
-                    <Button type="submit" onClick={submitHandler}>Submit</Button>
+                    <div className="submit-button">
+                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                    </div>
                 </form>
                 <br /><br />
                 {/* {searchstates.isSearchVisible ?
@@ -597,13 +644,9 @@ function PurchaseOrder() {
                 } */}
 
 
-                <div className="row">
-                    <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
-                    <div className="col-sm-1"><p> </p></div>
-                </div>
 
-                <h5>Select Items from Purchase Requisitions</h5>
+
+                <h6> &nbsp;&nbsp;&nbsp;Select Items from Purchase Requisitions</h6>
                 <Table dataSource={reqs} columns={columns1} />
 
 
@@ -671,20 +714,25 @@ function PurchaseOrder() {
                         </tbody>
                     </table>
                 </Modal>
+                <div className="row">
+                    <div className="col-sm-10"><p> </p></div>
+                    <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                    <div className="col-sm-1"><p> </p></div>
+                </div>
                 <br /><br /><br /><br />
                 <BackFooter />
             </div>
         )
-    } 
-    else if(!r) {
-      return (
-        <div className="print-center">
-            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-            <Spin tip="Loading..." />
-        </div>
-    )
-  
-    }else {
+    }
+    else if (!r) {
+        return (
+            <div className="print-center">
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <Spin tip="Loading..." />
+            </div>
+        )
+
+    } else {
         return (
             <NotFound />
         )

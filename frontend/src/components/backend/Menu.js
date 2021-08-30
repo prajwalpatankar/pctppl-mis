@@ -35,6 +35,9 @@ function Menu() {
                         setPO(true);
                     }
                 })
+                .then(res => {
+                    setR(true);
+                })
                 .catch(error => {
                     console.log(error.response.status)
                     if (error.response.status === 401) {
@@ -49,7 +52,7 @@ function Menu() {
         }
     
         setTimeout(() => {
-            setR(true);
+            
             return 0;
         }, 50);
     }, [])
@@ -58,27 +61,27 @@ function Menu() {
         return (
             <div>
                 <br /><br /><br /><br />
-                <h4>MAIN MENU</h4>
-                <Table className="table table-hover">
+                <h4 className="page-title">MAIN MENU</h4>
+                <Table className="table">
                     <tbody>
                         <tr>
                             <td>
-                                <ul>
-                                    <h4>Purchse Requisitions</h4>
-                                    <li><Link to="/1req">New Purchase Requisition</Link></li>
-                                    <li><Link to="/1viewreq">View Purchase Requisition</Link></li>
-                                    {/* {adm ? <li><Link to="/1master">Approve Purchase requisitions</Link></li> : wp ? <li><Link to="/1reqsite">Approve Purchase requisitions</Link></li> : <p></p> } */}
-                                    {adm ? <li><Link to="/1master">Approve Purchase requisitions</Link></li> : <p></p> }
+                                <ul className="menu-list">
+                                    <h5 className="menu-title">Purchase Requisitions</h5>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1req">New Purchase Requisition</Link></p></li>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1viewreq">View Purchase Requisition</Link></p></li>
+                                    {/* {adm ? <li className="menu-item"><p><Link className="menu-item-a" to="/1master">Approve Purchase requisitions</Link></p></li> : wp ? <li className="menu-item"><p><Link className="menu-item-a" to="/1reqsite">Approve Purchase requisitions</Link></p></li> : <p></p> } */}
+                                    {adm ? <li className="menu-item"><p><Link className="menu-item-a" to="/1master">Approve Purchase requisitions</Link></p></li> : <p></p> }
                                 </ul>                                
                             </td>
                         </tr>
                         { (adm || po ) ? 
                         <tr>
                             <td>
-                                <ul>
-                                    <h4>Purchase Orders</h4>
-                                    <li><Link to="/1po">New Purchase Order</Link></li>
-                                    <li><Link to="/1po">View Purchase Orders</Link>----</li>
+                                <ul className="menu-list">
+                                    <h5 className="menu-title">Purchase Orders</h5>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1po">New Purchase Order</Link></p></li>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1viewpo">View Purchase Orders</Link></p></li>
                                 </ul>                                
                             </td>
                         </tr>
@@ -86,46 +89,47 @@ function Menu() {
 
                         <tr>
                             <td>
-                                <ul>
-                                    <h4>Goods Recipt Note</h4>
-                                    <li><Link to="/1grn">New GRN</Link></li>
-                                    <li><Link to="/">View GRN</Link>----</li>
+                                <ul className="menu-list">
+                                    <h5 className="menu-title">Goods Recipt Note</h5>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1grn">New GRN</Link></p></li>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1viewgrn">View GRN</Link></p></li>
                                 </ul>                                
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <ul>
-                                    <h4>Avaialble Stock details</h4>
-                                    <li><Link to="/1stock">View Stock</Link></li>
+                                <ul className="menu-list">
+                                    <h5 className="menu-title">Avaialble Stock details</h5>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1stock">View Stock</Link></p></li>
 
                                 </ul>                                
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <ul>
-                                    <h4>Material Issue and Transfer</h4>
-                                    <li><Link to="/1issue">New Issue Slip</Link></li>
-                                    <li><Link to="/1delivery">Site-to-site Material Transfer</Link></li>
+                                <ul className="menu-list">
+                                    <h5 className="menu-title">Material Issue and Transfer</h5>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1issue">New Issue Slip</Link></p></li>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1delivery">Site-to-site Material Transfer</Link></p></li>
                                 </ul>                                
                             </td>
                         </tr>
                         {/* <tr>
                             <td>
-                                <ul>
-                                    <h4>Material Master</h4>
-                                    <li><Link to="/1material">Add New Material</Link></li>
+                                <ul className="menu-list">
+                                    <h5 className="menu-title">Material Master</h5>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1material">Add New Material</Link></p></li>
                                 </ul>                                
                             </td>
                         </tr> */}
                         { (adm || po ) ? 
                         <tr>
                             <td>
-                                <ul>
-                                    <h4>Suppliers</h4>
-                                    <li><Link to="/1supplier">Add New Supplier</Link></li>
-                                    <li><Link to="/1supplierUpdate">Update Supplier Details</Link></li>
+                                <ul className="menu-list">
+                                    <h5 className="menu-title">Suppliers</h5>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1supplier">Add New Supplier</Link></p></li>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1supplierUpdate">Update Supplier Details</Link></p></li>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1viewsupplier">View Supplier Details</Link></p></li>
                                 </ul>                                
                             </td>
                         </tr>
@@ -133,11 +137,11 @@ function Menu() {
                         {adm ? 
                         <tr>
                             <td>
-                                <ul>                                   
-                                    <h4>Admin Panel</h4>
-                                    <li><Link to="/1projects">New Project</Link></li>                                    
-                                    <li><Link to="/1newuser">New User</Link></li>
-                                    <li><Link to="/1projectData">Update Requisition Limit</Link></li>
+                                <ul className="menu-list">                                   
+                                    <h5 className="menu-title">Admin Panel</h5>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1projects">New Project</Link></p></li>                                    
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1newuser">New User</Link></p></li>
+                                    <li className="menu-item"><p><Link className="menu-item-a" to="/1projectData">Update Requisition Limit</Link></p></li>
                                </ul>                                
                             </td>
                         </tr>

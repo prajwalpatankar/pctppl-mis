@@ -33,7 +33,6 @@ const StockIndividualPrint = (props) => {
                     axios.get(baseUrl.concat("grn/?project_id=" + id + "&initialItemRow__mat_id=" + mat))
                         .then(response => {
                             setgrn(response.data)
-
                             axios.get(baseUrl.concat("projects/" + id + "/"))
                                 .then(res1 => {
                                     setProject(res1.data);                                    
@@ -95,22 +94,24 @@ const StockIndividualPrint = (props) => {
                         <b>
                             <tr className="row">
                                 <td className="col-sm-1 border border-dark">Sr. No.</td>
-                                <td className="col-sm-3 border border-dark">Recieved Date and Time</td>
+                                <td className="col-sm-2 border border-dark">GRN No.</td>
+                                <td className="col-sm-2 border border-dark">Recieved Date &#38; Time</td>
                                 <td className="col-sm-2 border border-dark">PO Quantity</td>
                                 <td className="col-sm-2 border border-dark">Quantity Recieved</td>
                                 <td className="col-sm-2 border border-dark">Quantity Accepted</td>
-                                <td className="col-sm-2 border border-dark">Unit</td>
+                                <td className="col-sm-1 border border-dark">Unit</td>
                             </tr>
                         </b>
 
                         {grn.map((r, index) => (
                             <tr className="row" key="index">
                                 <td className="col-sm-1 border border-dark">{index + 1}</td>
-                                <td className="col-sm-3 border border-dark">{r.created_date_time.substring(8, 10)}-{r.created_date_time.substring(5, 7)}-{r.created_date_time.substring(0, 4)}&nbsp;&nbsp;&nbsp;{r.created_date_time.substring(11, 19)}<br /></td>
-                                <td className="col-sm-2 border border-dark">{r.initialItemRow[0].quantity}</td>
-                                <td className="col-sm-2 border border-dark">{r.initialItemRow[0].rec_quant}</td>
-                                <td className="col-sm-2 border border-dark"><b>{r.initialItemRow[0].accepted}</b></td>
-                                <td className="col-sm-2 border border-dark">{r.initialItemRow[0].unit}</td>
+                                <td className="col-sm-2 border border-dark">{r.grn_id}</td>
+                                <td className="col-sm-2 border border-dark">{r.created_date_time.substring(8, 10)}-{r.created_date_time.substring(5, 7)}-{r.created_date_time.substring(0, 4)}&nbsp;&nbsp;&nbsp;{r.created_date_time.substring(11, 19)}<br /></td>
+                                <td className="col-sm-2 border border-dark">{parseFloat(r.initialItemRow[0].quantity).toFixed(2)}</td>
+                                <td className="col-sm-2 border border-dark">{parseFloat(r.initialItemRow[0].rec_quant).toFixed(2)}</td>
+                                <td className="col-sm-2 border border-dark"><b>{parseFloat(r.initialItemRow[0].accepted).toFixed(2)}</b></td>
+                                <td className="col-sm-1 border border-dark">{r.initialItemRow[0].unit}</td>
                             </tr>
                         ))}
 

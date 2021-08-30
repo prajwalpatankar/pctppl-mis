@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import RequisitionTable from './RequisitionTable';
-import NotFound from './../NotFound';
+import RequisitionTable from '../RequisitionTable';
+import NotFound from '../../NotFound';
 import { Button, message, Input, Table, Space, Select, Spin } from 'antd';
-import BackFooter from './BackFooter';
+import BackFooter from '../BackFooter';
 import jwt_decode from 'jwt-decode';
+import ViewReq from '../views/ViewReq';
 
 function Requisition() {
 
@@ -202,7 +203,6 @@ function Requisition() {
           id_string = proj_string + id_string;
           setQuery({ ...query, project_id: value, req_id: id_string })
         } else {
-          console.log(len)
           axios.get(baseUrl.concat("projects/" + value + "/"))
             .then(res => {
               var id_string = res.data.identifier + "-PR-00001";
@@ -255,7 +255,6 @@ function Requisition() {
     setLimitToUpdate([...limitToUpdate, record])
     const values = [...inputFields];
     const index = searchstates.idx;
-    console.log(record);
     values[index].mat_id = record.mat_id;
     values[index].hsn_id = record.hsn_id;
     // values[index].mat_name = record.desc;  //check once later
@@ -281,10 +280,10 @@ function Requisition() {
     e.preventDefault();
     console.log(query)
     var len = inputFields.length;
-    if(inputFields[len-1].mat_name === "----" ){
+    if (inputFields[len - 1].mat_name === "----") {
       message.error("Material not selected in last row!")
       return;
-  }
+    }
     let n = limitToUpdate.length
     for (var i = 0; i < n; i++) {
       if (inputFields[i].quantity > (limitToUpdate[i].quantity - limitToUpdate[i].utilized)) {
@@ -294,12 +293,11 @@ function Requisition() {
     }
     axios.post(baseUrl.concat("requisition/"), query)
       .then(response => {
-        console.log(response)
         for (i = 0; i < n; i++) {
           limitToUpdate[i].utilized = parseFloat(inputFields[i].quantity) + parseFloat(limitToUpdate[i].utilized);
           axios.patch(baseUrl.concat("reqlimit/" + limitToUpdate[i].id + "/"), limitToUpdate[i])
-            .then(res => {
-              message.success("Requisition sent successfully", 5)
+            .catch(error => {
+              console.log(error)
             })
         }
 
@@ -308,8 +306,8 @@ function Requisition() {
         id_string = parseInt(id_string) + 1;
         var len = 5 - id_string.toString().length
         while (len !== 0) {
-            proj_string = proj_string + 0;
-            len--;
+          proj_string = proj_string + 0;
+          len--;
         }
         id_string = proj_string + id_string;
         setQuery({
@@ -322,23 +320,26 @@ function Requisition() {
         })
         setInputField([]) //clear first
         setLimitToUpdate([]);
-        axios.get(baseUrl.concat("reqlimit/?project_id=" + query.project_id))
-        .then(res => {
-          setLimiter(res.data);
-        })
         //init again
         setInputField([
-        {
-          mat_id: "",
-          hsn_id: "",
-          mat_name: "----",
-          quantity: "",
-          description: "",
-          unit: "---",
-          required_date: "",
-        },
+          {
+            mat_id: "",
+            hsn_id: "",
+            mat_name: "----",
+            quantity: "",
+            description: "",
+            unit: "---",
+            required_date: "",
+          },
         ])
         // window.open('/purchaserequisition:' + response.data.id)
+      })
+      .then(res => {
+        axios.get(baseUrl.concat("reqlimit/?project_id=" + query.project_id))
+          .then(res => {
+            setLimiter(res.data);
+          })
+        message.success("Requisition sent successfully", 5)
       })
       .catch(error => {
         console.log(error.response.status)
@@ -364,14 +365,34 @@ function Requisition() {
   if (l && r) {
     return (
       <div>
-        <br /><br /><br /><br /><br /><br /><br /><br /><br />
+
+        <br />
+        <br /><br /><br /><br />
+        <h4 className="page-title">New Purchase Requisition</h4>
         <form onSubmit={submitHandler}>
-          <Select placeholder="Select Project" style={{ width: 300 }} onChange={onChangeProject}>
-            {projects.map((project, index) => (
-              <Option value={project.id}>{project.project_name}</Option>
-            ))}
-          </Select>
-          <Button type="button" onClick={addHandler}>Add</Button><br /><br /><br /><br />
+
+          <div className="row">
+            <div className="col-sm-1"></div>
+            <div className="col-sm-10">
+              <h6>Select Project</h6>
+              <Select placeholder="Select Project" style={{ width: 300 }} onChange={onChangeProject}>
+                {projects.map((project, index) => (
+                  <Option value={project.id}>{project.project_name}</Option>
+                ))}
+              </Select>
+            </div>
+            <div className="col-sm-1"></div>
+          </div>
+
+          <br /><br /><br /><br />
+          <div className="row">
+            <div className="col-sm-1"></div>
+            <div className="col-sm-10">
+              <Button type="button" style={{ background: "yellowgreen", color: "white" }} onClick={addHandler}>+ Add Row</Button>
+            </div>
+            <div className="col-sm-1"></div>
+          </div>
+          <br />
 
           <div className="row">
             <div className="col-md-1"><p> </p></div>
@@ -382,7 +403,7 @@ function Requisition() {
                     <div className="row">
                       <th className="col-md-1">Select Material</th>
                       <th className="col-md-2">Material Name</th>
-                      <th className="col-md-3">Description</th>
+                      <th className="col-md-4">Description</th>
                       <th className="col-md-1">Quantity</th>
                       <th className="col-md-1">Unit</th>
                       <th className="col-md-2">Expected Date (YYYY/MM/DD)</th>
@@ -396,7 +417,7 @@ function Requisition() {
                       <div className="row">
                         <td className="col-md-1"><Button type="button" size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
                         <td className="col-md-2">{inputField.mat_name}</td>
-                        <td className="col-md-3"><Input type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
+                        <td className="col-md-4"><Input type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
                         <td className="col-md-1"><Input required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                         <td className="col-md-1">{inputField.unit}</td>
                         <td className="col-md-2"><Input type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
@@ -422,12 +443,18 @@ function Requisition() {
             )
           }
 
-          <Button type="submit" onClick={submitHandler}>Submit</Button>
+          <br /><br />
+          <div className="submit-button">
+            <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+          </div>
         </form>
         <br /><br />
+        <br /><br />
+        <br /><br />
+        <br /><br />
 
-
-        <RequisitionTable />
+        <h5 className="menu-title">Purchase Requisition Status : </h5>
+        <ViewReq />
         <div className="row">
           <div className="col-sm-10"><p> </p></div>
           <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
@@ -439,13 +466,13 @@ function Requisition() {
     )
 
   }
-  else if(!r) {
+  else if (!r) {
     return (
       <div className="print-center">
-          <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-          <Spin tip="Loading..." />
+        <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+        <Spin tip="Loading..." />
       </div>
-  )
+    )
 
   } else {
     return (

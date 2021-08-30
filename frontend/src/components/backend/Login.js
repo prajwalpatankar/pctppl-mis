@@ -51,6 +51,7 @@ function Login() {
         e.preventDefault();
         const key = 'updatable';
         message.loading({ content: 'Loading...', key });
+        console.log(formvalue);
         fetch(baseUrl.concat("token-auth/"), {
             method: 'POST',
             headers: {

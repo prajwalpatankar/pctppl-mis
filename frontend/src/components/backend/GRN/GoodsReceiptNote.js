@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select , Spin } from 'antd';
-import NotFound from './../NotFound';
-import BackFooter from './BackFooter';
+import { Button, message, Input, Table, Space, Select, Spin } from 'antd';
+import NotFound from './../../NotFound';
+import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
 
 function GoodsReceiptNote() {
@@ -94,17 +94,6 @@ function GoodsReceiptNote() {
                     }
                 })
 
-            axios.get(baseUrl.concat("po"))
-                .then(res => {
-                    setPos(res.data);
-                })
-                .catch(error => {
-                    console.log(error.response.status)
-                    if (error.response.status === 401) {
-                        localStorage.removeItem('token')
-                        setloggedin(false);
-                    }
-                })
         } else {
             setloggedin(false);
             delete axios.defaults.headers.common["Authorization"];
@@ -212,6 +201,17 @@ function GoodsReceiptNote() {
     const handleProjectChange = (value, index) => {
         setVisibility({ ...visibility, project: true })
         // setQuery({ ...query, project_id: value });
+        axios.get(baseUrl.concat("po?project_id=" + value))
+        .then(res => {
+            setPos(res.data);
+        })
+        .catch(error => {
+            console.log(error.response.status)
+            if (error.response.status === 401) {
+                localStorage.removeItem('token')
+                setloggedin(false);
+            }
+        })
 
         axios.get(baseUrl.concat("grn/?project_id=" + value))
             .then(res => {
@@ -240,7 +240,7 @@ function GoodsReceiptNote() {
 
     const handleSupplierChange = (value) => {
         setQuery({ ...query, supp_id: value });
-    
+
     }
 
     const formChangeHandler = (event) => {  //for outer form
@@ -258,7 +258,7 @@ function GoodsReceiptNote() {
         let tempdate = event.target.value;
         tempdate = tempdate + "T12:00";
         setQuery({ ...query, challan_date: tempdate })
-      }
+    }
 
     // --------------------------------------------------------------------
     // Visibility handlers 
@@ -278,10 +278,26 @@ function GoodsReceiptNote() {
     }
 
     const showPO = () => {
-        if (searchstates.isSearchVisiblePO) {
+
+        if(!visibility.project) {
+            message.error("Please Select a Project ")
+        }
+        else if (searchstates.isSearchVisiblePO) {
             setSearch({ ...searchstates, isSearchVisiblePO: false });
+            setTimeout(() => {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
+                });
+            }, 500);
         } else {
             setSearch({ ...searchstates, isSearchVisiblePO: true });
+            window.scrollTo({
+                top: 1000,
+                left: 0,
+                behavior: 'smooth'
+            });
         }
     }
 
@@ -460,35 +476,71 @@ function GoodsReceiptNote() {
 
     // --------------------------------------------------------------------
     // html
-    if (l&& r) {
+    if (l && r) {
         return (
             <div>
-                <br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br />
+                <h4 className="page-title">New Goods Receipt Note</h4>
+                <br />
                 <form onSubmit={submitHandler}>
-                    <Select placeholder="Select Project" style={{ width: 300 }} onChange={handleProjectChange}>
-                        {projects.map((project, index) => (
-                            <Option value={project.id}>{project.project_name}</Option>
-                        ))}
-                    </Select>
 
-                    <Select placeholder="Select Supplier" style={{ width: 300 }} onChange={handleSupplierChange}>
-                        {supplier.map((supp, index) => (
-                            <Option value={supp.id}>{supp.supp_name}</Option>
-                        ))}
-                    </Select>
-
-                    <Input disabled="true" placeholder="Purchase Order ID" name="po_id" value={query.po_id} className="col-md-2" /> &nbsp;
-
-                    <Button type="button" onClick={() => showPO()}>Select PO</Button>&nbsp;<br /><br /><br />
-
-                    <Input type="text" value={query.vehicle_no} placeholder="Vehicle Number" name="vehicle_no" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp;
-
-                    <Input type="text" value={query.challan_no} placeholder="Challan Number" name="challan_no" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp;
-
-                    <Input type="date" placeholder="Challan Date" name="challan_date" onChange={event => changeDateHandler(event)}  className="col-md-2"/> &nbsp;
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-3">
+                            <h6>Select Project</h6>
+                            <Select placeholder="Select Project" style={{ width: 300 }} onChange={handleProjectChange}>
+                                {projects.map((project, index) => (
+                                    <Option value={project.id}>{project.project_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Select Supplier</h6>
+                            <Select placeholder="Select Supplier" style={{ width: 300 }} onChange={handleSupplierChange}>
+                                {supplier.map((supp, index) => (
+                                    <Option value={supp.id}>{supp.supp_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-4">
+                            <h6>Select a Purchase Order</h6>
+                            <Input disabled="true" className="col-sm-9" placeholder="Purchase Order ID" name="po_id" value={query.po_id} /> &nbsp;
+                            <Button type="button" onClick={() => showPO()}>Select PO</Button>
+                        </div>
+                        <div className="col-sm-1"></div>
+                    </div>
                     <br /><br />
 
-                    <Button type="button" onClick={addHandler}>Add</Button><br /><br />
+
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-3">
+                            <h6>Vehicle Number</h6>
+                            <Input type="text" value={query.vehicle_no} placeholder="Vehicle Number" name="vehicle_no" onChange={event => formChangeHandler(event)} /> &nbsp;
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Challan Number</h6>
+                            <Input type="text" value={query.challan_no} placeholder="Challan Number" name="challan_no" onChange={event => formChangeHandler(event)} /> &nbsp;
+
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Challan Date</h6>
+                            <Input type="date" placeholder="Challan Date" name="challan_date" onChange={event => changeDateHandler(event)} /> &nbsp;
+                        </div>
+                        <div className="col-sm-2"></div>
+                    </div>
+
+
+
+                    <br /><br /><br /><br />
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-10">
+                            <Button type="button" style={{ background: "yellowgreen", color: "white" }} onClick={addHandler}>+ Add Row</Button>
+                        </div>
+                        <div className="col-sm-1"></div>
+                    </div>
+                    <br />
 
                     <div className="row">
                         <div className="col-md-1"><p> </p></div>
@@ -527,9 +579,11 @@ function GoodsReceiptNote() {
                             </table>
                         </div>
                         <div className="col-md-1"><p> </p></div>
-                    </div> <br />
-
-                    <Button type="submit" onClick={submitHandler}>Submit</Button>
+                    </div>
+                    <br /><br />
+                    <div className="submit-button">
+                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                    </div>
                 </form>
                 <br /><br />
                 {searchstates.isSearchVisible ?
@@ -568,16 +622,16 @@ function GoodsReceiptNote() {
             </div>
         )
 
-    } 
-    else if(!r) {
-      return (
-        <div className="print-center">
-            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-            <Spin tip="Loading..." />
-        </div>
-    )
-  
-    }else {
+    }
+    else if (!r) {
+        return (
+            <div className="print-center">
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <Spin tip="Loading..." />
+            </div>
+        )
+
+    } else {
         console.log("NOT SIGNED IN")
         return (
             <NotFound />

@@ -5,19 +5,18 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import NavbarMis from './components/backend/NavbarMis';
 import Master from './components/backend/Master';
-import Requisition from './components/backend/Requisition';
+import Requisition from './components/backend/Req/Requisition';
 import RequisitionSite from './components/backend/Requisition_site';
-import PurchaseOrder from './components/backend/PurchaseOrder';
-import GoodsReceiptNote from './components/backend/GoodsReceiptNote';
+import PurchaseOrder from './components/backend/PO/PurchaseOrder';
+import GoodsReceiptNote from './components/backend/GRN/GoodsReceiptNote';
 import Login from './components/backend/Login';
 import NewUser from './components/backend/NewUser';
 import NewProjects from './components/backend/NewProjects';
 import Menu from './components/backend/Menu';
-import ViewStock from './components/backend/ViewStock';
+import ViewStock from './components/backend/views/ViewStock';
 import Issue from './components/backend/Issue';
 import DeliveryChallan from './components/backend/DeliveryChallan';
 import PageNotFound from './components/PageNotFound';
-import RequisitionTable from './components/backend/RequisitionTable';
 import Material from './components/backend/Material';
 import Supplier from './components/backend/Suppliers';
 import UpdateSupplier from './components/backend/UpdateSupplier';
@@ -27,6 +26,11 @@ import POPrint from './components/backend/print_templates/POPrint';
 import GRNPrint from './components/backend/print_templates/GRNPrint';
 import StockOverallPrint from './components/backend/print_templates/StockOverallPrint';
 import StockIndividualPrint from './components/backend/print_templates/StockIndividualPrint';
+
+import ViewPO from './components/backend/views/ViewPO';
+import ViewGRN from './components/backend/views/ViewGRN';
+import ViewSuppliers from './components/backend/views/ViewSuppliers';
+import RequisitionView from './components/backend/Req/RequisitionView';
 
 
 function App() {
@@ -50,7 +54,6 @@ function App() {
           <Route exact path='/' component={Login} />
           <Route path='/1req' component={Requisition} />
           <Route path='/1reqsite' component={RequisitionSite} />
-          <Route path='/1viewreq' component={RequisitionTable} />
           <Route path='/1Menu' component={Menu} />          
           <Route path='/1newuser' component={NewUser} />
           <Route path='/1projects' component={NewProjects} />
@@ -65,6 +68,11 @@ function App() {
           <Route path='/1supplierUpdate' component={UpdateSupplier} />
           <Route path='/1projectData' component={ProjectData} />
 
+          {/* Views */}  
+          <Route path='/1viewreq' component={RequisitionView} />
+          <Route path='/1viewpo' component={ViewPO} />
+          <Route path='/1viewgrn' component={ViewGRN} />
+          <Route path='/1viewsupplier' component={ViewSuppliers} />
 
           {/* Printing */}
 
