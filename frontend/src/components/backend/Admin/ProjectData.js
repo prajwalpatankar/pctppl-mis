@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select, Modal , Spin } from 'antd';
-import NotFound from './../NotFound';
-import BackFooter from './BackFooter';
+import { Button, message, Input, Table, Space, Select, Modal, Spin } from 'antd';
+import NotFound from './../../NotFound';
+import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
 
 function ProjectData() {
@@ -16,7 +16,7 @@ function ProjectData() {
     // states
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);
-    
+
     const [projects, setProjects] = useState([]);
     const [visibility, setVisibility] = useState(false);
     const [req, setReq] = useState([]);
@@ -80,7 +80,7 @@ function ProjectData() {
     // --------------------------------------------------------------------
     // Form change handlers
 
-    const handleProjectChange = (value, index) => {
+    const onChangeProject = (value, index) => {
         axios.get(baseUrl.concat("reqlimit/?project_id=" + value))
             .then(res => {
                 setReq(res.data);
@@ -129,48 +129,56 @@ function ProjectData() {
 
     // --------------------------------------------------------------------
     // html
-    if (l&& r) {
+    if (l && r) {
         return (
             <div>
-                <br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br />
+                <h4 className="page-title">Update Requisition Limits</h4>
                 <form onSubmit={submitHandler}>
-                    <Select placeholder="Select Project" style={{ width: 300 }} onChange={handleProjectChange}>
-                        {projects.map((project, index) => (
-                            <Option value={project.id}>{project.project_name}</Option>
-                        ))}
-                    </Select>
+                    <br /><br />
+
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-10">
+                            <h6>Select Project</h6>
+                            <Select placeholder="Select Project" style={{ width: 300 }} onChange={onChangeProject}>
+                                {projects.map((project, index) => (
+                                    <Option value={project.id}>{project.project_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-1"></div>
+                    </div>
                     <br /><br />
 
                     {visibility ?
-                        <div className="row">
-                            <div className="col-md-1"><p></p></div>
-                            <div className="table-responsive col-md-10">
-                                <table className="table table-hover table-bordered">
-                                    <thead className="row">
-                                        <th className="col-md-2">Material ID</th>
-                                        <th className="col-md-2">Material Name</th>
-                                        <th className="col-md-2">Utilized Quantity (Cumulative)</th>
-                                        <th className="col-md-2">Quantity Limit</th>
-                                        <th className="col-md-2">Unit</th>
-                                        <th className="col-md-2">Action</th>
+                        <div className="row print-center ">
+                            <div className="center table-responsive col-lg-10 col-md-12">
+                                <table className="table table-hover table-bordered ">
+                                    <thead className="thead-light">
+                                        <tr className="row">
+                                            <th className="col-md-2">Material ID</th>
+                                            <th className="col-md-2">Material Name</th>
+                                            <th className="col-md-2">Utilized Quantity (Cumulative)</th>
+                                            <th className="col-md-2">Quantity Limit</th>
+                                            <th className="col-md-2">Unit</th>
+                                            <th className="col-md-2">Action</th>
+                                        </tr>
                                     </thead>
-                                    <tbody>
-                                        {req.map((r, index) => (
+                                    {req.map((r, index) => (
+                                        <tbody>
                                             <tr key={index} className="row">
                                                 <td className="col-md-2">{r.mat_id}</td>
                                                 <td className="col-md-2">{r.mat_name}</td>
                                                 <td className="col-md-2">{r.utilized}</td>
                                                 <td className="col-md-2">{r.quantity}</td>
                                                 <td className="col-md-2">{r.unit}</td>
-                                                <td className="col-md-2"><Button type="button" onClick={() => showModalDetails(index)}>Change</Button></td>
-                                                
-
+                                                <td className="col-md-2"><Button type="primary" size="small" onClick={() => showModalDetails(index)}>Change</Button></td>
                                             </tr>
-                                        ))}
-                                    </tbody>
+                                        </tbody>
+                                    ))}
                                 </table>
                             </div>
-                            <div className="col-md-1"><p></p></div>
                         </div>
 
 
@@ -224,16 +232,16 @@ function ProjectData() {
             </div>
         )
 
-    } 
-    else if(!r) {
-      return (
-        <div className="print-center">
-            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-            <Spin tip="Loading..." />
-        </div>
-    )
-  
-    }else {
+    }
+    else if (!r) {
+        return (
+            <div className="print-center">
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <Spin tip="Loading..." />
+            </div>
+        )
+
+    } else {
         console.log("NOT SIGNED IN")
         return (
             <NotFound />

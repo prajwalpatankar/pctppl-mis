@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select , Spin } from 'antd';
+import { Button, message, Input, Table, Space, Select, Spin } from 'antd';
 import NotFound from './../../NotFound';
 import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
@@ -155,11 +155,11 @@ function DeliveryChallan() {
 
     const handleProjectChangeFrom = (value, index) => {
         setVisibility(true)
-        axios.get(baseUrl.concat("stock/?project_id=" + value ))
+        axios.get(baseUrl.concat("stock/?project_id=" + value))
             .then(response => {
                 setMats(response.data)
             })
-        setQuery({ ...query, from_project: value });        
+        setQuery({ ...query, from_project: value });
     }
 
     const handleProjectChangeTo = (value, index) => {
@@ -181,7 +181,7 @@ function DeliveryChallan() {
     // Visibility handlers 
 
     const showMaterial = (index) => {
-        if(visibility) {
+        if (visibility) {
             if (searchstates.isSearchVisible) {
                 setSearch({ ...searchstates, isSearchVisible: false });
             } else {
@@ -190,7 +190,7 @@ function DeliveryChallan() {
         } else {
             message.error("Please Select a Project")
         }
-       
+
     }
 
 
@@ -220,7 +220,7 @@ function DeliveryChallan() {
     // Validations before Submission
 
     const blurHandler = (entered, max) => {
-        if(entered <= 0 || entered > max) {
+        if (entered <= 0 || entered > max) {
             message.error("Please check quantity again !")
         }
 
@@ -233,7 +233,7 @@ function DeliveryChallan() {
         e.preventDefault();
         console.log(query)
 
-        if(query.to_project === query.from_project){
+        if (query.to_project === query.from_project) {
             message.error("Invalid Project !")
         }
 
@@ -338,68 +338,92 @@ function DeliveryChallan() {
 
     // --------------------------------------------------------------------
     // html
-    if (l&& r) {
+    if (l && r) {
         return (
             <div>
-                <br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br />
+                <h4 className="page-title">New Material Transfer Challan</h4>
+                <br /><br />
                 <form onSubmit={submitHandler}>
-                    <Select placeholder="Select Project From" style={{ width: 300 }} onChange={handleProjectChangeFrom}>
-                        {projects.map((project, index) => (
-                            <Option value={project.id}>{project.project_name}</Option>
-                        ))}
-                    </Select>
-                    <Select placeholder="Select Project To" style={{ width: 300 }} onChange={handleProjectChangeTo}>
-                        {projects.map((project, index) => (
-                            <Option value={project.id}>{project.project_name}</Option>
-                        ))}
-                    </Select>
+
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-3">
+                            <h6>Select Project (From)</h6>
+                            <Select placeholder="Select Project From" style={{ width: 300 }} onChange={handleProjectChangeFrom}>
+                                {projects.map((project, index) => (
+                                    <Option value={project.id}>{project.project_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-3">
+                            <h6>Select Project (To)</h6>
+                            <Select placeholder="Select Project To" style={{ width: 300 }} onChange={handleProjectChangeTo}>
+                                {projects.map((project, index) => (
+                                    <Option value={project.id}>{project.project_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-5"></div>
+                    </div>
+
+
+
 
                     {/* if needed to add another field <Input type="text" value={query.grn_id} placeholder="grn_id" name="grn_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp; */}
 
-                    <Button type="button" onClick={addHandler}>Add</Button><br /><br />
 
+                    <br /><br /><br /><br />
                     <div className="row">
-                        <div className="col-md-1"><p> </p></div>
-                        <div className="table-responsive col-md-10">
-                            <table className="table table-hover table-bordered">
-                                <thead>
-                                    <tr className="info">
-                                        <div className="row">
-                                            <th className="col-md-2">Select Material</th>
-                                            <th className="col-md-4">Material Name</th>
-                                            <th className="col-md-2">Quantity</th>
-                                            <th className="col-md-1">Unit</th>
-                                            <th className="col-md-1">Delete</th>
-                                        </div>
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-10">
+                            <Button type="button" style={{ background: "yellowgreen", color: "white" }} onClick={addHandler}>+ Add Row</Button>
+                        </div>
+                        <div className="col-sm-1"></div>
+                    </div>
+                    <br />
+
+                    <div className="row print-center ">
+                        <div className="center table-responsive col-lg-10 col-md-12">
+                            <table className="table table-hover table-bordered ">
+                                <thead className="thead-light">
+                                    <tr className="row">
+                                        <th className="col-md-2">Select Material</th>
+                                        <th className="col-md-4">Material Name</th>
+                                        <th className="col-md-2">Available quantity</th>
+                                        <th className="col-md-2">Quantity</th>
+                                        <th className="col-md-1">Unit</th>
+                                        <th className="col-md-1">Delete</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {inputFields.map((inputField, index) => (
-                                        <tr key={index}>
-                                            <div className="row">
-                                                <td className="col-md-2"><Button type="button" onClick={() => showMaterial(index)}>Select Material</Button></td>
-                                                <td className="col-md-4">{inputField.mat_name}</td>
-                                                <td className="col-md-2"><Input type="text" value={inputField.quantity} placeholder={`Available : ${inputField.zzmax}`} name="quantity" onChange={event => changeHandler(index, event)} onBlur={() => blurHandler(inputField.quantity, inputField.zzmax)}/></td>
-                                                <td className="col-md-1">{inputField.unit}</td>
-                                                <td className="col-md-1"><Button danger="true" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
-                                            </div>
+
+                                {inputFields.map((inputField, index) => (
+                                    <tbody>
+                                        <tr key={index} className="row">
+                                            <td className="col-md-2"><Button type="button" size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
+                                            <td className="col-md-4">{inputField.mat_name}</td>
+                                            <td className="col-md-2"><Input type="text" disabled="true" value={inputField.zzmax} /></td>
+                                            <td className="col-md-2"><Input type="text" value={inputField.quantity} placeholder={`Available : ${inputField.zzmax}`} name="quantity" onChange={event => changeHandler(index, event)} onBlur={() => blurHandler(inputField.quantity, inputField.zzmax)} /></td>
+                                            <td className="col-md-1">{inputField.unit}</td>
+                                            <td className="col-md-1"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>
-                                    ))}
-                                </tbody>
+                                    </tbody>
+                                ))}
                             </table>
                         </div>
-                        <div className="col-md-1"><p> </p></div>
                     </div> <br />
 
-                    <Button type="submit" onClick={submitHandler}>Submit</Button>
+                    <div className="submit-button">
+                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                    </div>
                 </form>
                 <br /><br />
-                { searchstates.isSearchVisible ?
+                {searchstates.isSearchVisible ?
                     (<div>
                         <br /><br />
                         <div className="row">
                             <div className="col-sm-1"><p> </p></div>
-                            <div className="col-sm-10"><Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={mats} columns={columns1} /></div>
+                            <div className="col-sm-10"><Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={mats} columns={columns1} /></div>
                             <div className="col-sm-1"><p> </p></div>
                         </div>
                     </div>) : (
@@ -413,21 +437,21 @@ function DeliveryChallan() {
                     <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
                     <div className="col-sm-1"><p> </p></div>
                 </div>
-                <br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br />
                 <BackFooter />
             </div>
         )
 
-    } 
-    else if(!r) {
-      return (
-        <div className="print-center">
-            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-            <Spin tip="Loading..." />
-        </div>
-    )
-  
-    }else {
+    }
+    else if (!r) {
+        return (
+            <div className="print-center">
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <Spin tip="Loading..." />
+            </div>
+        )
+
+    } else {
         console.log("NOT SIGNED IN")
         return (
             <NotFound />

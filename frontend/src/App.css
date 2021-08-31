@@ -285,6 +285,15 @@ td{
   width: 50%;
 }
 
+.available-green {
+  margin-top: -15px;
+  color: limegreen;
+}
+
+.unavailable-red {
+  margin-top: -15px;
+  color: red;
+}
 
 .border_bottom  {
   border-bottom: 2px solid black;

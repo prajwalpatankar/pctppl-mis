@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Input, Button, message, Select, Spin } from 'antd';
-import BackFooter from './BackFooter';
-import NotFound from './../NotFound';
+import BackFooter from './../BackFooter';
+import NotFound from './../../NotFound';
 import jwt_decode from 'jwt-decode';
-import PageNotFound from '../PageNotFound';
+import PageNotFound from './../../PageNotFound';
 
 function NewUser() {
     const baseUrl = 'http://localhost:8000/';
@@ -140,17 +140,21 @@ function NewUser() {
             <div>
                 {isAdmin ?
                     <div>
+                        <br /><br /><br /><br />
+                        <h4 className="page-title">New User</h4>
+                        <br /><br /><br /><br /><br />
                         <div className="container col-md-6 col-xl-3">
-                            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-                            <h3>Create New User</h3>
                             <form onSubmit={event => handle_signup(event)}>
                                 <div>
+                                    <h6>Username</h6>
                                     <Input type="text" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} /> <br /><br />
                                 </div>
                                 <div>
+                                    <h6>Password</h6>
                                     <Input type="password" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} /> <br /><br />
                                 </div>
                                 <div>
+                                    <h6>Assign a Role</h6>
                                     <Select placeholder="Assign Role" style={{ width: 300 }} onChange={changeRole}>
                                         {rolesList.map((rolez, index) => (
                                             <Option value={rolez.role}>{rolez.role}</Option>
