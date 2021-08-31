@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, message, Input, Table, Space, Select , Spin } from 'antd';
-import NotFound from './../NotFound';
-import BackFooter from './BackFooter';
+import NotFound from './../../NotFound';
+import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
 
 function DeliveryChallan() {
@@ -399,7 +399,7 @@ function DeliveryChallan() {
                         <br /><br />
                         <div className="row">
                             <div className="col-sm-1"><p> </p></div>
-                            <div className="col-sm-10"><Table dataSource={mats} columns={columns1} /></div>
+                            <div className="col-sm-10"><Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={mats} columns={columns1} /></div>
                             <div className="col-sm-1"><p> </p></div>
                         </div>
                     </div>) : (

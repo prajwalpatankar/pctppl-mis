@@ -164,7 +164,7 @@ function ViewReq() {
             return (
                 <div>
                     <br />
-                    <Table dataSource={reqs} columns={columns} />
+                    <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={reqs} columns={columns} />
 
                     <Modal
                         title="Purchase Requisition Details"

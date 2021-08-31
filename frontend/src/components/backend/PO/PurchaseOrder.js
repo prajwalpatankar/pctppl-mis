@@ -161,7 +161,7 @@ function PurchaseOrder() {
             key: 'completed',
             render: (text, record, index) => (
                 <Space size="middle">
-                    <Button type="primary" onClick={() => { markCompleted(record, index) }}>Mark as Completed</Button>
+                    <Button type="button" size="small" style={{ background: "yellowgreen", color: "white"  }} onClick={() => { markCompleted(record, index) }}>Mark as Completed</Button>
                 </Space>
             ),
         },
@@ -207,6 +207,7 @@ function PurchaseOrder() {
     }
 
     const onChangeProject = (value) => {  //for outer form
+        message.info("Please click 'View Details' from Purchase Requisitions to select Material")
         setQuery({ ...query, project_id: value });
         axios.get(baseUrl.concat("requisition/?project_id=" + value + "&completed=N&isaprroved_master=Y"))
             .then(res => {
@@ -275,6 +276,7 @@ function PurchaseOrder() {
         console.log(query)
         axios.post(baseUrl.concat("po/"), query)
             .then(response => {
+                message.info("Please mark Requisition as completed if necessary")
                 message.open({
                     type: 'success',
                     content: <p>Purchase Order Successful. <Button type="link" onClick={handlePrint}>Click here to Print</Button></p>,
@@ -522,7 +524,7 @@ function PurchaseOrder() {
                         </div>
                         <div className="col-sm-2"></div>
                     </div>
-                    <br /><br /><br />
+                    <br />
                     <div className="row">
                         <div className="col-sm-1"></div>
                         <div className="col-sm-3">
@@ -543,47 +545,7 @@ function PurchaseOrder() {
                         <div className="col-sm-2"></div>
                     </div>
 
-
-
-                    <br /><br /><br /><br />
-                    {/* <Button type="button" onClick={addHandler}>Add</Button><br /><br /> */}
-
-                    <div className="row">
-                        <div className="col-md-1"><p> </p></div>
-                        <div className="table-responsive col-md-10">
-                            <table className="table table-hover table-bordered">
-                                <thead>
-                                    <tr className="info">
-                                        <div className="row">
-                                            {/* <th className="col-md-2">Select Material</th> */}
-                                            <th className="col-md-4">Material Name</th>
-                                            <th className="col-md-2">Rate</th>
-                                            <th className="col-md-2">Discount</th>
-                                            <th className="col-md-2">Quantity</th>
-                                            <th className="col-md-1">Unit</th>
-                                            <th className="col-md-1">Delete</th>
-                                        </div>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {inputFields.map((inputField, index) => (
-                                        <tr key={index}>
-                                            <div className="row">
-                                                {/* <td className="col-md-2"><Button type="button" onClick={() => showMaterial(index)}>Select Material</Button></td> */}
-                                                <td className="col-md-4">{inputField.mat_name}</td>
-                                                <td className="col-md-2"><Input type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                                <td className="col-md-2"><Input type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                                <td className="col-md-2"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
-                                                <td className="col-md-1">{inputField.unit}</td>
-                                                <td className="col-md-1"><Button danger="true" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
-                                            </div>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="col-md-1"><p> </p></div>
-                    </div> <br />
+                    <br />
 
                     <div className="row">
                         <div className="col-sm-1"></div>
@@ -597,6 +559,45 @@ function PurchaseOrder() {
                         </div>
                         <div className="col-sm-5"></div>
                     </div>
+
+
+
+                    <br /><br />
+                    {/* <Button type="button" onClick={addHandler}>Add</Button><br /><br /> */}
+
+                    <div className="row print-center ">
+                        <div className="center table-responsive col-lg-10 col-md-12">
+                            <table className="table table-hover table-bordered ">
+                                <thead className="thead-light">
+                                    <tr className="row">
+                                        {/* <th className="col-md-2">Select Material</th> */}
+                                        <th className="col-md-4">Material Name</th>
+                                        <th className="col-md-2">Rate</th>
+                                        <th className="col-md-2">Discount</th>
+                                        <th className="col-md-2">Quantity</th>
+                                        <th className="col-md-1">Unit</th>
+                                        <th className="col-md-1">Delete</th>
+                                    </tr>
+                                </thead>
+
+                                {inputFields.map((inputField, index) => (
+                                    <tbody>
+                                        <tr key={index} className="row">
+                                            {/* <td className="col-md-2"><Button type="button" onClick={() => showMaterial(index)}>Select Material</Button></td> */}
+                                            <td className="col-md-4">{inputField.mat_name}</td>
+                                            <td className="col-md-2"><Input type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                            <td className="col-md-2"><Input type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                            <td className="col-md-2"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-1">{inputField.unit}</td>
+                                            <td className="col-md-1"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                                        </tr>
+                                    </tbody>
+                                ))}
+                            </table>
+                        </div>
+                    </div> 
+
+                    
 
 
 
@@ -635,7 +636,7 @@ function PurchaseOrder() {
                         <br /><br />
                         <div className="row">
                             <div className="col-sm-1"><p> </p></div>
-                            <div className="col-sm-10"><Table dataSource={materials} columns={columns} /></div>
+                            <div className="col-sm-10"><Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={materials} columns={columns} /></div>
                             <div className="col-sm-1"><p> </p></div>
                         </div>
                     </div>) : (
@@ -647,10 +648,10 @@ function PurchaseOrder() {
 
 
                 <h6> &nbsp;&nbsp;&nbsp;Select Items from Purchase Requisitions</h6>
-                <Table dataSource={reqs} columns={columns1} />
+                <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={reqs} columns={columns1} />
 
 
-                {/* <Table dataSource={pos} columns={columspo} /> */}
+                {/* <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={pos} columns={columspo} /> */}
 
 
 

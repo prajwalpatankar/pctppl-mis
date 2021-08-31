@@ -169,7 +169,7 @@ function ViewPO() {
                     <br /><br /><br /><br />
                     <h4 className="page-title">Purchase Orders</h4>
                     <br />
-                    <Table dataSource={po} columns={columns} />
+                    <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={po} columns={columns} />
 
                     <Modal
                         title="Purchase Requisition Details"

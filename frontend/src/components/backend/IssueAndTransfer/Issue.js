@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select , Spin } from 'antd';
-import NotFound from './../NotFound';
-import BackFooter from './BackFooter';
+import { Button, message, Input, Table, Space, Select, Spin } from 'antd';
+import NotFound from './../../NotFound';
+import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
 
 function Issue() {
@@ -21,13 +21,13 @@ function Issue() {
     const [projects, setProjects] = useState([]);
 
     const [query, setQuery] = useState({
-            project_id: "",
-            mat_id: "",
-            mat_name: "----",
-            quantity: 0,
-            unit: "---"
-        });
- 
+        project_id: "",
+        mat_id: "",
+        mat_name: "----",
+        quantity: 0,
+        unit: "---"
+    });
+
     // const [quant, setquant] = useState({
     //     project_id: "",
     //     mat_id: "",
@@ -103,11 +103,16 @@ function Issue() {
             key: 'quantity',
         },
         {
+            title: 'Unit',
+            dataIndex: 'unit',
+            key: 'unit',
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button onClick={() => { updatecol(record) }} type="button">Select</Button>
+                    <Button onClick={() => { updatecol(record) }} size="small" type="button">Select</Button>
                 </Space>
             ),
         },
@@ -182,40 +187,40 @@ function Issue() {
     const submitHandler = (e) => {
         e.preventDefault();
         console.log(query)
-        if(quant >= query.quantity && 0 < query.quantity ){
-            var remaining = quant - query.quantity;
-            axios.post(baseUrl.concat("issue/"),query)
-            .then(response => {
-                console.log(response)
-                axios.put(baseUrl.concat("stock/"+id+"/"), {
-                    quantity: remaining,
-                    project_id: query.project_id,
-                    mat_id: query.mat_id,
-                    mat_name: query.mat_name,
-                    recieved: quant,
-                })
+        if (quant >= parseFloat(query.quantity) && 0 < parseFloat(query.quantity)) {
+            var remaining = parseFloat(quant) - parseFloat(query.quantity);
+            axios.post(baseUrl.concat("issue/"), query)
                 .then(response => {
                     console.log(response)
-                    axios.get(baseUrl.concat("stock/?project_id=" +  query.project_id))
-                    .then(response => {
-                        setMats(response.data)
-                        message.success("Material Issue Successful")
+                    axios.put(baseUrl.concat("stock/" + id + "/"), {
+                        quantity: remaining,
+                        project_id: query.project_id,
+                        mat_id: query.mat_id,
+                        mat_name: query.mat_name,
+                        recieved: quant,
                     })
-                })
+                        .then(response => {
+                            console.log(response)
+                            axios.get(baseUrl.concat("stock/?project_id=" + query.project_id))
+                                .then(response => {
+                                    setMats(response.data)
+                                    message.success("Material Issue Successful")
+                                })
+                        })
 
-            })
-            .catch(error => {
-                console.log(error.response.status)
-                if (error.response.status === 401) {
-                    localStorage.removeItem('token')
-                    setloggedin(false);
-                }
-            })            
+                })
+                .catch(error => {
+                    console.log(error.response.status)
+                    if (error.response.status === 401) {
+                        localStorage.removeItem('token')
+                        setloggedin(false);
+                    }
+                })
         } else {
             message.error("Invalid Quantity")
         }
         setQuery({
-            ...query ,
+            ...query,
             quantity: 0,
         })
     }
@@ -243,57 +248,62 @@ function Issue() {
 
     // --------------------------------------------------------------------
     // html
-    if (l&& r) {
+    if (l && r) {
         return (
             <div>
-                <br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <br /><br /><br /><br />
+                <h4 className="page-title">New Issue Slip</h4>
                 <form onSubmit={submitHandler}>
-                    <Select placeholder="Select Project" style={{ width: 300 }} onChange={handleProjectChange}>
-                        {projects.map((project, index) => (
-                            <Option value={project.id}>{project.project_name}</Option>
-                        ))}
-                    </Select>
-                    <br /><br />
                     <div className="row">
-                        <div className="col-md-1"><p> </p></div>
-                        <div className="table-responsive col-md-10">
-                            <table className="table  table-bordered">
-                                <thead>
-                                    <tr className="info">
-                                        <div className="row">
-                                            <th className="col-md-2">Select Material</th>
-                                            <th className="col-md-4">Material Name</th>
-                                            <th className="col-md-2">Quantity</th>
-                                            <th className="col-md-2">Unit</th>
-                                            <th className="col-md-2">Delete</th>
-                                        </div>
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-10">
+                            <h6>Select Project</h6>
+                            <Select placeholder="Select Project" style={{ width: 300 }} onChange={handleProjectChange}>
+                                {projects.map((project, index) => (
+                                    <Option value={project.id}>{project.project_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-1"></div>
+                    </div>
+
+                    <br /><br />
+                    <div className="row print-center ">
+                        <div className="center table-responsive col-lg-10 col-md-12">
+                            <table className="table table-hover table-bordered ">
+                                <thead className="thead-light">
+                                    <tr className="row">
+                                        <th className="col-md-2">Select Material</th>
+                                        <th className="col-md-4">Material Name</th>
+                                        <th className="col-md-2">Quantity</th>
+                                        <th className="col-md-2">Unit</th>
+                                        <th className="col-md-2">Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <div className="row">
-                                            <td className="col-md-2"><Button type="button" onClick={() => showMaterial()}>Select Material</Button></td>
-                                            <td className="col-md-4">{query.mat_name}</td>
-                                            <td className="col-md-2"><Input type="text" value={query.quantity} placeholder="Quantity" name="quantity" onChange={handleformChange}/></td>
-                                            <td className="col-md-2">{query.unit}</td>
-                                            <td className="col-md-2"><Button danger="true" type="button" onClick={() => { deleteRowHandler() }}>Delete</Button></td>
-                                        </div>
+                                    <tr className="row">
+                                        <td className="col-md-2"><Button type="button" onClick={() => showMaterial()}>Select Material</Button></td>
+                                        <td className="col-md-4">{query.mat_name}</td>
+                                        <td className="col-md-2"><Input type="text" value={query.quantity} placeholder="Quantity" name="quantity" onChange={handleformChange} /></td>
+                                        <td className="col-md-2">{query.unit}</td>
+                                        <td className="col-md-2"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler() }}>Delete</Button></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div className="col-md-1"><p> </p></div>
                     </div> <br />
 
-                    <Button type="submit" onClick={submitHandler}>Submit</Button>
+                    <div className="submit-button">
+                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                    </div>
                 </form>
                 <br /><br />
-                { searchstates ?
+                {searchstates ?
                     (<div>
                         <br /><br />
                         <div className="row">
                             <div className="col-sm-1"><p> </p></div>
-                            <div className="col-sm-10"><Table dataSource={mats} columns={columns} /></div>
+                            <div className="col-sm-10"><Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={mats} columns={columns} /></div>
                             <div className="col-sm-1"><p> </p></div>
                         </div>
                     </div>) : (
@@ -301,27 +311,27 @@ function Issue() {
                     )
                 }
 
-                <br /><br /><br /><br />
+                <br /><br />
                 <div className="row">
                     <div className="col-sm-10"><p> </p></div>
                     <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
                     <div className="col-sm-1"><p> </p></div>
                 </div>
-                <br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                 <BackFooter />
             </div>
         )
 
-    } 
-    else if(!r) {
-      return (
-        <div className="print-center">
-            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-            <Spin tip="Loading..." />
-        </div>
-    )
-  
-    }else {
+    }
+    else if (!r) {
+        return (
+            <div className="print-center">
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                <Spin tip="Loading..." />
+            </div>
+        )
+
+    } else {
         console.log("NOT SIGNED IN")
         return (
             <NotFound />

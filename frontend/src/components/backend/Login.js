@@ -29,6 +29,7 @@ function Login() {
                     console.log(error.response.status)
                     if (error.response.status === 401) {
                         localStorage.removeItem('token')
+                        setR(true);
                     }
                 })
 

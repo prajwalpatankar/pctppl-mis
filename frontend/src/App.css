@@ -252,8 +252,38 @@
 }
 
 
+/*   Table */
+tr {
+  margin-top:  0 !important;
+  margin-bottom:  -3px !important;
+}
 
+
+td{
+  padding: 3px 0 0 0 !important;
+}
+
+
+.table-row-light {
+  background-color: #ffffff;
+}
+.table-row-dark {
+  background-color: #E6E6FA;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background: rgb(168, 238, 168) !important;
+}
+
+.ant-table-tbody > tr.ant-table-row > td {
+  padding-left: 15px !important;
+}
 /* BACKEND  */
+
+.center {
+  margin: auto;
+  width: 50%;
+}
 
 
 .border_bottom  {

@@ -100,6 +100,7 @@ function GoodsReceiptNote() {
         }
 
         setTimeout(() => {
+            message.info("First select a Project, then Select the PO")
             setR(true);
             return 0;
         }, 50);
@@ -199,19 +200,20 @@ function GoodsReceiptNote() {
     // Form change handlers
 
     const handleProjectChange = (value, index) => {
+        message.info("Click Select PO")
         setVisibility({ ...visibility, project: true })
         // setQuery({ ...query, project_id: value });
         axios.get(baseUrl.concat("po?project_id=" + value))
-        .then(res => {
-            setPos(res.data);
-        })
-        .catch(error => {
-            console.log(error.response.status)
-            if (error.response.status === 401) {
-                localStorage.removeItem('token')
-                setloggedin(false);
-            }
-        })
+            .then(res => {
+                setPos(res.data);
+            })
+            .catch(error => {
+                console.log(error.response.status)
+                if (error.response.status === 401) {
+                    localStorage.removeItem('token')
+                    setloggedin(false);
+                }
+            })
 
         axios.get(baseUrl.concat("grn/?project_id=" + value))
             .then(res => {
@@ -279,11 +281,12 @@ function GoodsReceiptNote() {
 
     const showPO = () => {
 
-        if(!visibility.project) {
+        if (!visibility.project) {
             message.error("Please Select a Project ")
         }
         else if (searchstates.isSearchVisiblePO) {
             setSearch({ ...searchstates, isSearchVisiblePO: false });
+            message.info("Select a PO from the table below")
             setTimeout(() => {
                 window.scrollTo({
                     top: 0,
@@ -305,6 +308,7 @@ function GoodsReceiptNote() {
     // Update Rows 
 
     const updatePOID = (record) => {
+        message.info("You may now select Materials")
         setVisibility({ ...visibility, po: true })
         setQuery({ ...query, po_id: record.po_id })
         setSearch({ ...searchstates, isSearchVisiblePO: false });
@@ -495,6 +499,11 @@ function GoodsReceiptNote() {
                             </Select>
                         </div>
                         <div className="col-sm-3">
+                            <h6>Select a Purchase Order</h6>
+                            <Input disabled="true" className="col-sm-9" placeholder="Purchase Order ID" name="po_id" value={query.po_id} /> &nbsp;
+                            <Button type="button" onClick={() => showPO()}>Select PO</Button>
+                        </div>
+                        <div className="col-sm-3">
                             <h6>Select Supplier</h6>
                             <Select placeholder="Select Supplier" style={{ width: 300 }} onChange={handleSupplierChange}>
                                 {supplier.map((supp, index) => (
@@ -502,12 +511,7 @@ function GoodsReceiptNote() {
                                 ))}
                             </Select>
                         </div>
-                        <div className="col-sm-4">
-                            <h6>Select a Purchase Order</h6>
-                            <Input disabled="true" className="col-sm-9" placeholder="Purchase Order ID" name="po_id" value={query.po_id} /> &nbsp;
-                            <Button type="button" onClick={() => showPO()}>Select PO</Button>
-                        </div>
-                        <div className="col-sm-1"></div>
+                        <div className="col-sm-2"></div>
                     </div>
                     <br /><br />
 
@@ -542,43 +546,38 @@ function GoodsReceiptNote() {
                     </div>
                     <br />
 
-                    <div className="row">
-                        <div className="col-md-1"><p> </p></div>
-                        <div className="table-responsive col-md-10">
-                            <table className="table table-hover table-bordered">
-                                <thead>
-                                    <tr className="info">
-                                        <div className="row">
-                                            <th className="col-md-2">Select Material</th>
-                                            <th className="col-md-2">Material Name</th>
-                                            <th className="col-md-1">Rate</th>
-                                            <th className="col-md-1">PO Quantity</th>
-                                            <th className="col-md-2">Recieved Quantity</th>
-                                            <th className="col-md-2">Accepted Quantity</th>
-                                            <th className="col-md-1">Unit</th>
-                                            <th className="col-md-1">Delete</th>
-                                        </div>
+                    <div className="row print-center ">
+                        <div className="center table-responsive col-lg-10 col-md-12">
+                            <table className="table table-hover table-bordered ">
+                                <thead className="thead-light">
+                                    <tr className="row">
+                                        <th className="col-md-1">Select Material</th>
+                                        <th className="col-md-3">Material Name</th>
+                                        <th className="col-md-1">Rate</th>
+                                        <th className="col-md-1">PO Quantity</th>
+                                        <th className="col-md-2">Recieved Quantity</th>
+                                        <th className="col-md-2">Accepted Quantity</th>
+                                        <th className="col-md-1">Unit</th>
+                                        <th className="col-md-1">Delete</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {inputFields.map((inputField, index) => (
-                                        <tr key={index}>
-                                            <div className="row">
-                                                <td className="col-md-2"><Button type="button" onClick={() => showMaterial(index)}>Select Material</Button></td>
-                                                <td className="col-md-2">{inputField.mat_name}</td>
-                                                <td className="col-md-1"><Input type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
-                                                <td className="col-md-1"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
-                                                <td className="col-md-2"><Input type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
-                                                <td className="col-md-2"><Input type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
-                                                <td className="col-md-1">{inputField.unit}</td>
-                                                <td className="col-md-1"><Button danger="true" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
-                                            </div>
+
+                                {inputFields.map((inputField, index) => (
+                                    <tbody>
+                                        <tr key={index} className="row">
+                                            <td className="col-md-1"><Button type="button" size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
+                                            <td className="col-md-3">{inputField.mat_name}</td>
+                                            <td className="col-md-1"><Input type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
+                                            <td className="col-md-1"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
+                                            <td className="col-md-2"><Input type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-2"><Input type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-1">{inputField.unit}</td>
+                                            <td className="col-md-1"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>
-                                    ))}
-                                </tbody>
+                                    </tbody>
+                                ))}
                             </table>
                         </div>
-                        <div className="col-md-1"><p> </p></div>
                     </div>
                     <br /><br />
                     <div className="submit-button">
@@ -586,30 +585,32 @@ function GoodsReceiptNote() {
                     </div>
                 </form>
                 <br /><br />
-                {searchstates.isSearchVisible ?
-                    (<div>
-                        <br /><br />
-                        <div className="row">
-                            <div className="col-sm-1"><p> </p></div>
-                            <div className="col-sm-10"><Table dataSource={mats} columns={columns1} /></div>
-                            <div className="col-sm-1"><p> </p></div>
-                        </div>
-                    </div>) : (
-                        <div><p> </p></div>
-                    )
+                {
+                    searchstates.isSearchVisible ?
+                        (<div>
+                            <br /><br />
+                            <div className="row">
+                                <div className="col-sm-1"><p> </p></div>
+                                <div className="col-sm-10"><Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={mats} columns={columns1} /></div>
+                                <div className="col-sm-1"><p> </p></div>
+                            </div>
+                        </div>) : (
+                            <div><p> </p></div>
+                        )
                 }
 
-                {searchstates.isSearchVisiblePO ?
-                    (<div>
-                        <br /><br />
-                        <div className="row">
-                            <div className="col-sm-1"><p> </p></div>
-                            <div className="col-sm-10"><Table dataSource={pos} columns={columns} /></div>
-                            <div className="col-sm-1"><p> </p></div>
-                        </div>
-                    </div>) : (
-                        <div><p> </p></div>
-                    )
+                {
+                    searchstates.isSearchVisiblePO ?
+                        (<div>
+                            <br /><br />
+                            <div className="row">
+                                <div className="col-sm-1"><p> </p></div>
+                                <div className="col-sm-10"><Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={pos} columns={columns} /></div>
+                                <div className="col-sm-1"><p> </p></div>
+                            </div>
+                        </div>) : (
+                            <div><p> </p></div>
+                        )
                 }
                 <br /><br /><br /><br />
                 <div className="row">
@@ -619,7 +620,7 @@ function GoodsReceiptNote() {
                 </div>
                 <br /><br /><br /><br />
                 <BackFooter />
-            </div>
+            </div >
         )
 
     }

@@ -188,7 +188,7 @@ function UpdateSupplier() {
                 </div>
                 <div className="row">
                     <div className="col-sm-1"><p> </p></div>
-                    <div className="col-sm-10"><Table dataSource={suppliers} columns={columns} /></div>
+                    <div className="col-sm-10"><Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={suppliers} columns={columns} /></div>
                     <div className="col-sm-1"><p> </p></div>
                 </div>
                 <br /><br />

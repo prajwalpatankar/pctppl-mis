@@ -104,7 +104,7 @@ function ViewSuppliers() {
                     <br /><br /><br /><br />
                     <h4 className="page-title">Supplier Details</h4>
                     <br />
-                    <Table dataSource={supplier} columns={columns} />
+                    <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={supplier} columns={columns} />
                     <br /><br /><br /><br /><br />
                     <BackFooter />
                 </div>

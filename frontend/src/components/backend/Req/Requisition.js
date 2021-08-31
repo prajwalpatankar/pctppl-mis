@@ -394,13 +394,11 @@ function Requisition() {
           </div>
           <br />
 
-          <div className="row">
-            <div className="col-md-1"><p> </p></div>
-            <div className="table-responsive col-md-10">
-              <table className="table table-hover table-bordered">
-                <thead>
-                  <tr className="info">
-                    <div className="row">
+          <div className="row print-center ">
+            <div className="center table-responsive col-lg-10 col-md-12">
+              <table className="table table-hover table-bordered ">
+                <thead className="thead-light">
+                  <tr className="row">
                       <th className="col-md-1">Select Material</th>
                       <th className="col-md-2">Material Name</th>
                       <th className="col-md-4">Description</th>
@@ -408,34 +406,30 @@ function Requisition() {
                       <th className="col-md-1">Unit</th>
                       <th className="col-md-2">Expected Date (YYYY/MM/DD)</th>
                       <th className="col-md-1">Delete</th>
-                    </div>
                   </tr>
                 </thead>
+                {inputFields.map((inputField, index) => (
                 <tbody>
-                  {inputFields.map((inputField, index) => (
-                    <tr key={index}>
-                      <div className="row">
-                        <td className="col-md-1"><Button type="button" size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
+                    <tr key={index} className="row">
+                        <td className="col-md-1"><Button type="button" size="small" onClick={() => showMaterial(index)}>Select</Button></td>
                         <td className="col-md-2">{inputField.mat_name}</td>
                         <td className="col-md-4"><Input type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
                         <td className="col-md-1"><Input required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                         <td className="col-md-1">{inputField.unit}</td>
                         <td className="col-md-2"><Input type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
-                        <td className="col-md-1"><Button danger="true" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
-                      </div>
-                    </tr>
-                  ))}
+                        <td className="col-md-1"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                    </tr>               
                 </tbody>
+                ))}
               </table>
             </div>
-            <div className="col-md-1"><p> </p></div>
           </div> <br />
           {searchstates.isSearchVisible ?
             (<div>
               <br /><br />
               <div className="row">
                 <div className="col-sm-1"><p> </p></div>
-                <div className="col-sm-10"><Table dataSource={limiter} columns={columns} pagination={false} /></div>
+                <div className="col-sm-10"><Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={limiter} columns={columns} pagination={false} /></div>
                 <div className="col-sm-1"><p> </p></div>
               </div>
             </div>) : (

@@ -166,7 +166,7 @@ function ViewGRN() {
                     <br /><br /><br /><br />
                     <h4 className="page-title">Goods Recipt Notes</h4>
                     <br />
-                    <Table dataSource={grn} columns={columns} />
+                    <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={grn} columns={columns} />
 
                     <Modal
                         title="Purchase Requisition Details"

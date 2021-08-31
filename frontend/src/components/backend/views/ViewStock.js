@@ -201,7 +201,7 @@ function ViewStock() {
                     <p className="col-md-9" />
                 </div>
                 <br />
-                <Table dataSource={stock} columns={columns} />
+                <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={stock} columns={columns} />
                 <br /><br />
                 {printValid ?
                     <div className="submit-button">
@@ -209,7 +209,7 @@ function ViewStock() {
                     </div>
                     : <p></p>
                 }
-                <br /><br /><br /><br /><br />
+                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                 <BackFooter />
             </div>
         )

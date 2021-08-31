@@ -43,6 +43,7 @@ function Menu() {
                     if (error.response.status === 401) {
                         localStorage.removeItem('token')
                         setloggedin(false);
+                        setR(true);
                     }
                 })
     
