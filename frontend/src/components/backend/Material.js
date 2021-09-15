@@ -150,17 +150,17 @@ function Material() {
                 </span>
                 <span>
                     <h4>Enter Material Name &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Input placeholder="Material Name" name="desc" value={query.desc} onChange={formChangeHandler} style={{ width: 300 }} />
+                    <Input style={{ borderRadius: "8px " }}  placeholder="Material Name" name="desc" value={query.desc} onChange={formChangeHandler} style={{ width: 300 }} />
                     </h4>
                 </span>
                 <span>
                     <h4>Enter unit &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Input placeholder="Unit" name="unit" value={query.unit} onChange={formChangeHandler} style={{ width: 300 }} />
+                    <Input style={{ borderRadius: "8px " }}  placeholder="Unit" name="unit" value={query.unit} onChange={formChangeHandler} style={{ width: 300 }} />
                     </h4>
                 </span>
                 <span>
                     <h4>Enter HSN ID &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Input placeholder="HSN ID" name="hsan_id" value={query.hsan_id} onChange={formChangeHandler} style={{ width: 300 }} type="number" />
+                    <Input style={{ borderRadius: "8px " }}  placeholder="HSN ID" name="hsan_id" value={query.hsan_id} onChange={formChangeHandler} style={{ width: 300 }} type="number" />
                     </h4>
                 </span>
 

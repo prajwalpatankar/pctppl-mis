@@ -127,7 +127,7 @@ function ViewReq() {
             key: 'details',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => { showModalDetails(record) }}>View Details</Button>
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { showModalDetails(record) }}>View Details</Button>
                 </Space>
             ),
         },
@@ -169,7 +169,7 @@ function ViewReq() {
                     <Modal
                         title="Purchase Requisition Details"
                         footer={[
-                            <Button type="button" key="back" onClick={handleCancelDetails}>Go back</Button>,
+                            <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
                         ]}
                         visible={ModalDetails} onCancel={handleCancelDetails}
                     >

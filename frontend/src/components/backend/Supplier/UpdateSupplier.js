@@ -209,7 +209,7 @@ function UpdateSupplier() {
                             <div className="col-md-2"></div>
                             <div className="col-md-3">
                                 <h6>Supplier Name</h6>
-                                <Input placeholder="Supplier Name" name="supp_name" value={query.supp_name} onChange={formChangeHandler} style={{ width: 300 }} />
+                                <Input style={{ borderRadius: "8px " }}  placeholder="Supplier Name" name="supp_name" value={query.supp_name} onChange={formChangeHandler} style={{ width: 300 }} />
 
                             </div>
                             <div className="col-md-3">
@@ -219,7 +219,7 @@ function UpdateSupplier() {
                             </div>
                             <div className="col-md-3">
                                 <h6>Contact Person</h6>
-                                <Input placeholder="Contact Person Name" name="contact_person" value={query.contact_person} onChange={formChangeHandler} style={{ width: 300 }} />
+                                <Input style={{ borderRadius: "8px " }}  placeholder="Contact Person Name" name="contact_person" value={query.contact_person} onChange={formChangeHandler} style={{ width: 300 }} />
 
                             </div>
                             <div className="col-md-1"></div>
@@ -229,12 +229,12 @@ function UpdateSupplier() {
                             <div className="col-md-2"></div>
                             <div className="col-md-3">
                                 <h6>Contact No.</h6>
-                                <Input placeholder="Contact Number" name="contact" value={query.contact} onChange={formChangeHandler} style={{ width: 300 }} type="number" />
+                                <Input style={{ borderRadius: "8px " }}  placeholder="Contact Number" name="contact" value={query.contact} onChange={formChangeHandler} style={{ width: 300 }} type="number" />
 
                             </div>
                             <div className="col-md-3">
                                 <h6>State</h6>
-                                <Input placeholder="State" name="state" value={query.state} style={{ width: 300 }} disabled="True" />
+                                <Input style={{ borderRadius: "8px " }}  placeholder="State" name="state" value={query.state} style={{ width: 300 }} disabled="True" />
                                 <Select placeholder="Change State" style={{ width: 300 }} onChange={onSearchState} >
                                     {ind_states.map((state, index) => (
                                         <Option value={state.name}>{state.name}</Option>
@@ -244,7 +244,7 @@ function UpdateSupplier() {
                             </div>
                             <div className="col-md-3">
                                 <h6>GST No.</h6>
-                                <Input placeholder="GST Number" name="gst" value={query.gst} onChange={formChangeHandler} style={{ width: 300 }} />
+                                <Input style={{ borderRadius: "8px " }}  placeholder="GST Number" name="gst" value={query.gst} onChange={formChangeHandler} style={{ width: 300 }} />
 
                             </div>
                             <div className="col-md-1"></div>
@@ -252,7 +252,7 @@ function UpdateSupplier() {
 
                         <br /><br />
                         <div className="submit-button">
-                            <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                            <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
                         </div>
 
                     </div>

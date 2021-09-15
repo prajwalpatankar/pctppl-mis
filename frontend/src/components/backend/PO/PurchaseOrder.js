@@ -144,7 +144,7 @@ function PurchaseOrder() {
             key: 'details',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => { showModalDetails(record) }}>View Details</Button>
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { showModalDetails(record) }}>View Details</Button>
                 </Space>
             ),
         },
@@ -161,7 +161,7 @@ function PurchaseOrder() {
             key: 'completed',
             render: (text, record, index) => (
                 <Space size="middle">
-                    <Button type="button" size="small" style={{ background: "yellowgreen", color: "white"  }} onClick={() => { markCompleted(record, index) }}>Mark as Completed</Button>
+                    <Button type="button" style={{ borderRadius: "10px " }} size="small" style={{ background: "yellowgreen", color: "white", borderRadius: "10px"  }} onClick={() => { markCompleted(record, index) }}>Mark as Completed</Button>
                 </Space>
             ),
         },
@@ -184,7 +184,7 @@ function PurchaseOrder() {
     //         key: 'details',
     //         render: (text, record) => (
     //             <Space size="middle">
-    //                 <Button type="link" onClick={() => { showModalPO(record) }}>View Details</Button>
+    //                 <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { showModalPO(record) }}>View Details</Button>
     //             </Space>
     //         ),
     //     },
@@ -193,7 +193,7 @@ function PurchaseOrder() {
     //         key: 'action',
     //         render: (text, record) => (
     //             <Space size="middle">
-    //                 <Button type="link" onClick={handlePrint}>Print</Button>
+    //                 <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={handlePrint}>Print</Button>
     //             </Space>
     //         ),
     //     },
@@ -211,6 +211,9 @@ function PurchaseOrder() {
         setQuery({ ...query, project_id: value });
         axios.get(baseUrl.concat("requisition/?project_id=" + value + "&completed=N&isaprroved_master=Y"))
             .then(res => {
+                res.data.sort(function (a, b) {
+                    return b.id - a.id;
+                }); 
                 setReqs(res.data)
             })
 
@@ -279,7 +282,7 @@ function PurchaseOrder() {
                 message.info("Please mark Requisition as completed if necessary")
                 message.open({
                     type: 'success',
-                    content: <p>Purchase Order Successful. <Button type="link" onClick={handlePrint}>Click here to Print</Button></p>,
+                    content: <p>Purchase Order Successful. <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={handlePrint}>Click here to Print</Button></p>,
                     duration: 10,
                 });
                 // message.success("Purchase Order Made successfully", 5)
@@ -520,7 +523,7 @@ function PurchaseOrder() {
                         </div>
                         <div className="col-sm-3">
                             <h6>Contact Person Details</h6>
-                            <Input type="text" value={query.contact_person} placeholder="Contact Person" name="contact_person" onChange={event => formChangeHandler(event)} />
+                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.contact_person} placeholder="Contact Person" name="contact_person" onChange={event => formChangeHandler(event)} />
                         </div>
                         <div className="col-sm-2"></div>
                     </div>
@@ -529,17 +532,17 @@ function PurchaseOrder() {
                         <div className="col-sm-1"></div>
                         <div className="col-sm-3">
                             <h6>Payment Terms</h6>
-                            <Input type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} />
+                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} />
 
                         </div>
                         <div className="col-sm-3">
                             <h6>Other Terms</h6>
-                            <Input type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} />
+                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} />
 
                         </div>
                         <div className="col-sm-3">
                             <h6>Delivery Schedule</h6>
-                            <Input type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} />
+                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} />
 
                         </div>
                         <div className="col-sm-2"></div>
@@ -551,11 +554,11 @@ function PurchaseOrder() {
                         <div className="col-sm-1"></div>
                         <div className="col-sm-3">
                             <h6>Transport Charges</h6>
-                            <Input type="text" value={query.transport} placeholder="Transport Charges" name="transport" onChange={event => formChangeHandler(event)} />
+                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.transport} placeholder="Transport Charges" name="transport" onChange={event => formChangeHandler(event)} />
                         </div>
                         <div className="col-sm-3">
                             <h6>Other Charges</h6>
-                            <Input type="text" value={query.other_charges} placeholder="Other Charges" name="other_charges" onChange={event => formChangeHandler(event)} />
+                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.other_charges} placeholder="Other Charges" name="other_charges" onChange={event => formChangeHandler(event)} />
                         </div>
                         <div className="col-sm-5"></div>
                     </div>
@@ -563,7 +566,7 @@ function PurchaseOrder() {
 
 
                     <br /><br />
-                    {/* <Button type="button" onClick={addHandler}>Add</Button><br /><br /> */}
+                    {/* <Button type="button" style={{ borderRadius: "10px " }} onClick={addHandler}>Add</Button><br /><br /> */}
 
                     <div className="row print-center ">
                         <div className="center table-responsive col-lg-10 col-md-12">
@@ -583,13 +586,13 @@ function PurchaseOrder() {
                                 {inputFields.map((inputField, index) => (
                                     <tbody>
                                         <tr key={index} className="row">
-                                            {/* <td className="col-md-2"><Button type="button" onClick={() => showMaterial(index)}>Select Material</Button></td> */}
+                                            {/* <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial(index)}>Select Material</Button></td> */}
                                             <td className="col-md-4">{inputField.mat_name}</td>
-                                            <td className="col-md-2"><Input type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                            <td className="col-md-2"><Input type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                            <td className="col-md-2"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                                             <td className="col-md-1">{inputField.unit}</td>
-                                            <td className="col-md-1"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                                            <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>
                                     </tbody>
                                 ))}
@@ -603,7 +606,7 @@ function PurchaseOrder() {
 
                     <br /><br />
                     <div className="submit-button">
-                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                        <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
                     </div>
                 </form>
                 <br /><br />
@@ -658,7 +661,7 @@ function PurchaseOrder() {
                 <Modal
                     title="Requisition Details"
                     footer={[
-                        <Button type="button" key="back" onClick={handleCancelDetails}>Go back</Button>,
+                        <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
                     ]}
                     visible={ModalDetails.details} onCancel={handleCancelDetails}
                 >
@@ -675,7 +678,7 @@ function PurchaseOrder() {
                         <tbody>
                             {current_items.map((item, index) => (
                                 <tr>
-                                    <td><Button type="link" onClick={() => { selectMaterial(item) }} >Select</Button></td>
+                                    <td><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { selectMaterial(item) }} >Select</Button></td>
                                     <td>{item.mat_name}</td>
                                     <td>{item.quantity}</td>
                                     <td>{item.unit}</td>
@@ -690,7 +693,7 @@ function PurchaseOrder() {
                 <Modal
                     title="Purchase Order Details"
                     footer={[
-                        <Button type="button" key="back" onClick={handleCancelPO}>Go back</Button>,
+                        <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelPO}>Go back</Button>,
                     ]}
                     visible={ModalDetails.po} onCancel={handleCancelPO}
                 >
@@ -717,7 +720,7 @@ function PurchaseOrder() {
                 </Modal>
                 <div className="row">
                     <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
                     <div className="col-sm-1"><p> </p></div>
                 </div>
                 <br /><br /><br /><br />

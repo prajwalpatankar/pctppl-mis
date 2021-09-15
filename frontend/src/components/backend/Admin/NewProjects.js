@@ -160,11 +160,11 @@ function NewProjects() {
                                 <form onSubmit={event => submitHandler(event)}>
                                     <div>
                                         <h6>Project Name :</h6>
-                                        <Input type="text" name="project_name" placeholder="Project Name" value={formvalue.project_name} onChange={event => ChangeHandler(event)} /> <br /><br />
+                                        <Input style={{ borderRadius: "8px " }}  type="text" name="project_name" placeholder="Project Name" value={formvalue.project_name} onChange={event => ChangeHandler(event)} /> <br /><br />
                                     </div>
                                     <div>
                                         <h6>Project Identifier :</h6>
-                                        <Input type="text" name="identifier" placeholder="4 lettered Project Identifier" value={formvalue.identifier} onChange={event => IdentifierChangeHandler(event)} /> <br /><br />
+                                        <Input style={{ borderRadius: "8px " }}  type="text" name="identifier" placeholder="4 lettered Project Identifier" value={formvalue.identifier} onChange={event => IdentifierChangeHandler(event)} /> <br /><br />
                                         {formvalue.identifier === "" ?
                                             <p></p>
                                             :
@@ -179,7 +179,7 @@ function NewProjects() {
                                     </div>
                                     <div>
                                         <h6>Location / Address :</h6>
-                                        <Input type="text" name="location" placeholder="Location" value={formvalue.location} onChange={event => ChangeHandler(event)} /> <br /><br />
+                                        <Input style={{ borderRadius: "8px " }}  type="text" name="location" placeholder="Location" value={formvalue.location} onChange={event => ChangeHandler(event)} /> <br /><br />
                                     </div>
                                     <div>
                                         <h6>Select Project Manager :</h6>
@@ -216,7 +216,7 @@ function NewProjects() {
                                         </Select><br /><br />
                                     </div>
                                     <div>
-                                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                                        <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
                                     </div>
                                 </form> <br /><br />
                             </div>

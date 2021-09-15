@@ -205,6 +205,9 @@ function GoodsReceiptNote() {
         // setQuery({ ...query, project_id: value });
         axios.get(baseUrl.concat("po?project_id=" + value))
             .then(res => {
+                res.data.sort(function (a, b) {
+                    return b.id - a.id;
+                }); 
                 setPos(res.data);
             })
             .catch(error => {
@@ -360,7 +363,7 @@ function GoodsReceiptNote() {
 
                 message.open({
                     type: 'success',
-                    content: <p>GRN made successfully. <Button type="link" onClick={handlePrint}>Click here to Print</Button></p>,
+                    content: <p>GRN made successfully. <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={handlePrint}>Click here to Print</Button></p>,
                     duration: 10,
                 });
                 console.log(response)
@@ -500,8 +503,8 @@ function GoodsReceiptNote() {
                         </div>
                         <div className="col-sm-3">
                             <h6>Select a Purchase Order</h6>
-                            <Input disabled="true" className="col-sm-9" placeholder="Purchase Order ID" name="po_id" value={query.po_id} /> &nbsp;
-                            <Button type="button" onClick={() => showPO()}>Select PO</Button>
+                            <Input style={{ borderRadius: "8px " }}  disabled="true" className="col-sm-9" placeholder="Purchase Order ID" name="po_id" value={query.po_id} /> &nbsp;
+                            <Button type="button" style={{ borderRadius: "10px " }} onClick={() => showPO()}>Select PO</Button>
                         </div>
                         <div className="col-sm-3">
                             <h6>Select Supplier</h6>
@@ -520,16 +523,16 @@ function GoodsReceiptNote() {
                         <div className="col-sm-1"></div>
                         <div className="col-sm-3">
                             <h6>Vehicle Number</h6>
-                            <Input type="text" value={query.vehicle_no} placeholder="Vehicle Number" name="vehicle_no" onChange={event => formChangeHandler(event)} /> &nbsp;
+                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.vehicle_no} placeholder="Vehicle Number" name="vehicle_no" onChange={event => formChangeHandler(event)} /> &nbsp;
                         </div>
                         <div className="col-sm-3">
                             <h6>Challan Number</h6>
-                            <Input type="text" value={query.challan_no} placeholder="Challan Number" name="challan_no" onChange={event => formChangeHandler(event)} /> &nbsp;
+                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.challan_no} placeholder="Challan Number" name="challan_no" onChange={event => formChangeHandler(event)} /> &nbsp;
 
                         </div>
                         <div className="col-sm-3">
                             <h6>Challan Date</h6>
-                            <Input type="date" placeholder="Challan Date" name="challan_date" onChange={event => changeDateHandler(event)} /> &nbsp;
+                            <Input style={{ borderRadius: "8px " }}  type="date" placeholder="Challan Date" name="challan_date" onChange={event => changeDateHandler(event)} /> &nbsp;
                         </div>
                         <div className="col-sm-2"></div>
                     </div>
@@ -540,7 +543,7 @@ function GoodsReceiptNote() {
                     <div className="row">
                         <div className="col-sm-1"></div>
                         <div className="col-sm-10">
-                            <Button type="button" style={{ background: "yellowgreen", color: "white" }} onClick={addHandler}>+ Add Row</Button>
+                            <Button type="button" style={{ borderRadius: "10px " }} style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
                         </div>
                         <div className="col-sm-1"></div>
                     </div>
@@ -565,14 +568,14 @@ function GoodsReceiptNote() {
                                 {inputFields.map((inputField, index) => (
                                     <tbody>
                                         <tr key={index} className="row">
-                                            <td className="col-md-1"><Button type="button" size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
+                                            <td className="col-md-1"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
                                             <td className="col-md-3">{inputField.mat_name}</td>
-                                            <td className="col-md-1"><Input type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
-                                            <td className="col-md-1"><Input type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
-                                            <td className="col-md-2"><Input type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
-                                            <td className="col-md-2"><Input type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-1"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
+                                            <td className="col-md-1"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
                                             <td className="col-md-1">{inputField.unit}</td>
-                                            <td className="col-md-1"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                                            <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>
                                     </tbody>
                                 ))}
@@ -581,7 +584,7 @@ function GoodsReceiptNote() {
                     </div>
                     <br /><br />
                     <div className="submit-button">
-                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                        <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
                     </div>
                 </form>
                 <br /><br />
@@ -615,7 +618,7 @@ function GoodsReceiptNote() {
                 <br /><br /><br /><br />
                 <div className="row">
                     <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
                     <div className="col-sm-1"><p> </p></div>
                 </div>
                 <br /><br /><br /><br />

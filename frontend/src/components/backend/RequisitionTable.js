@@ -39,7 +39,7 @@ class RequisitionTable extends Component {
   getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
-        <Input
+        <Input style={{ borderRadius: "8px " }} 
           ref={node => {
             this.searchInput = node;
           }}
@@ -63,7 +63,7 @@ class RequisitionTable extends Component {
             Reset
               </Button>
           <Button
-            type="link"
+            type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} 
             size="small"
             onClick={() => {
               confirm({ closeDropdown: false });

@@ -243,58 +243,73 @@ function DeliveryChallan() {
 
                 message.open({
                     type: 'success',
-                    content: <p>Delivery Challan made successfully. <Button type="link" onClick={handlePrint}>Click here to Print</Button></p>,
+                    content: <p>Delivery Challan made successfully</p>,
                     duration: 10,
                 });
-                console.log(response)
 
                 // updating stock
 
-                // let limit = query.initialItemRow.length
-                // var proj = query.project_id;
-                // for (var i = 0; i < limit; i++) {
-                //     var current = query.initialItemRow[i].rec_quant;
-                //     var mat = query.initialItemRow[i].mat_id;
-                //     var matid = query.initialItemRow[i].mat_id;
-                //     var matname = query.initialItemRow[i].mat_name;
-                //     var matunit = query.initialItemRow[i].unit;
-                //     axios.get(baseUrl.concat("stock/?project_id=" + proj + "&mat_id=" + mat))
-                //         .then(response => {
-                //             console.log("RESPONSE OF GET : ", response.data)
-                //             console.log("LENGTH OF RESPONSE", response.data.length)
-                //             if (response.data.length === 0) {
-                //                 axios.post(baseUrl.concat("stock/"), {
-                //                     project_id: proj,
-                //                     recieved: current,
-                //                     quantity: current,
-                //                     mat_id: matid,
-                //                     mat_name: matname,
-                //                     unit: matunit,
-                //                 })
-                //                     .then(response => {
-                //                         console.log(response)
-                //                     })
-                //             } else {
-                //                 var id = response.data.id
-                //                 var total_recieved = response.data.recieved + current;
-                //                 var quant = response.data.quantity + current;
-                //                 axios.put(baseUrl.concat("stock/" + id + "/"), { recieved: total_recieved, quantity: quant })
-                //                     .then(response => {
-                //                         console.log(response)
-                //                     })
-                //                     .catch(error => {
-                //                         console.log(error)
-                //                     })
-                //             }
+                let limit = query.initialItemRow.length
+                var to_proj = query.to_project;
+                var from_proj = query.from_project;
+                for (var i = 0; i < limit; i++) {
+                    var current = query.initialItemRow[i].quantity;
+                    var mat = query.initialItemRow[i].mat_id;
+                    var matid = query.initialItemRow[i].mat_id;
+                    var matname = query.initialItemRow[i].mat_name;
+                    var matunit = query.initialItemRow[i].unit;
 
-                //         })
-                //         .catch(error => {
-                //             console.log(error)
-                //         })
-                // }
+                    // Addition
+                    axios.get(baseUrl.concat("stock/?project_id=" + to_proj + "&mat_id=" + mat))
+                        .then(response => {
+                            if (response.data.length === 0) {
+                                axios.post(baseUrl.concat("stock/"), {
+                                    project_id: to_proj,
+                                    recieved: current,
+                                    quantity: current,
+                                    mat_id: matid,
+                                    mat_name: matname,
+                                    unit: matunit,
+                                })
+                                    .catch(err => {
+                                        console.log(err)
+                                    })
+                            } else {
+                                let update = response.data[0];
+                                update.recieved = parseFloat(update.recieved) + parseFloat(current);
+                                update.quantity = parseFloat(update.quantity) + parseFloat(current);
+                                var id = response.data[0].id
+                                axios.patch(baseUrl.concat("stock/" + id + "/"), update)
+                                    .catch(error => {
+                                        console.log(error)
+                                    })
+                            }
+                        })
+                        .then(res => {
+
+                            // Subtraction
+                            axios.get(baseUrl.concat("stock/?project_id=" + from_proj + "&mat_id=" + mat))
+                                .then(response1 => {
+                                    let update1 = response1.data[0];
+                                    update1.quantity = parseFloat(update1.quantity) - parseFloat(current);
+                                    axios.patch(baseUrl.concat("stock/" + update1.id + "/"), update1)
+                                        .catch(error => {
+                                            console.log(error)
+                                        })
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                })
+                        })
+
+                        .catch(error => {
+                            console.log(error)
+                        })
+                }
 
                 // clearing fields
                 setQuery({
+                    ...query,
                     initialItemRow: [],
                 })
                 setInputField([
@@ -305,6 +320,13 @@ function DeliveryChallan() {
                         unit: "---",
                     },
                 ])
+                
+            })
+            .then(function() {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 200);
+                
             })
             .catch(error => {
                 console.log(error.response.status)
@@ -313,14 +335,6 @@ function DeliveryChallan() {
                     setloggedin(false);
                 }
             })
-    }
-
-
-    // --------------------------------------------------------------------
-    // Print Api
-
-    const handlePrint = () => {
-        console.log("Printing....")
     }
 
     // --------------------------------------------------------------------
@@ -370,14 +384,14 @@ function DeliveryChallan() {
 
 
 
-                    {/* if needed to add another field <Input type="text" value={query.grn_id} placeholder="grn_id" name="grn_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp; */}
+                    {/* if needed to add another field <Input style={{ borderRadius: "8px " }}  type="text" value={query.grn_id} placeholder="grn_id" name="grn_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp; */}
 
 
                     <br /><br /><br /><br />
                     <div className="row">
                         <div className="col-sm-1"></div>
                         <div className="col-sm-10">
-                            <Button type="button" style={{ background: "yellowgreen", color: "white" }} onClick={addHandler}>+ Add Row</Button>
+                            <Button type="button" style={{ borderRadius: "10px " }} style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
                         </div>
                         <div className="col-sm-1"></div>
                     </div>
@@ -400,12 +414,12 @@ function DeliveryChallan() {
                                 {inputFields.map((inputField, index) => (
                                     <tbody>
                                         <tr key={index} className="row">
-                                            <td className="col-md-2"><Button type="button" size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
+                                            <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
                                             <td className="col-md-4">{inputField.mat_name}</td>
-                                            <td className="col-md-2"><Input type="text" disabled="true" value={inputField.zzmax} /></td>
-                                            <td className="col-md-2"><Input type="text" value={inputField.quantity} placeholder={`Available : ${inputField.zzmax}`} name="quantity" onChange={event => changeHandler(index, event)} onBlur={() => blurHandler(inputField.quantity, inputField.zzmax)} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" disabled="true" value={inputField.zzmax} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.quantity} placeholder={`Available : ${inputField.zzmax}`} name="quantity" onChange={event => changeHandler(index, event)} onBlur={() => blurHandler(inputField.quantity, inputField.zzmax)} /></td>
                                             <td className="col-md-1">{inputField.unit}</td>
-                                            <td className="col-md-1"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                                            <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>
                                     </tbody>
                                 ))}
@@ -414,7 +428,7 @@ function DeliveryChallan() {
                     </div> <br />
 
                     <div className="submit-button">
-                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                        <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
                     </div>
                 </form>
                 <br /><br />
@@ -434,7 +448,7 @@ function DeliveryChallan() {
                 <br /><br /><br /><br />
                 <div className="row">
                     <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
                     <div className="col-sm-1"><p> </p></div>
                 </div>
                 <br /><br /><br /><br /><br /><br /><br /><br />

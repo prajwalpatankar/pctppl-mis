@@ -388,7 +388,7 @@ function Requisition() {
           <div className="row">
             <div className="col-sm-1"></div>
             <div className="col-sm-10">
-              <Button type="button" style={{ background: "yellowgreen", color: "white" }} onClick={addHandler}>+ Add Row</Button>
+              <Button type="button" style={{ borderRadius: "10px " }} style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
             </div>
             <div className="col-sm-1"></div>
           </div>
@@ -411,13 +411,13 @@ function Requisition() {
                 {inputFields.map((inputField, index) => (
                 <tbody>
                     <tr key={index} className="row">
-                        <td className="col-md-1"><Button type="button" size="small" onClick={() => showMaterial(index)}>Select</Button></td>
+                        <td className="col-md-1"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select</Button></td>
                         <td className="col-md-2">{inputField.mat_name}</td>
-                        <td className="col-md-4"><Input type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
-                        <td className="col-md-1"><Input required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                        <td className="col-md-4"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
+                        <td className="col-md-1"><Input style={{ borderRadius: "8px " }}  required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                         <td className="col-md-1">{inputField.unit}</td>
-                        <td className="col-md-2"><Input type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
-                        <td className="col-md-1"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                        <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
+                        <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                     </tr>               
                 </tbody>
                 ))}
@@ -439,7 +439,7 @@ function Requisition() {
 
           <br /><br />
           <div className="submit-button">
-            <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+            <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
           </div>
         </form>
         <br /><br />
@@ -451,7 +451,7 @@ function Requisition() {
         <ViewReq />
         <div className="row">
           <div className="col-sm-10"><p> </p></div>
-          <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+          <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
           <div className="col-sm-1"><p> </p></div>
         </div>
         <br /><br /><br /><br />

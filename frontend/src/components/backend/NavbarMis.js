@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './../../App.css';
 import axios from 'axios';
-import { message } from 'antd';
+import { message, Button } from 'antd';
 import jwt_decode from 'jwt-decode';
+import { useHistory } from "react-router-dom";
 
 
 function  NavbarMis() {
     const baseUrl = 'http://localhost:8000/';
     const [l,setL] = useState(false);
+    const [mob, setMob] = useState(false);
+    
+    const history = useHistory();
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -30,37 +34,43 @@ function  NavbarMis() {
         }, 200);
     }, [])
 
+    useLayoutEffect(() => {
+        window.addEventListener('resize', () => {   //check screensize
+            if(window.innerWidth < 1000) {
+                setMob(true);
+            } else {
+                setMob(false);
+            }
+        });
+    })
+
 
     const handleLogout = () => {
         delete axios.defaults.headers.common["Authorization"];
         localStorage.removeItem('token');
         message.success("Successfully Logged Out")
         setL(false);
+        history.push("/")
     }
 
     if (l) {
-        // if (this.state.isMobile) {
-        //     return (
-        //         <div className="nav-display">
-        //             <Navbar fixed="top" bg="white" expand="lg">
-        //                 <Navbar.Brand><Link to="/"><img src="assets/img/final_logo_PNG.png" alt="pctppl_logo" height="60px" /></Link></Navbar.Brand>
-        //                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        //                 <Navbar.Collapse id="basic-navbar-nav">
-        //                     <Nav className="mr-auto mobile-nav-ul-pp">
-        //                         <Nav.Link><Link to="/1Menu"><h6>Main Menu</h6></Link></Nav.Link>
-        //                         <Nav.Link onClick={this.handleLogout}><Link to="/"><h6>Log Out</h6></Link></Nav.Link>
-        //                     </Nav>
-        //                 </Navbar.Collapse>
-        //             </Navbar>
-        //             {/* <Navbar fixed="top" bg="white" expand="lg">
-        //                 <Navbar.Brand><Link to="/"><img src="assets/img/final_logo_PNG.png" alt="pctppl_logo" height="60px" /></Link></Navbar.Brand>
-        //                 <Nav.Link><Link to="/1Menu"><h6>Main Menu</h6></Link></Nav.Link>
-        //                 <Nav.Link onClick={this.handleLogout}><Link to="/"><h6>Log Out</h6></Link></Nav.Link>
-        //             </Navbar> */}
-        //         </div>
-        //     )
-        // }
-        // else {
+        if (mob) {
+            return (
+                <div className="nav-display">
+                    <Navbar fixed="top" bg="white" expand="lg">
+                        <Navbar.Brand><Link to="/"><img src="assets/img/final_logo_PNG.png" alt="pctppl_logo" height="60px" /></Link></Navbar.Brand>
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="mr-auto mobile-nav-ul-pp print-right">
+                                <Nav.Link><Link to="/1Menu"><h6><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}>Main Menu</Button></h6></Link></Nav.Link>
+                                <Nav.Link onClick={handleLogout}><Link to="/"><h6><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}>Log Out</Button></h6></Link></Nav.Link>
+                            </Nav>
+                        </Navbar.Collapse>
+                    </Navbar>
+                </div>
+            )
+        }
+        else {
             return (
                 <div className="nav-display">
                     <header id="header" className="fixed-top">
@@ -76,25 +86,15 @@ function  NavbarMis() {
                     </header>
                 </div>
             );
-        // }
+        }
     } else {
-        // if (this.state.isMobile) {
-        //     return (
-        //         <div>
-        //             <Navbar fixed="top" bg="white" expand="lg">
-        //                 <Navbar.Brand><Link to="/"><img src="assets/img/final_logo_PNG.png" alt="pctppl_logo" height="60px" /></Link></Navbar.Brand>
-        //             </Navbar>
-        //         </div>
-        //     )
-        // }
-        // else {
             return (
                 <div>
-                    <header id="header" className="fixed-top">
+                    {/* <header id="header" className="fixed-top">
                         <div className="container d-flex align-items-center">
                             <h1 className="logo mr-auto"><Link to="/"><img src="assets/img/final_logo_PNG.png" alt="pctppl_logo"></img></Link></h1>
                         </div>
-                    </header>
+                    </header> */}
                 </div>
             );
         // }

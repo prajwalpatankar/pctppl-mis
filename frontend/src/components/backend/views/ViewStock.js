@@ -123,7 +123,7 @@ function ViewStock() {
             key: 'details',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => { handleIndividualPrint(record) }}>Print Details</Button>
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { handleIndividualPrint(record) }}>Print Details</Button>
                 </Space>
             ),
         },
@@ -182,10 +182,10 @@ function ViewStock() {
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                             </svg>&nbsp;&nbsp;
-                            Search Material 
+                            Search Material
                         </h6>
 
-                        <Input
+                        <Input style={{ borderRadius: "8px " }} 
                             placeholder="Material Name"
                             value={value}
                             onChange={e => {
@@ -201,7 +201,7 @@ function ViewStock() {
                     <p className="col-md-9" />
                 </div>
                 <br />
-                <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={stock} columns={columns} />
+                <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={stock} columns={columns} />
                 <br /><br />
                 {printValid ?
                     <div className="submit-button">

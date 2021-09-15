@@ -282,11 +282,11 @@ function Issue() {
                                 </thead>
                                 <tbody>
                                     <tr className="row">
-                                        <td className="col-md-2"><Button type="button" onClick={() => showMaterial()}>Select Material</Button></td>
+                                        <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial()}>Select Material</Button></td>
                                         <td className="col-md-4">{query.mat_name}</td>
-                                        <td className="col-md-2"><Input type="text" value={query.quantity} placeholder="Quantity" name="quantity" onChange={handleformChange} /></td>
+                                        <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={query.quantity} placeholder="Quantity" name="quantity" onChange={handleformChange} /></td>
                                         <td className="col-md-2">{query.unit}</td>
-                                        <td className="col-md-2"><Button danger="true" size="small" type="button" onClick={() => { deleteRowHandler() }}>Delete</Button></td>
+                                        <td className="col-md-2"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler() }}>Delete</Button></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -294,7 +294,7 @@ function Issue() {
                     </div> <br />
 
                     <div className="submit-button">
-                        <Button type="submit" style={{ background: "dodgerblue", color: "white" }} onClick={submitHandler}>Submit</Button>
+                        <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
                     </div>
                 </form>
                 <br /><br />
@@ -314,7 +314,7 @@ function Issue() {
                 <br /><br />
                 <div className="row">
                     <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
                     <div className="col-sm-1"><p> </p></div>
                 </div>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />

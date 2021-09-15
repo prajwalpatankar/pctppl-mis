@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { useEffect } from 'react';
 import axios from 'axios';
 import NavbarMis from './components/backend/NavbarMis';
-import Master from './components/backend/Master';
 import Requisition from './components/backend/Req/Requisition';
 import RequisitionSite from './components/backend/Requisition_site';
 import PurchaseOrder from './components/backend/PO/PurchaseOrder';
@@ -31,6 +30,7 @@ import ViewPO from './components/backend/views/ViewPO';
 import ViewGRN from './components/backend/views/ViewGRN';
 import ViewSuppliers from './components/backend/views/ViewSuppliers';
 import RequisitionView from './components/backend/Req/RequisitionView';
+import ReqMaster from './components/backend/Req/ReqMaster';
 
 
 function App() {
@@ -57,7 +57,7 @@ function App() {
           <Route path='/1Menu' component={Menu} />          
           <Route path='/1newuser' component={NewUser} />
           <Route path='/1projects' component={NewProjects} />
-          <Route path='/1master' component={Master} />
+          <Route path='/1master' component={ReqMaster} />
           <Route path='/1po' component={PurchaseOrder} />
           <Route path='/1grn' component={GoodsReceiptNote} />
           <Route path='/1stock' component={ViewStock} />

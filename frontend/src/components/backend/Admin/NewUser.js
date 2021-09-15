@@ -33,23 +33,30 @@ function NewUser() {
                         setAdmin(true);
                     }
                 })
+                .then(() =>{
+                    axios.get(baseUrl.concat("role/"))
+                    .then(res => {
+                        setRolesList(res.data);
+                    })
+                    .then(() =>{
+                        setR(true);
+                    })
+                })
                 .catch(error => {
                     console.log(error.response.status)
                     if (error.response.status === 401) {
                         localStorage.removeItem('token')
                         setloggedin(false);
+                        setR(true);
                     }
                 })
         } else {
             setloggedin(false);
             delete axios.defaults.headers.common["Authorization"];
-        }
-        axios.get(baseUrl.concat("role/"))
-            .then(res => {
-                setRolesList(res.data);
-            })
-        setTimeout(() => {
             setR(true);
+        }
+
+        setTimeout(() => {
             return 0;
         }, 50);
     }, [])
@@ -147,11 +154,11 @@ function NewUser() {
                             <form onSubmit={event => handle_signup(event)}>
                                 <div>
                                     <h6>Username</h6>
-                                    <Input type="text" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} /> <br /><br />
+                                    <Input style={{ borderRadius: "8px " }}  type="text" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} /> <br /><br />
                                 </div>
                                 <div>
                                     <h6>Password</h6>
-                                    <Input type="password" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} /> <br /><br />
+                                    <Input style={{ borderRadius: "8px " }}  type="password" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} /> <br /><br />
                                 </div>
                                 <div>
                                     <h6>Assign a Role</h6>

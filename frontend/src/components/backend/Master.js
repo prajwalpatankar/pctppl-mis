@@ -157,7 +157,7 @@ class Master extends Component {
                                         <tr>
                                             <td> {index + 1}</td>
                                             <td>{requisition.req_id}</td>
-                                            <td><Button type="link" onClick={(e) => { this.showModalDetails(e, requisition) }}>view details</Button></td>
+                                            <td><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={(e) => { this.showModalDetails(e, requisition) }}>view details</Button></td>
                                             <td><Button type="submit" size="small" onClick={(e) => { this.approveHandler(e, requisition) }}>Approve</Button></td>
                                             <td><Button type="submit" size="small" danger="true" onClick={(e) => { this.showModal(e, requisition) }}>Reject</Button></td>
                                         </tr>
@@ -187,8 +187,8 @@ class Master extends Component {
                         title="Reject Requisition ?"
                         visible={this.state.setIsModalVisible}
                         footer={[
-                            <Button type="button" key="back" onClick={this.handleCancel}>Go back</Button>,
-                            <Button type="button" danger="true" onClick={this.rejectHandler}>Reject</Button>
+                            <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={this.handleCancel}>Go back</Button>,
+                            <Button type="button" style={{ borderRadius: "10px " }} danger="true" onClick={this.rejectHandler}>Reject</Button>
                         ]}
                         onCancel={this.handleCancel}
                     >
@@ -198,7 +198,7 @@ class Master extends Component {
                     <Modal
                         title="Requisition Details"
                         footer={[
-                            <Button type="button" key="back" onClick={this.handleCancelDetails}>Go back</Button>,
+                            <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={this.handleCancelDetails}>Go back</Button>,
                         ]}
                         visible={this.state.setIsModalVisibleDetails} onCancel={this.handleCancelDetails}
                     >
@@ -243,8 +243,8 @@ class Master extends Component {
                                     <tr>
                                         <td>{index + 1}</td>
                                         <td>{requisition.req_id}</td>
-                                        <td><Button type="link" onClick={(e) => { this.showModalDetails(e, requisition) }}>view details</Button></td>
-                                        <td><Button type="link" danger="true" onClick={(e) => { this.showModal(e, requisition) }}>Change</Button></td>
+                                        <td><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={(e) => { this.showModalDetails(e, requisition) }}>view details</Button></td>
+                                        <td><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  danger="true" onClick={(e) => { this.showModal(e, requisition) }}>Change</Button></td>
                                     </tr>
                                 ))}
                             </tbody>
