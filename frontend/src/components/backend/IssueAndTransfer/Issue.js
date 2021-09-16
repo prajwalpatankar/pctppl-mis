@@ -278,7 +278,7 @@ function Issue() {
                                     <tr className="row">
                                         <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial()}>Select Material</Button></td>
                                         <td className="col-md-4">{query.mat_name}</td>
-                                        <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={query.quantity} placeholder="Quantity" name="quantity" onChange={handleformChange} /></td>
+                                        <td className="col-md-2"><Input style={{ borderRadius: "8px" }}  type="text" value={query.quantity} placeholder="Quantity" name="quantity" onChange={handleformChange} /></td>
                                         <td className="col-md-2">{query.unit}</td>
                                         <td className="col-md-2"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler() }}>Delete</Button></td>
                                     </tr>

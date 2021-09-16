@@ -58,6 +58,11 @@ const StockIndividualPrint = (props) => {
                                                 .then(resST => {
                                                     console.log("Transfers : ", resST.data)
                                                     setTransfers(resST.data);
+                                                    if(response.data.length !== 0) {
+                                                        document.title = "Stock Staement - " + response.data[0].initialItemRow[0].mat_name + " -- " + response.data[0].created_date_time.substring(8, 10) + "-" + response.data[0].created_date_time.substring(5, 7) + "-" +  response.data[0].created_date_time.substring(0, 4)
+                                                    } else if (resST.data.length !== 0) {
+                                                        document.title = "Stock Staement - " + resST.data[0].initialItemRow[0].mat_name + " -- " + resST.data[0].created_date_time.substring(8, 10) + "-" + resST.data[0].created_date_time.substring(5, 7) + "-" +  resST.data[0].created_date_time.substring(0, 4)
+                                                    }    
                                                 })
                                                 .then(() => {
                                                     setComplete(true);

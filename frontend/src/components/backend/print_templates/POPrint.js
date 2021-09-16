@@ -50,7 +50,7 @@ const POPrint = (props) => {
             axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
                 .then(res => {
                     var id = props.match.params.id.substring(1);
-
+                    
 
                     axios.get(baseUrl.concat("hsn"))
                         .then(response => {
@@ -58,7 +58,7 @@ const POPrint = (props) => {
                                 .then(res => {
                                     setPo(res.data)
                                     setRows(res.data.initialItemRow)
-
+                                    
                                     axios.get(baseUrl.concat("projects/" + res.data.project_id))
                                         .then(res1 => {
                                             setProject(res1.data);
@@ -67,6 +67,9 @@ const POPrint = (props) => {
                                                 .then(res2 => {
                                                     setSupplier(res2.data);
                                                     totalValue(res.data, response.data);
+
+                                                    document.title = "PO - " + res2.data.supp_name + " -- " + res.data.created_date_time.substring(8, 10) + "-" + res.data.created_date_time.substring(5, 7) + "-" +  res.data.created_date_time.substring(0, 4)
+
                                                 })
 
 

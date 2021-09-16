@@ -78,7 +78,7 @@ function UpdateSupplier() {
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button onClick={() => { updateRecord(record) }} type="button">Select</Button>
+                    <Button style={{ borderRadius: "10px" }} onClick={() => { updateRecord(record) }} type="button">Select</Button>
                 </Space>
             ),
         },
@@ -189,7 +189,7 @@ function UpdateSupplier() {
                     <span className="col-sm-1"> </span>
                     <span className="col-sm-10">
                         <h6>Search Supplier</h6>
-                        <Search placeholder="Search Supplier" name="searchname" onChange={event => searchChangeHandler(event)} onSearch={onSearchSupp} enterButton  />
+                        <Search placeholder="Search Supplier" name="searchname" onChange={event => searchChangeHandler(event)} onSearch={onSearchSupp} style={{ borderRadius: "8px", width: 300 }} enterButton  />
 
                     </span>
                     <span className="col-sm-1"> </span>

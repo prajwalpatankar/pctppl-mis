@@ -49,8 +49,11 @@ const GRNPrint = (props) => {
                                     setProject(res1.data);
 
                                     axios.get(baseUrl.concat("supplier/" + res.data.supp_id))
-                                        .then(res => {
-                                            setSupplier(res.data);
+                                        .then(res2 => {
+                                            document.title = "GRN - " + res2.data.supp_name + " -- " + res.data.created_date_time.substring(8, 10) + "-" + res.data.created_date_time.substring(5, 7) + "-" +  res.data.created_date_time.substring(0, 4)
+
+                                            
+                                            setSupplier(res2.data);
                                             setComplete(true);
                                             window.print()
                                         })

@@ -350,6 +350,47 @@ function GoodsReceiptNote() {
     // --------------------------------------------------------------------
     // Submission
 
+
+    const HandleSubmitStockUpdates = (updateQuery, proj) => {
+        var current = updateQuery.rec_quant;
+        var mat = updateQuery.mat_id;
+        var matid = updateQuery.mat_id;
+        var matname = updateQuery.mat_name;
+        var matunit = updateQuery.unit;
+        axios.get(baseUrl.concat("stock/?project_id=" + proj + "&mat_id=" + mat))
+            .then(response => {
+                if (response.data.length === 0) {
+                    axios.post(baseUrl.concat("stock/"), {
+                        project_id: proj,
+                        recieved: current,
+                        quantity: current,
+                        mat_id: matid,
+                        mat_name: matname,
+                        unit: matunit,
+                    })
+                        .then(response => {
+                            console.log(response)
+                        })
+                } else {
+                    let update = response.data[0];
+                    update.recieved = parseFloat(update.recieved) + parseFloat(current);
+                    update.quantity = parseFloat(update.quantity) + parseFloat(current);
+                    var id = response.data[0].id
+                    axios.patch(baseUrl.concat("stock/" + id + "/"), update)
+                        .then(response => {
+                            console.log(response)
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                }
+
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
     const submitHandler = (e) => {
         e.preventDefault();
         console.log(query)
@@ -373,43 +414,44 @@ function GoodsReceiptNote() {
                 let limit = query.initialItemRow.length
                 var proj = query.project_id;
                 for (var i = 0; i < limit; i++) {
-                    var current = query.initialItemRow[i].rec_quant;
-                    var mat = query.initialItemRow[i].mat_id;
-                    var matid = query.initialItemRow[i].mat_id;
-                    var matname = query.initialItemRow[i].mat_name;
-                    var matunit = query.initialItemRow[i].unit;
-                    axios.get(baseUrl.concat("stock/?project_id=" + proj + "&mat_id=" + mat))
-                        .then(response => {
-                            if (response.data.length === 0) {
-                                axios.post(baseUrl.concat("stock/"), {
-                                    project_id: proj,
-                                    recieved: current,
-                                    quantity: current,
-                                    mat_id: matid,
-                                    mat_name: matname,
-                                    unit: matunit,
-                                })
-                                    .then(response => {
-                                        console.log(response)
-                                    })
-                            } else {
-                                let update = response.data[0];
-                                update.recieved = parseFloat(update.recieved) + parseFloat(current);
-                                update.quantity = parseFloat(update.quantity) + parseFloat(current);
-                                var id = response.data[0].id
-                                axios.patch(baseUrl.concat("stock/" + id + "/"), update)
-                                    .then(response => {
-                                        console.log(response)
-                                    })
-                                    .catch(error => {
-                                        console.log(error)
-                                    })
-                            }
+                    HandleSubmitStockUpdates(query.initialItemRow[i], proj);
+                    // var current = query.initialItemRow[i].rec_quant;
+                    // var mat = query.initialItemRow[i].mat_id;
+                    // var matid = query.initialItemRow[i].mat_id;
+                    // var matname = query.initialItemRow[i].mat_name;
+                    // var matunit = query.initialItemRow[i].unit;
+                    // axios.get(baseUrl.concat("stock/?project_id=" + proj + "&mat_id=" + mat))
+                    //     .then(response => {
+                    //         if (response.data.length === 0) {
+                    //             axios.post(baseUrl.concat("stock/"), {
+                    //                 project_id: proj,
+                    //                 recieved: current,
+                    //                 quantity: current,
+                    //                 mat_id: matid,
+                    //                 mat_name: matname,
+                    //                 unit: matunit,
+                    //             })
+                    //                 .then(response => {
+                    //                     console.log(response)
+                    //                 })
+                    //         } else {
+                    //             let update = response.data[0];
+                    //             update.recieved = parseFloat(update.recieved) + parseFloat(current);
+                    //             update.quantity = parseFloat(update.quantity) + parseFloat(current);
+                    //             var id = response.data[0].id
+                    //             axios.patch(baseUrl.concat("stock/" + id + "/"), update)
+                    //                 .then(response => {
+                    //                     console.log(response)
+                    //                 })
+                    //                 .catch(error => {
+                    //                     console.log(error)
+                    //                 })
+                    //         }
 
-                        })
-                        .catch(error => {
-                            console.log(error)
-                        })
+                    //     })
+                    //     .catch(error => {
+                    //         console.log(error)
+                    //     })
                 }
 
 
@@ -570,10 +612,10 @@ function GoodsReceiptNote() {
                                         <tr key={index} className="row">
                                             <td className="col-md-1"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
                                             <td className="col-md-3">{inputField.mat_name}</td>
-                                            <td className="col-md-1"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
-                                            <td className="col-md-1"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-1"><Input style={{ borderRadius: "8px" }}  type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
+                                            <td className="col-md-1"><Input style={{ borderRadius: "8px" }}  type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px" }}  type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px" }}  type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
                                             <td className="col-md-1">{inputField.unit}</td>
                                             <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>

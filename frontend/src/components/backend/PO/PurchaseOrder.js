@@ -284,12 +284,7 @@ function PurchaseOrder() {
         axios.post(baseUrl.concat("po/"), query)
             .then(response => {
                 message.info("Please mark Requisition as completed if necessary")
-                message.open({
-                    type: 'success',
-                    content: <p>Purchase Order Successful. <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={handlePrint}>Click here to Print</Button></p>,
-                    duration: 10,
-                });
-                // message.success("Purchase Order Made successfully", 5)
+                message.success("Purchase Order Made successfully", 5)
                 console.log(response)
 
                 var proj_string = query.po_id.substring(0, 8);
@@ -484,9 +479,6 @@ function PurchaseOrder() {
     // --------------------------------------------------------------------
     // Print Api
 
-    const handlePrint = () => {
-        console.log("Printing....")
-    }
 
     // --------------------------------------------------------------------
     // html
@@ -598,9 +590,9 @@ function PurchaseOrder() {
                                                 <tr key={index} className="row">
                                                     {/* <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial(index)}>Select Material</Button></td> */}
                                                     <td className="col-md-4">{inputField.mat_name}</td>
-                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }} type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }} type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px" }} type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px" }} type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px" }} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                                                     <td className="col-md-1">{inputField.unit}</td>
                                                     <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                                 </tr>

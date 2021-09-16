@@ -229,6 +229,61 @@ function DeliveryChallan() {
     // --------------------------------------------------------------------
     // Submission
 
+    const handleSubmitStockUpdates = (updateQuery, to_proj, from_proj) => {
+        var current = updateQuery.quantity;
+        var mat = updateQuery.mat_id;
+        var matid = updateQuery.mat_id;
+        var matname = updateQuery.mat_name;
+        var matunit = updateQuery.unit;
+
+        // Addition
+        axios.get(baseUrl.concat("stock/?project_id=" + to_proj + "&mat_id=" + mat))
+            .then(response => {
+                if (response.data.length === 0) {
+                    axios.post(baseUrl.concat("stock/"), {
+                        project_id: to_proj,
+                        recieved: current,
+                        quantity: current,
+                        mat_id: matid,
+                        mat_name: matname,
+                        unit: matunit,
+                    })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                } else {
+                    let update = response.data[0];
+                    update.recieved = parseFloat(update.recieved) + parseFloat(current);
+                    update.quantity = parseFloat(update.quantity) + parseFloat(current);
+                    var id = response.data[0].id
+                    axios.patch(baseUrl.concat("stock/" + id + "/"), update)
+                        .catch(error => {
+                            console.log(error)
+                        })
+                }
+            })
+            .then(res => {
+
+                // Subtraction
+                axios.get(baseUrl.concat("stock/?project_id=" + from_proj + "&mat_id=" + mat))
+                    .then(response1 => {
+                        let update1 = response1.data[0];
+                        update1.quantity = parseFloat(update1.quantity) - parseFloat(current);
+                        axios.patch(baseUrl.concat("stock/" + update1.id + "/"), update1)
+                            .catch(error => {
+                                console.log(error)
+                            })
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            })
+
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
     const submitHandler = (e) => {
         e.preventDefault();
         console.log(query)
@@ -253,58 +308,59 @@ function DeliveryChallan() {
                 var to_proj = query.to_project;
                 var from_proj = query.from_project;
                 for (var i = 0; i < limit; i++) {
-                    var current = query.initialItemRow[i].quantity;
-                    var mat = query.initialItemRow[i].mat_id;
-                    var matid = query.initialItemRow[i].mat_id;
-                    var matname = query.initialItemRow[i].mat_name;
-                    var matunit = query.initialItemRow[i].unit;
+                    handleSubmitStockUpdates(query.initialItemRow[i], to_proj, from_proj )
+                    // var current = query.initialItemRow[i].quantity;
+                    // var mat = query.initialItemRow[i].mat_id;
+                    // var matid = query.initialItemRow[i].mat_id;
+                    // var matname = query.initialItemRow[i].mat_name;
+                    // var matunit = query.initialItemRow[i].unit;
 
-                    // Addition
-                    axios.get(baseUrl.concat("stock/?project_id=" + to_proj + "&mat_id=" + mat))
-                        .then(response => {
-                            if (response.data.length === 0) {
-                                axios.post(baseUrl.concat("stock/"), {
-                                    project_id: to_proj,
-                                    recieved: current,
-                                    quantity: current,
-                                    mat_id: matid,
-                                    mat_name: matname,
-                                    unit: matunit,
-                                })
-                                    .catch(err => {
-                                        console.log(err)
-                                    })
-                            } else {
-                                let update = response.data[0];
-                                update.recieved = parseFloat(update.recieved) + parseFloat(current);
-                                update.quantity = parseFloat(update.quantity) + parseFloat(current);
-                                var id = response.data[0].id
-                                axios.patch(baseUrl.concat("stock/" + id + "/"), update)
-                                    .catch(error => {
-                                        console.log(error)
-                                    })
-                            }
-                        })
-                        .then(res => {
+                    // // Addition
+                    // axios.get(baseUrl.concat("stock/?project_id=" + to_proj + "&mat_id=" + mat))
+                    //     .then(response => {
+                    //         if (response.data.length === 0) {
+                    //             axios.post(baseUrl.concat("stock/"), {
+                    //                 project_id: to_proj,
+                    //                 recieved: current,
+                    //                 quantity: current,
+                    //                 mat_id: matid,
+                    //                 mat_name: matname,
+                    //                 unit: matunit,
+                    //             })
+                    //                 .catch(err => {
+                    //                     console.log(err)
+                    //                 })
+                    //         } else {
+                    //             let update = response.data[0];
+                    //             update.recieved = parseFloat(update.recieved) + parseFloat(current);
+                    //             update.quantity = parseFloat(update.quantity) + parseFloat(current);
+                    //             var id = response.data[0].id
+                    //             axios.patch(baseUrl.concat("stock/" + id + "/"), update)
+                    //                 .catch(error => {
+                    //                     console.log(error)
+                    //                 })
+                    //         }
+                    //     })
+                    //     .then(res => {
 
-                            // Subtraction
-                            axios.get(baseUrl.concat("stock/?project_id=" + from_proj + "&mat_id=" + mat))
-                                .then(response1 => {
-                                    let update1 = response1.data[0];
-                                    update1.quantity = parseFloat(update1.quantity) - parseFloat(current);
-                                    axios.patch(baseUrl.concat("stock/" + update1.id + "/"), update1)
-                                        .catch(error => {
-                                            console.log(error)
-                                        })
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                })
-                        })
+                    //         // Subtraction
+                    //         axios.get(baseUrl.concat("stock/?project_id=" + from_proj + "&mat_id=" + mat))
+                    //             .then(response1 => {
+                    //                 let update1 = response1.data[0];
+                    //                 update1.quantity = parseFloat(update1.quantity) - parseFloat(current);
+                    //                 axios.patch(baseUrl.concat("stock/" + update1.id + "/"), update1)
+                    //                     .catch(error => {
+                    //                         console.log(error)
+                    //                     })
+                    //             })
+                    //             .catch(error => {
+                    //                 console.log(error)
+                    //             })
+                    //     })
 
-                        .catch(error => {
-                            console.log(error)
-                        })
+                    //     .catch(error => {
+                    //         console.log(error)
+                    //     })
                 }
 
                 // clearing fields
@@ -416,8 +472,8 @@ function DeliveryChallan() {
                                         <tr key={index} className="row">
                                             <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
                                             <td className="col-md-4">{inputField.mat_name}</td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" disabled="true" value={inputField.zzmax} /></td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.quantity} placeholder={`Available : ${inputField.zzmax}`} name="quantity" onChange={event => changeHandler(index, event)} onBlur={() => blurHandler(inputField.quantity, inputField.zzmax)} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px" }}  type="text" disabled="true" value={inputField.zzmax} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px" }}  type="text" value={inputField.quantity} placeholder={`Available : ${inputField.zzmax}`} name="quantity" onChange={event => changeHandler(index, event)} onBlur={() => blurHandler(inputField.quantity, inputField.zzmax)} /></td>
                                             <td className="col-md-1">{inputField.unit}</td>
                                             <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>

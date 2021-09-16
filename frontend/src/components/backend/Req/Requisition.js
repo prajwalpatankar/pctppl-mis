@@ -412,10 +412,10 @@ function Requisition() {
                     <tr key={index} className="row">
                         <td className="col-md-1"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select</Button></td>
                         <td className="col-md-2">{inputField.mat_name}</td>
-                        <td className="col-md-4"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
-                        <td className="col-md-1"><Input style={{ borderRadius: "8px", width: 300 }}  required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                        <td className="col-md-4"><Input style={{ borderRadius: "8px" }}  type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
+                        <td className="col-md-1"><Input style={{ borderRadius: "8px" }}  required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                         <td className="col-md-1">{inputField.unit}</td>
-                        <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
+                        <td className="col-md-2"><Input style={{ borderRadius: "8px" }}  type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
                         <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                     </tr>               
                 </tbody>

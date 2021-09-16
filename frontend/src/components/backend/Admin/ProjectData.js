@@ -305,7 +305,7 @@ function ProjectData() {
                                     <td>{query.mat_id}</td>
                                     <td>{query.mat_name}</td>
                                     <td>{query.utilized}</td>
-                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={query.quantity} onChange={event => handleFormChange(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px" }} value={query.quantity} onChange={event => handleFormChange(event)} type="text" /></td>
                                     <td>{query.unit}</td>
                                 </tr>
                             </tbody>
@@ -332,10 +332,10 @@ function ProjectData() {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={newItem.mat_name} name="mat_name" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={newItem.quantity} name="quantity" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={newItem.unit} name="unit" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={newItem.hsn_id} name="hsn_id" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.mat_name} name="mat_name" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.quantity} name="quantity" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.unit} name="unit" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.hsn_id} name="hsn_id" onChange={event => handleFormChangeNew(event)} type="text" /></td>
                                 </tr>
                             </tbody>
                         </table>
