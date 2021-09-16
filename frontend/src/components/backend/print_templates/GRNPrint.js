@@ -72,7 +72,7 @@ const GRNPrint = (props) => {
         setTimeout(() => {
             return 0;
         }, 200);
-    }, [])
+    }, [props.match.params])
 
 
 

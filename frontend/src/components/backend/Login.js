@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Input, Button, message } from 'antd';
+import { message } from 'antd';
 import { useHistory } from "react-router-dom";
-import BackFooter from './BackFooter';
 import { Spin } from 'antd';
 
 function Login() {
@@ -41,7 +40,7 @@ function Login() {
         setTimeout(() => {
             return 0;
         }, 200);
-    })
+    }, [history])
 
     const ChangeHandler = (e) => {
         SetFormvalue({ ...formvalue, [e.target.name]: e.target.value })
@@ -52,7 +51,6 @@ function Login() {
         e.preventDefault();
         const key = 'updatable';
         message.loading({ content: 'Loading...', key });
-        console.log(formvalue);
         fetch(baseUrl.concat("token-auth/"), {
             method: 'POST',
             headers: {
@@ -126,10 +124,10 @@ function Login() {
                     <h3>Sign in</h3>
                     <form onSubmit={event => handle_login(event)}>
                         <div>
-                            <Input style={{ borderRadius: "8px " }}  type="text" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} /> <br /><br />
+                            <Input style={{ borderRadius: "8px", width: 300 }}  type="text" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} /> <br /><br />
                         </div>
                         <div>
-                            <Input style={{ borderRadius: "8px " }}  type="password" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} /> <br /><br />
+                            <Input style={{ borderRadius: "8px", width: 300 }}  type="password" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} /> <br /><br />
                         </div>
                         <div>
                             <Button type="submit" onClick={event => handle_login(event)}> Submit </Button>
@@ -138,7 +136,7 @@ function Login() {
                     <img src="assets/img/final_logo_PNG.png" width="200px" alt="logo" /><br /><br /><p>MIS system</p><br /> <br /><br /><br /><br />
                 </div> */}
                 <div className="print-center" >
-                    <img src="assets/img/final_logo_JPG1.jpg" alt="pctppl_logo" height="90px" className="logo-login"/>
+                    <img src="assets/img/final_logo_JPG1.jpg" alt="pctppl_logo" height="80px" className="logo-login"/>
                 </div>
 
                 <div class="container1">
@@ -147,7 +145,7 @@ function Login() {
                             <form class="login" onSubmit={event => handle_login(event)}>
                                 <div class="login__field">
                                     <i class="login__icon fas fa-user"></i>
-                                    <input type="text" class="login__input" type="text" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} />
+                                    <input type="text" class="login__input" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} />
                                 </div>
                                 <div class="login__field">
                                     <i class="login__icon fas fa-lock"></i>

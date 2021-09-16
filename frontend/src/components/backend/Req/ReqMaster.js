@@ -4,6 +4,7 @@ import { Button, message, Input, Table, Space, Select, Modal, Spin } from 'antd'
 import NotFound from './../../NotFound';
 import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
+import PageNotFound from '../../PageNotFound';
 
 function ReqMaster() {
 
@@ -16,6 +17,7 @@ function ReqMaster() {
     // states
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);
+    const [isAdmin, setAdmin] = useState(false);
 
     const [projects, setProjects] = useState([]);
     const [projectsAll, setProjectsAll] = useState([]);
@@ -40,6 +42,7 @@ function ReqMaster() {
             axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
                 .then(res => {
                     if (res.data[0].role === "admin") {
+                        setAdmin(true);
                         axios.get(baseUrl.concat("projects"))
                             .then(res => {
                                 setProjects(res.data);
@@ -58,6 +61,8 @@ function ReqMaster() {
                                         setR(true);
                                     })
                             })
+                    } else {
+                        setR(true);
                     }
                 })
                 .catch(error => {
@@ -106,7 +111,7 @@ function ReqMaster() {
             key: 'details',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { showModalDetails(record) }}>View Details</Button>
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={() => { showModalDetails(record) }}>View Details</Button>
                 </Space>
             ),
         },
@@ -178,6 +183,22 @@ function ReqMaster() {
             })
     }
 
+    const allProjects = () => {
+        axios.get(baseUrl.concat("requisition/"))
+            .then(resR => {
+                resR.data.sort(function (a, b) {
+                    return b.id - a.id;
+                });
+                let filtered_reqs = resR.data.filter(function (r) {
+                    return r.isapproved_master === "N"
+                })
+                setReq(filtered_reqs);
+            })
+            .then(() => {
+                setR(true);
+            })
+    }
+
 
     // --------------------------------------------------------------------
     // Submission
@@ -201,8 +222,8 @@ function ReqMaster() {
                 // console.log(obj);
             }
         }
-        for (var i = 0; i < reqLimitArray.length; i++) {
-            axios.patch(baseUrl.concat("reqlimit/" + reqLimitArray[i].id + "/"), reqLimitArray[i])
+        for (var j = 0; j < reqLimitArray.length; j++) {
+            axios.patch(baseUrl.concat("reqlimit/" + reqLimitArray[j].id + "/"), reqLimitArray[j])
                 .catch(err => {
                     console.log(err)
                 })
@@ -257,76 +278,83 @@ function ReqMaster() {
     if (l && r) {
         return (
             <div>
-                <br /><br /><br /><br />
-                <h4 className="page-title">Approve Purchase Requisitions</h4>
-                <form onSubmit={submitHandler}>
-                    <br /><br />
+                {isAdmin ? <div>
+                    <br /><br /><br /><br />
+                    <h4 className="page-title">Approve Purchase Requisitions</h4>
+                    <form onSubmit={submitHandler}>
+                        <br /><br />
 
-                    <div className="row">
-                        <div className="col-sm-1"></div>
-                        <div className="col-sm-10">
-                            <h6>Sort by Project</h6>
-                            <Select placeholder="Select Project" style={{ width: 300 }} onChange={onChangeProject}>
-                                {projects.map((project, index) => (
-                                    <Option value={project.id}>{project.project_name}</Option>
-                                ))}
-                            </Select>
+                        <div className="row">
+                            <div className="col-sm-1"></div>
+                            <div className="col-sm-10">
+                                <h6>Sort by Project</h6>
+                                <Select placeholder="Select Project"  onChange={onChangeProject}>
+                                    {projects.map((project, index) => (
+                                        <Option value={project.id}>{project.project_name}</Option>
+                                    ))}
+                                </Select>
+                                &nbsp;&nbsp;
+                                <Button type="button" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={allProjects}>All Projects</Button>
+                            </div>
+                            <div className="col-sm-1"></div>
                         </div>
-                        <div className="col-sm-1"></div>
+                        <br /><br />
+
+
+
+                        <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={req} columns={columns} />
+                        <br /><br />
+                    </form>
+                    <br /><br />
+
+                    <br /><br /><br /><br />
+                    <div className="row">
+                        <div className="col-sm-10"><p> </p></div>
+                        <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                        <div className="col-sm-1"><p> </p></div>
                     </div>
-                    <br /><br />
+                    <br /><br /><br /><br />
+                    <BackFooter />
 
 
-
-                    <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={req} columns={columns} />
-                    <br /><br />
-                </form>
-                <br /><br />
-
-                <br /><br /><br /><br />
-                <div className="row">
-                    <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
-                    <div className="col-sm-1"><p> </p></div>
-                </div>
-                <br /><br /><br /><br />
-                <BackFooter />
-
-
-                <Modal
-                    title="Change Item Details"
-                    footer={[
-                        <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
-                        <Button type="button" style={{ borderRadius: "10px " }} key="changequant" onClick={flipQuant}>Change Quantities</Button>,
-                        <Button type="primary" key="submit" onClick={submitHandler}>Approve</Button>,
-                    ]}
-                    visible={ModalDetails} onCancel={handleCancelDetails}
-                >
-                    <table className="table table-bordered table-hover print-center">
-                        <thead>
-                            <tr>
-                                <td>Material ID</td>
-                                <td>Material Name</td>
-                                <td>Description</td>
-                                <td>Quantity Limit</td>
-                                <td>Unit</td>
-                            </tr>
-                        </thead>
-                        {rows.map((r, index) => (
-                            <tbody>
-                                <tr key={index}>
-                                    <td>{r.mat_id}</td>
-                                    <td>{r.mat_name}</td>
-                                    <td>{r.description}</td>
-                                    <td>{quantChange ? <Input style={{ borderRadius: "8px " }}  name="quantity" value={r.quantity} onChange={event => handleQuantityChange(index, event)} /> : <p>{r.quantity}</p>}</td>
-                                    <td>{r.unit}</td>
+                    <Modal
+                        title="Change Item Details"
+                        footer={[
+                            <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
+                            <Button type="button" style={{ borderRadius: "10px " }} key="changequant" onClick={flipQuant}>Change Quantities</Button>,
+                            <Button type="primary" key="submit" onClick={submitHandler}>Approve</Button>,
+                        ]}
+                        visible={ModalDetails} onCancel={handleCancelDetails}
+                    >
+                        <table className="table table-bordered table-hover print-center">
+                            <thead>
+                                <tr>
+                                    <td>Material ID</td>
+                                    <td>Material Name</td>
+                                    <td>Description</td>
+                                    <td>Quantity Limit</td>
+                                    <td>Unit</td>
                                 </tr>
-                            </tbody>
-                        ))}
-                    </table>
-                </Modal>
-
+                            </thead>
+                            {rows.map((r, index) => (
+                                <tbody>
+                                    <tr key={index}>
+                                        <td>{r.mat_id}</td>
+                                        <td>{r.mat_name}</td>
+                                        <td>{r.description}</td>
+                                        <td>{quantChange ? <Input style={{ borderRadius: "8px", width: 300 }} name="quantity" value={r.quantity} onChange={event => handleQuantityChange(index, event)} /> : <p>{r.quantity}</p>}</td>
+                                        <td>{r.unit}</td>
+                                    </tr>
+                                </tbody>
+                            ))}
+                        </table>
+                    </Modal>
+                </div>
+                    :
+                    <PageNotFound />
+                }
             </div>
+
         )
 
     }

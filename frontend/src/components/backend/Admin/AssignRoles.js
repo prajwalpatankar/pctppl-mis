@@ -75,14 +75,14 @@
 //                 <h3>Select Role for the user</h3>
 //                 <form onSubmit={event => HandleSubmit(event)}>
 //                     <div>
-//                         <Select placeholder="Select User" style={{ width: 300 }} onChange={ChangeHandlerUser}>
+//                         <Select placeholder="Select User"  onChange={ChangeHandlerUser}>
 //                             {rolesList.map((rolez, index) => (
 //                                 <Option value={rolez.role}>{rolez.role}</Option>
 //                             ))}
 //                         </Select><br /><br />
 //                     </div>
 //                     <div>
-//                         <Select placeholder="Assign Role" style={{ width: 300 }} onChange={ChangeHandlerRole}>
+//                         <Select placeholder="Assign Role"  onChange={ChangeHandlerRole}>
 //                             {rolesList.map((rolez, index) => (
 //                                 <Option value={rolez.role}>{rolez.role}</Option>
 //                             ))}

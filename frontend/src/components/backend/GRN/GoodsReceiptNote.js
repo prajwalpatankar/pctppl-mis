@@ -495,7 +495,7 @@ function GoodsReceiptNote() {
                         <div className="col-sm-1"></div>
                         <div className="col-sm-3">
                             <h6>Select Project</h6>
-                            <Select placeholder="Select Project" style={{ width: 300 }} onChange={handleProjectChange}>
+                            <Select placeholder="Select Project"  onChange={handleProjectChange}>
                                 {projects.map((project, index) => (
                                     <Option value={project.id}>{project.project_name}</Option>
                                 ))}
@@ -503,12 +503,12 @@ function GoodsReceiptNote() {
                         </div>
                         <div className="col-sm-3">
                             <h6>Select a Purchase Order</h6>
-                            <Input style={{ borderRadius: "8px " }}  disabled="true" className="col-sm-9" placeholder="Purchase Order ID" name="po_id" value={query.po_id} /> &nbsp;
+                            <Input style={{ borderRadius: "8px", width: 300 }}  disabled="true" className="col-sm-9" placeholder="Purchase Order ID" name="po_id" value={query.po_id} /> &nbsp;
                             <Button type="button" style={{ borderRadius: "10px " }} onClick={() => showPO()}>Select PO</Button>
                         </div>
                         <div className="col-sm-3">
                             <h6>Select Supplier</h6>
-                            <Select placeholder="Select Supplier" style={{ width: 300 }} onChange={handleSupplierChange}>
+                            <Select placeholder="Select Supplier"  onChange={handleSupplierChange}>
                                 {supplier.map((supp, index) => (
                                     <Option value={supp.id}>{supp.supp_name}</Option>
                                 ))}
@@ -523,16 +523,16 @@ function GoodsReceiptNote() {
                         <div className="col-sm-1"></div>
                         <div className="col-sm-3">
                             <h6>Vehicle Number</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.vehicle_no} placeholder="Vehicle Number" name="vehicle_no" onChange={event => formChangeHandler(event)} /> &nbsp;
+                            <Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={query.vehicle_no} placeholder="Vehicle Number" name="vehicle_no" onChange={event => formChangeHandler(event)} /> &nbsp;
                         </div>
                         <div className="col-sm-3">
                             <h6>Challan Number</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.challan_no} placeholder="Challan Number" name="challan_no" onChange={event => formChangeHandler(event)} /> &nbsp;
+                            <Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={query.challan_no} placeholder="Challan Number" name="challan_no" onChange={event => formChangeHandler(event)} /> &nbsp;
 
                         </div>
                         <div className="col-sm-3">
                             <h6>Challan Date</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="date" placeholder="Challan Date" name="challan_date" onChange={event => changeDateHandler(event)} /> &nbsp;
+                            <Input style={{ borderRadius: "8px", width: 300 }}  type="date" placeholder="Challan Date" name="challan_date" onChange={event => changeDateHandler(event)} /> &nbsp;
                         </div>
                         <div className="col-sm-2"></div>
                     </div>
@@ -543,7 +543,7 @@ function GoodsReceiptNote() {
                     <div className="row">
                         <div className="col-sm-1"></div>
                         <div className="col-sm-10">
-                            <Button type="button" style={{ borderRadius: "10px " }} style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
+                            <Button type="button" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
                         </div>
                         <div className="col-sm-1"></div>
                     </div>
@@ -570,10 +570,10 @@ function GoodsReceiptNote() {
                                         <tr key={index} className="row">
                                             <td className="col-md-1"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
                                             <td className="col-md-3">{inputField.mat_name}</td>
-                                            <td className="col-md-1"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
-                                            <td className="col-md-1"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-1"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.item_rate} placeholder="Rate" name="item_rate" disabled="true" /></td>
+                                            <td className="col-md-1"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" disabled="true" /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.rec_quant} placeholder="Recieved Quantity" name="rec_quant" onChange={event => changeHandler(index, event)} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.accepted} placeholder="Accepted Quantity" name="accepted" onChange={event => changeHandler(index, event)} /></td>
                                             <td className="col-md-1">{inputField.unit}</td>
                                             <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>

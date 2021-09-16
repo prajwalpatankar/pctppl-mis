@@ -4,6 +4,7 @@ import { Button, message, Input, Table, Space, Select, Modal, Spin } from 'antd'
 import NotFound from './../../NotFound';
 import BackFooter from './../BackFooter';
 import jwt_decode from 'jwt-decode';
+import PageNotFound from '../../PageNotFound';
 
 function PurchaseOrder() {
 
@@ -11,6 +12,7 @@ function PurchaseOrder() {
 
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);
+    const [store, setStore] = useState(false);
 
     const [inputFields, setInputField] = useState([
         {
@@ -69,6 +71,8 @@ function PurchaseOrder() {
                             .then(res => {
                                 setProjects(res.data);
                             })
+                    } else if (res.data[0].role === "Store") {
+                        setStore(true);
                     } else {
                         axios.get(baseUrl.concat("projects/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
                             .then(res => {
@@ -144,7 +148,7 @@ function PurchaseOrder() {
             key: 'details',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { showModalDetails(record) }}>View Details</Button>
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={() => { showModalDetails(record) }}>View Details</Button>
                 </Space>
             ),
         },
@@ -161,7 +165,7 @@ function PurchaseOrder() {
             key: 'completed',
             render: (text, record, index) => (
                 <Space size="middle">
-                    <Button type="button" style={{ borderRadius: "10px " }} size="small" style={{ background: "yellowgreen", color: "white", borderRadius: "10px"  }} onClick={() => { markCompleted(record, index) }}>Mark as Completed</Button>
+                    <Button type="button" size="small" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={() => { markCompleted(record, index) }}>Mark as Completed</Button>
                 </Space>
             ),
         },
@@ -213,7 +217,7 @@ function PurchaseOrder() {
             .then(res => {
                 res.data.sort(function (a, b) {
                     return b.id - a.id;
-                }); 
+                });
                 setReqs(res.data)
             })
 
@@ -282,7 +286,7 @@ function PurchaseOrder() {
                 message.info("Please mark Requisition as completed if necessary")
                 message.open({
                     type: 'success',
-                    content: <p>Purchase Order Successful. <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={handlePrint}>Click here to Print</Button></p>,
+                    content: <p>Purchase Order Successful. <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={handlePrint}>Click here to Print</Button></p>,
                     duration: 10,
                 });
                 // message.success("Purchase Order Made successfully", 5)
@@ -474,7 +478,7 @@ function PurchaseOrder() {
 
     // const { Search } = Input;
     const { Option } = Select;
-    const { TextArea } = Input;
+    // const { TextArea } = Input;
 
 
     // --------------------------------------------------------------------
@@ -489,140 +493,146 @@ function PurchaseOrder() {
     if (l && r) {
         return (
             <div>
-                <br /><br /><br /><br />
-                <h4 className="page-title">New Purchase Requisition</h4>
-                <br /><br />
-                <form onSubmit={submitHandler}>
-                    <div className="row">
-                        <div className="col-sm-1"></div>
-                        <div className="col-sm-3">
-                            <h6>Select Project</h6>
-                            <Select style={{ width: 300 }} placeholder="Select Project" onChange={onChangeProject}>
-                                {projects.map((project, index) => (
-                                    <Option value={project.id}>{project.project_name}</Option>
-                                ))}
-                            </Select>
-                        </div>
-                        <div className="col-sm-3">
-                            <h6>Select Supplier</h6>
-                            <Select
-                                showSearch
-                                style={{ width: 300 }}
-                                placeholder="Select Supplier"
-                                optionFilterProp="children"
-                                filterOption={(input, option) =>
-                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                }
-                                name="supp_id"
-                                onChange={onChangeSupplier}
-                            >
-                                {suppliers.map((supp, index) => (
-                                    <Option value={supp.id}>{supp.supp_name}</Option>
-                                ))}
-                            </Select>
-                        </div>
-                        <div className="col-sm-3">
-                            <h6>Contact Person Details</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.contact_person} placeholder="Contact Person" name="contact_person" onChange={event => formChangeHandler(event)} />
-                        </div>
-                        <div className="col-sm-2"></div>
-                    </div>
-                    <br />
-                    <div className="row">
-                        <div className="col-sm-1"></div>
-                        <div className="col-sm-3">
-                            <h6>Payment Terms</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} />
-
-                        </div>
-                        <div className="col-sm-3">
-                            <h6>Other Terms</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} />
-
-                        </div>
-                        <div className="col-sm-3">
-                            <h6>Delivery Schedule</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} />
-
-                        </div>
-                        <div className="col-sm-2"></div>
-                    </div>
-
-                    <br />
-
-                    <div className="row">
-                        <div className="col-sm-1"></div>
-                        <div className="col-sm-3">
-                            <h6>Transport Charges</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.transport} placeholder="Transport Charges" name="transport" onChange={event => formChangeHandler(event)} />
-                        </div>
-                        <div className="col-sm-3">
-                            <h6>Other Charges</h6>
-                            <Input style={{ borderRadius: "8px " }}  type="text" value={query.other_charges} placeholder="Other Charges" name="other_charges" onChange={event => formChangeHandler(event)} />
-                        </div>
-                        <div className="col-sm-5"></div>
-                    </div>
+                {store ?
+                    <PageNotFound />
+                    :
+                    <div>
 
 
+                        <br /><br /><br /><br />
+                        <h4 className="page-title">New Purchase Requisition</h4>
+                        <br /><br />
+                        <form onSubmit={submitHandler}>
+                            <div className="row">
+                                <div className="col-sm-1"></div>
+                                <div className="col-sm-3">
+                                    <h6>Select Project</h6>
+                                    <Select  placeholder="Select Project" onChange={onChangeProject}>
+                                        {projects.map((project, index) => (
+                                            <Option value={project.id}>{project.project_name}</Option>
+                                        ))}
+                                    </Select>
+                                </div>
+                                <div className="col-sm-3">
+                                    <h6>Select Supplier</h6>
+                                    <Select
+                                        showSearch
+                                        
+                                        placeholder="Select Supplier"
+                                        optionFilterProp="children"
+                                        filterOption={(input, option) =>
+                                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
+                                        name="supp_id"
+                                        onChange={onChangeSupplier}
+                                    >
+                                        {suppliers.map((supp, index) => (
+                                            <Option value={supp.id}>{supp.supp_name}</Option>
+                                        ))}
+                                    </Select>
+                                </div>
+                                <div className="col-sm-3">
+                                    <h6>Contact Person Details</h6>
+                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.contact_person} placeholder="Contact Person" name="contact_person" onChange={event => formChangeHandler(event)} />
+                                </div>
+                                <div className="col-sm-2"></div>
+                            </div>
+                            <br />
+                            <div className="row">
+                                <div className="col-sm-1"></div>
+                                <div className="col-sm-3">
+                                    <h6>Payment Terms</h6>
+                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} />
 
-                    <br /><br />
-                    {/* <Button type="button" style={{ borderRadius: "10px " }} onClick={addHandler}>Add</Button><br /><br /> */}
+                                </div>
+                                <div className="col-sm-3">
+                                    <h6>Other Terms</h6>
+                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} />
 
-                    <div className="row print-center ">
-                        <div className="center table-responsive col-lg-10 col-md-12">
-                            <table className="table table-hover table-bordered ">
-                                <thead className="thead-light">
-                                    <tr className="row">
-                                        {/* <th className="col-md-2">Select Material</th> */}
-                                        <th className="col-md-4">Material Name</th>
-                                        <th className="col-md-2">Rate</th>
-                                        <th className="col-md-2">Discount</th>
-                                        <th className="col-md-2">Quantity</th>
-                                        <th className="col-md-1">Unit</th>
-                                        <th className="col-md-1">Delete</th>
-                                    </tr>
-                                </thead>
+                                </div>
+                                <div className="col-sm-3">
+                                    <h6>Delivery Schedule</h6>
+                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} />
 
-                                {inputFields.map((inputField, index) => (
-                                    <tbody>
-                                        <tr key={index} className="row">
-                                            {/* <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial(index)}>Select Material</Button></td> */}
-                                            <td className="col-md-4">{inputField.mat_name}</td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
-                                            <td className="col-md-1">{inputField.unit}</td>
-                                            <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
-                                        </tr>
-                                    </tbody>
-                                ))}
-                            </table>
-                        </div>
-                    </div> 
+                                </div>
+                                <div className="col-sm-2"></div>
+                            </div>
 
-                    
+                            <br />
+
+                            <div className="row">
+                                <div className="col-sm-1"></div>
+                                <div className="col-sm-3">
+                                    <h6>Transport Charges</h6>
+                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.transport} placeholder="Transport Charges" name="transport" onChange={event => formChangeHandler(event)} />
+                                </div>
+                                <div className="col-sm-3">
+                                    <h6>Other Charges</h6>
+                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.other_charges} placeholder="Other Charges" name="other_charges" onChange={event => formChangeHandler(event)} />
+                                </div>
+                                <div className="col-sm-5"></div>
+                            </div>
 
 
 
-                    <br /><br />
-                    <div className="submit-button">
-                        <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
-                    </div>
-                </form>
-                <br /><br />
-                {/* {searchstates.isSearchVisible ?
+                            <br /><br />
+                            {/* <Button type="button" style={{ borderRadius: "10px " }} onClick={addHandler}>Add</Button><br /><br /> */}
+
+                            <div className="row print-center ">
+                                <div className="center table-responsive col-lg-10 col-md-12">
+                                    <table className="table table-hover table-bordered ">
+                                        <thead className="thead-light">
+                                            <tr className="row">
+                                                {/* <th className="col-md-2">Select Material</th> */}
+                                                <th className="col-md-4">Material Name</th>
+                                                <th className="col-md-2">Rate</th>
+                                                <th className="col-md-2">Discount</th>
+                                                <th className="col-md-2">Quantity</th>
+                                                <th className="col-md-1">Unit</th>
+                                                <th className="col-md-1">Delete</th>
+                                            </tr>
+                                        </thead>
+
+                                        {inputFields.map((inputField, index) => (
+                                            <tbody>
+                                                <tr key={index} className="row">
+                                                    {/* <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial(index)}>Select Material</Button></td> */}
+                                                    <td className="col-md-4">{inputField.mat_name}</td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }} type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }} type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                                                    <td className="col-md-1">{inputField.unit}</td>
+                                                    <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                                                </tr>
+                                            </tbody>
+                                        ))}
+                                    </table>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <br /><br />
+                            <div className="submit-button">
+                                <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
+                            </div>
+                        </form>
+                        <br /><br />
+                        {/* {searchstates.isSearchVisible ?
                     (<div>
                         <div className="row">
                             <div className="col-md-1"></div>
                             <div className="col-md-5">
                                 <h6>Search Material by Category</h6>
-                                <Select placeholder="Select Category" style={{ width: 300 }} onChange={onSearchCat}>
+                                <Select placeholder="Select Category"  onChange={onSearchCat}>
                                     {categories.map((category, index) => (
                                         <Option value={category.cat_id}>{category.cat_name}</Option>
                                     ))}
                                 </Select>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <Select placeholder="Select Sub Category" style={{ width: 300 }} onChange={onSearchSubCat}>
+                                <Select placeholder="Select Sub Category"  onChange={onSearchSubCat}>
                                     {subcategories.map((category, index) => (
                                         <Option value={category.subcat_id}>{category.subcat_name}</Option>
                                     ))}
@@ -650,81 +660,83 @@ function PurchaseOrder() {
 
 
 
-                <h6> &nbsp;&nbsp;&nbsp;Select Items from Purchase Requisitions</h6>
-                <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={reqs} columns={columns1} />
+                        <h6> &nbsp;&nbsp;&nbsp;Select Items from Purchase Requisitions</h6>
+                        <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={reqs} columns={columns1} />
 
 
-                {/* <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={pos} columns={columspo} /> */}
+                        {/* <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={pos} columns={columspo} /> */}
 
 
 
-                <Modal
-                    title="Requisition Details"
-                    footer={[
-                        <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
-                    ]}
-                    visible={ModalDetails.details} onCancel={handleCancelDetails}
-                >
-                    <table className="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <td>Action</td>
-                                <td>Material Name</td>
-                                <td>Quantity</td>
-                                <td>Unit</td>
-                                <td>Description</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {current_items.map((item, index) => (
-                                <tr>
-                                    <td><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { selectMaterial(item) }} >Select</Button></td>
-                                    <td>{item.mat_name}</td>
-                                    <td>{item.quantity}</td>
-                                    <td>{item.unit}</td>
-                                    <td>{item.description}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </Modal>
+                        <Modal
+                            title="Requisition Details"
+                            footer={[
+                                <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
+                            ]}
+                            visible={ModalDetails.details} onCancel={handleCancelDetails}
+                        >
+                            <table className="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>Action</td>
+                                        <td>Material Name</td>
+                                        <td>Quantity</td>
+                                        <td>Unit</td>
+                                        <td>Description</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {current_items.map((item, index) => (
+                                        <tr>
+                                            <td><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={() => { selectMaterial(item) }} >Select</Button></td>
+                                            <td>{item.mat_name}</td>
+                                            <td>{item.quantity}</td>
+                                            <td>{item.unit}</td>
+                                            <td>{item.description}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </Modal>
 
 
-                <Modal
-                    title="Purchase Order Details"
-                    footer={[
-                        <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelPO}>Go back</Button>,
-                    ]}
-                    visible={ModalDetails.po} onCancel={handleCancelPO}
-                >
-                    <table className="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <td>Material Name</td>
-                                <td>Quantity</td>
-                                <td>Unit</td>
-                                <td>Rate</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {current_items.map((item, index) => (
-                                <tr>
-                                    <td>{item.mat_name}</td>
-                                    <td>{item.quantity}</td>
-                                    <td>{item.unit}</td>
-                                    <td>{item.item_rate}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </Modal>
-                <div className="row">
-                    <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
-                    <div className="col-sm-1"><p> </p></div>
-                </div>
-                <br /><br /><br /><br />
-                <BackFooter />
+                        <Modal
+                            title="Purchase Order Details"
+                            footer={[
+                                <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelPO}>Go back</Button>,
+                            ]}
+                            visible={ModalDetails.po} onCancel={handleCancelPO}
+                        >
+                            <table className="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>Material Name</td>
+                                        <td>Quantity</td>
+                                        <td>Unit</td>
+                                        <td>Rate</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {current_items.map((item, index) => (
+                                        <tr>
+                                            <td>{item.mat_name}</td>
+                                            <td>{item.quantity}</td>
+                                            <td>{item.unit}</td>
+                                            <td>{item.item_rate}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </Modal>
+                        <div className="row">
+                            <div className="col-sm-10"><p> </p></div>
+                            <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                            <div className="col-sm-1"><p> </p></div>
+                        </div>
+                        <br /><br /><br /><br />
+                        <BackFooter />
+                    </div>
+                }
             </div>
         )
     }

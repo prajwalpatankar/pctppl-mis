@@ -30,7 +30,6 @@ const POPrint = (props) => {
         supp_address: "",
     });
 
-    const [hsn, setHsn] = useState([]);
     var amounts = [{ tax_rate: "", taxable_value: "", cgst: "", amount: "" }];
     const [billing, setBilling] = useState([]);
 
@@ -55,8 +54,6 @@ const POPrint = (props) => {
 
                     axios.get(baseUrl.concat("hsn"))
                         .then(response => {
-                            setHsn(response.data)
-
                             axios.get(baseUrl.concat("po/" + id))
                                 .then(res => {
                                     setPo(res.data)
@@ -89,7 +86,7 @@ const POPrint = (props) => {
         setTimeout(() => {
             return 0;
         }, 200);
-    }, [])
+    }, [props.match.params])
 
 
     const totalValue = (purchase, taxes) => {

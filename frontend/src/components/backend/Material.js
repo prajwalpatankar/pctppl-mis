@@ -132,7 +132,7 @@ function Material() {
                 <br /><br /><br /><br /><br /><br /><br />
                 <span>
                     <h4>Select Category &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Select placeholder="Select Category" style={{ width: 300 }} onChange={onSearchCat}>
+                    <Select placeholder="Select Category"  onChange={onSearchCat}>
                             {cat.map((category, index) => (
                                 <Option value={category.cat_id}>{category.cat_name}</Option>
                             ))}
@@ -141,7 +141,7 @@ function Material() {
                 </span>
                 <span>
                     <h4>Select Sub Category &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Select placeholder="Select Sub Category" style={{ width: 300 }} onChange={onSearchSubCat}>
+                    <Select placeholder="Select Sub Category"  onChange={onSearchSubCat}>
                             {subcat.map((category, index) => (
                                 <Option value={category.subcat_id}>{category.subcat_name}</Option>
                             ))}
@@ -150,17 +150,17 @@ function Material() {
                 </span>
                 <span>
                     <h4>Enter Material Name &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Input style={{ borderRadius: "8px " }}  placeholder="Material Name" name="desc" value={query.desc} onChange={formChangeHandler} style={{ width: 300 }} />
+                    <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="Material Name" name="desc" value={query.desc} onChange={formChangeHandler}  />
                     </h4>
                 </span>
                 <span>
                     <h4>Enter unit &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Input style={{ borderRadius: "8px " }}  placeholder="Unit" name="unit" value={query.unit} onChange={formChangeHandler} style={{ width: 300 }} />
+                    <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="Unit" name="unit" value={query.unit} onChange={formChangeHandler}  />
                     </h4>
                 </span>
                 <span>
                     <h4>Enter HSN ID &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Input style={{ borderRadius: "8px " }}  placeholder="HSN ID" name="hsan_id" value={query.hsan_id} onChange={formChangeHandler} style={{ width: 300 }} type="number" />
+                    <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="HSN ID" name="hsan_id" value={query.hsan_id} onChange={formChangeHandler}  type="number" />
                     </h4>
                 </span>
 

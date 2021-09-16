@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import RequisitionTable from '../RequisitionTable';
 import NotFound from '../../NotFound';
 import { Button, message, Input, Table, Space, Select, Spin } from 'antd';
 import BackFooter from '../BackFooter';
@@ -375,7 +374,7 @@ function Requisition() {
             <div className="col-sm-1"></div>
             <div className="col-sm-10">
               <h6>Select Project</h6>
-              <Select placeholder="Select Project" style={{ width: 300 }} onChange={onChangeProject}>
+              <Select placeholder="Select Project"  onChange={onChangeProject}>
                 {projects.map((project, index) => (
                   <Option value={project.id}>{project.project_name}</Option>
                 ))}
@@ -388,7 +387,7 @@ function Requisition() {
           <div className="row">
             <div className="col-sm-1"></div>
             <div className="col-sm-10">
-              <Button type="button" style={{ borderRadius: "10px " }} style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
+              <Button type="button" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
             </div>
             <div className="col-sm-1"></div>
           </div>
@@ -413,10 +412,10 @@ function Requisition() {
                     <tr key={index} className="row">
                         <td className="col-md-1"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select</Button></td>
                         <td className="col-md-2">{inputField.mat_name}</td>
-                        <td className="col-md-4"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
-                        <td className="col-md-1"><Input style={{ borderRadius: "8px " }}  required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                        <td className="col-md-4"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
+                        <td className="col-md-1"><Input style={{ borderRadius: "8px", width: 300 }}  required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
                         <td className="col-md-1">{inputField.unit}</td>
-                        <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
+                        <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
                         <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                     </tr>               
                 </tbody>

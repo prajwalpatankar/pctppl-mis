@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select, Modal, Spin } from 'antd';
+import { Button, message, Input, Select, Modal, Spin } from 'antd';
 import NotFound from './../../NotFound';
 import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
+import PageNotFound from '../../PageNotFound';
 
 function ProjectData() {
 
@@ -16,6 +17,7 @@ function ProjectData() {
     // states
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);
+    const [isAdmin, setAdmin] = useState(false);
 
     const [projects, setProjects] = useState([]);
     const [visibility, setVisibility] = useState(false);
@@ -37,6 +39,7 @@ function ProjectData() {
             axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
                 .then(res => {
                     if (res.data[0].role === "admin") {
+                        setAdmin(true);
                         axios.get(baseUrl.concat("projects"))
                             .then(res => {
                                 setProjects(res.data);
@@ -106,12 +109,12 @@ function ProjectData() {
     const addHandler = () => {
         console.log(newItem)
         axios.post(baseUrl.concat("reqlimit/"), newItem)
-        .then(() => {
-            message.success("New Material Added Successfully");
-        })
-        .catch(err => {
-            console.log(err);
-        })
+            .then(() => {
+                message.success("New Material Added Successfully");
+            })
+            .catch(err => {
+                console.log(err);
+            })
         setModalDetailsNew(false);
     }
 
@@ -124,20 +127,20 @@ function ProjectData() {
             .then(res => {
                 res.data.sort(function (a, b) {
                     return a.mat_id - b.mat_id;
-                });  
+                });
                 var len = res.data.length;
-                if(len !== 0){
-                    var lid = res.data[len-1].mat_id;
-                    nxtLid = parseInt(lid) + 1; 
-                    
-                }else {
+                if (len !== 0) {
+                    var lid = res.data[len - 1].mat_id;
+                    nxtLid = parseInt(lid) + 1;
+
+                } else {
                     nxtLid = 1;
                 }
                 setReq(res.data);
                 setVisibility(true);
             })
-            .then(() =>{
-                setNewItem({...newItem, project_id: value, mat_id: nxtLid});
+            .then(() => {
+                setNewItem({ ...newItem, project_id: value, mat_id: nxtLid });
             })
     }
 
@@ -157,13 +160,14 @@ function ProjectData() {
                 console.log(res);
                 message.success(`Limit for ${query.mat_name} updated successfully `);
             })
-            .then(() => {  
+            .then(() => {
                 axios.get(baseUrl.concat("reqlimit/?project_id=" + query.project_id))
                     .then(res => {
                         setReq(res.data);
                     })
-                    .then(() =>{
-                        setQuery({...query,
+                    .then(() => {
+                        setQuery({
+                            ...query,
                             mat_id: "",
                             mat_name: "",
                             hsn_id: "",
@@ -172,7 +176,7 @@ function ProjectData() {
                             unit: "",
                         })
                     })
-                    setModalDetailsNew(false);
+                setModalDetailsNew(false);
             })
             .catch(err => {
                 console.log(err);
@@ -200,142 +204,146 @@ function ProjectData() {
     if (l && r) {
         return (
             <div>
-                <br /><br /><br /><br />
-                <h4 className="page-title">Update Requisition Limits</h4>
-                <form onSubmit={submitHandler}>
-                    <br /><br />
+                {isAdmin ? <div>
+                    <br /><br /><br /><br />
+                    <h4 className="page-title">Update Requisition Limits</h4>
+                    <form onSubmit={submitHandler}>
+                        <br /><br />
 
-                    <div className="row">
-                        <div className="col-sm-1"></div>
-                        <div className="col-sm-10">
-                            <h6>Select Project</h6>
-                            <Select placeholder="Select Project" style={{ width: 300 }} onChange={onChangeProject}>
-                                {projects.map((project, index) => (
-                                    <Option value={project.id}>{project.project_name}</Option>
-                                ))}
-                            </Select>
-                        </div>
-                        <div className="col-sm-1"></div>
-                    </div>
-                    <br /><br />
-
-                    {visibility ?
-                        <div>
-                            <div className="row">
-                                <div className="col-lg-1"></div>
-                                <div className="col-lg-11"><Button type="button" style={{ borderRadius: "10px " }} style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={showModalDetailsNew}>+ Add Material</Button></div>                                
+                        <div className="row">
+                            <div className="col-sm-1"></div>
+                            <div className="col-sm-10">
+                                <h6>Select Project</h6>
+                                <Select placeholder="Select Project"  onChange={onChangeProject}>
+                                    {projects.map((project, index) => (
+                                        <Option value={project.id}>{project.project_name}</Option>
+                                    ))}
+                                </Select>
                             </div>
-                            <br />
-                            <div className="row print-center ">
-                                <div className="center table-responsive col-lg-10 col-md-12">
-                                    <table className="table table-hover table-bordered ">
-                                        <thead className="thead-light">
-                                            <tr className="row">
-                                                <th className="col-md-2">Material ID</th>
-                                                <th className="col-md-2">Material Name</th>
-                                                <th className="col-md-2">Utilized Quantity (Cumulative)</th>
-                                                <th className="col-md-2">Quantity Limit</th>
-                                                <th className="col-md-2">Unit</th>
-                                                <th className="col-md-2">Action</th>
-                                            </tr>
-                                        </thead>
-                                        {req.map((r, index) => (
-                                            <tbody>
-                                                <tr key={index} className="row">
-                                                    <td className="col-md-2">{r.mat_id}</td>
-                                                    <td className="col-md-2">{r.mat_name}</td>
-                                                    <td className="col-md-2">{parseFloat(r.utilized).toFixed(4)}</td>
-                                                    <td className="col-md-2">{parseFloat(r.quantity).toFixed(4)}</td>
-                                                    <td className="col-md-2">{r.unit}</td>
-                                                    <td className="col-md-2"><Button type="primary" size="small" onClick={() => showModalDetails(index)}>Change</Button></td>
+                            <div className="col-sm-1"></div>
+                        </div>
+                        <br /><br />
+
+                        {visibility ?
+                            <div>
+                                <div className="row">
+                                    <div className="col-lg-1"></div>
+                                    <div className="col-lg-11"><Button type="button" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={showModalDetailsNew}>+ Add Material</Button></div>
+                                </div>
+                                <br />
+                                <div className="row print-center ">
+                                    <div className="center table-responsive col-lg-10 col-md-12">
+                                        <table className="table table-hover table-bordered ">
+                                            <thead className="thead-light">
+                                                <tr className="row">
+                                                    <th className="col-md-2">Material ID</th>
+                                                    <th className="col-md-2">Material Name</th>
+                                                    <th className="col-md-2">Utilized Quantity (Cumulative)</th>
+                                                    <th className="col-md-2">Quantity Limit</th>
+                                                    <th className="col-md-2">Unit</th>
+                                                    <th className="col-md-2">Action</th>
                                                 </tr>
-                                            </tbody>
-                                        ))}
-                                    </table>
+                                            </thead>
+                                            {req.map((r, index) => (
+                                                <tbody>
+                                                    <tr key={index} className="row">
+                                                        <td className="col-md-2">{r.mat_id}</td>
+                                                        <td className="col-md-2">{r.mat_name}</td>
+                                                        <td className="col-md-2">{parseFloat(r.utilized).toFixed(4)}</td>
+                                                        <td className="col-md-2">{parseFloat(r.quantity).toFixed(4)}</td>
+                                                        <td className="col-md-2">{r.unit}</td>
+                                                        <td className="col-md-2"><Button type="primary" size="small" onClick={() => showModalDetails(index)}>Change</Button></td>
+                                                    </tr>
+                                                </tbody>
+                                            ))}
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
 
-                        : <p></p>}
+                            : <p></p>}
 
 
+                        <br /><br />
+
+
+
+                    </form>
                     <br /><br />
 
+                    <br /><br /><br /><br />
+                    <div className="row">
+                        <div className="col-sm-10"><p> </p></div>
+                        <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                        <div className="col-sm-1"><p> </p></div>
+                    </div>
+                    <br /><br /><br /><br />
+                    <BackFooter />
 
 
-                </form>
-                <br /><br />
+                    <Modal
+                        title="Change Item Details"
+                        footer={[
+                            <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
+                            <Button type="primary" key="submit" onClick={submitHandler}>Submit</Button>,
+                        ]}
+                        visible={ModalDetails} onCancel={handleCancelDetails}
+                    >
+                        <table className="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td>Material ID</td>
+                                    <td>Material Name</td>
+                                    <td>Utitlized</td>
+                                    <td>Quantity Limit</td>
+                                    <td>Unit</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{query.mat_id}</td>
+                                    <td>{query.mat_name}</td>
+                                    <td>{query.utilized}</td>
+                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={query.quantity} onChange={event => handleFormChange(event)} type="text" /></td>
+                                    <td>{query.unit}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Modal>
 
-                <br /><br /><br /><br />
-                <div className="row">
-                    <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
-                    <div className="col-sm-1"><p> </p></div>
+
+                    <Modal
+                        title="Change Item Details"
+                        footer={[
+                            <Button type="button" style={{ borderRadius: "10px " }} key="backN" onClick={handleCancelDetailsNew}>Go back</Button>,
+                            <Button type="primary" key="submitN" onClick={addHandler} >Submit</Button>,
+                        ]}
+                        visible={ModalDetailsNew} onCancel={handleCancelDetailsNew}
+                    >
+                        <table className="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td>Material Name</td>
+                                    <td>Quantity Limit</td>
+                                    <td>Unit</td>
+                                    <td>HSN ID</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={newItem.mat_name} name="mat_name" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={newItem.quantity} name="quantity" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={newItem.unit} name="unit" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px", width: 300 }} value={newItem.hsn_id} name="hsn_id" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Modal>
                 </div>
-                <br /><br /><br /><br />
-                <BackFooter />
-
-
-                <Modal
-                    title="Change Item Details"
-                    footer={[
-                        <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
-                        <Button type="primary" key="submit" onClick={submitHandler}>Submit</Button>,
-                    ]}
-                    visible={ModalDetails} onCancel={handleCancelDetails}
-                >
-                    <table className="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <td>Material ID</td>
-                                <td>Material Name</td>
-                                <td>Utitlized</td>
-                                <td>Quantity Limit</td>
-                                <td>Unit</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{query.mat_id}</td>
-                                <td>{query.mat_name}</td>
-                                <td>{query.utilized}</td>
-                                <td><Input style={{ borderRadius: "8px " }}  value={query.quantity} onChange={event => handleFormChange(event)} type="text" /></td>
-                                <td>{query.unit}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </Modal>
-
-
-                <Modal
-                    title="Change Item Details"
-                    footer={[
-                        <Button type="button" style={{ borderRadius: "10px " }} key="backN" onClick={handleCancelDetailsNew}>Go back</Button>,
-                        <Button type="primary" key="submitN" onClick={addHandler} >Submit</Button>,
-                    ]}
-                    visible={ModalDetailsNew} onCancel={handleCancelDetailsNew}
-                >
-                    <table className="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <td>Material Name</td>
-                                <td>Quantity Limit</td>
-                                <td>Unit</td>
-                                <td>HSN ID</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><Input style={{ borderRadius: "8px " }}  value={newItem.mat_name} name="mat_name" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                                <td><Input style={{ borderRadius: "8px " }}  value={newItem.quantity} name="quantity" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                                <td><Input style={{ borderRadius: "8px " }}  value={newItem.unit} name="unit" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                                <td><Input style={{ borderRadius: "8px " }}  value={newItem.hsn_id} name="hsn_id" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </Modal>
-
+                    :
+                    <PageNotFound />
+                }
             </div>
         )
 

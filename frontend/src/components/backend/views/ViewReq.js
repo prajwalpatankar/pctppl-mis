@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Spin, Button, Space, Modal } from 'antd';
-import BackFooter from '../BackFooter';
 import NotFound from '../../NotFound';
 import jwt_decode from "jwt-decode";
 
@@ -34,7 +33,7 @@ function ViewReq() {
                             setProjectsAll(resProj.data);
 
 
-                            if (res.data[0].role === "admin") {
+                            if (res.data[0].role === "admin"  || res.data[0].role === "Purchase Officer") {
                                 axios.get(baseUrl.concat("projects"))
                                     .then(res => {
                                         if (res.data.length === 0) {

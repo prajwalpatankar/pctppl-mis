@@ -54,7 +54,7 @@ const StockOverallPrint = (props) => {
             
             return 0;
         }, 200);
-    }, [])
+    }, [props.match.params])
 
 
 

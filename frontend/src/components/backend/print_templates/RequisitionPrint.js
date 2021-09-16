@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import MenuBar from './MenuBar';
 import jwt_decode from 'jwt-decode';
 
 
@@ -50,7 +49,7 @@ const RequisitionPrint = (props) => {
         setTimeout(() => {
             return 0;
         }, 200);
-    }, [])
+    }, [props.match.params])
 
     // --------------------------------------------------------------------
     // html

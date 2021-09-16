@@ -26,7 +26,7 @@ function ViewStock() {
             axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
                 .then(res => {
 
-                    if (res.data[0].role === "admin") {
+                    if (res.data[0].role === "admin" || res.data[0].role === "Purchase Officer") {
                         axios.get(baseUrl.concat("projects"))
                             .then(res => {
                                 setProjects(res.data);
@@ -84,10 +84,12 @@ function ViewStock() {
 
     const handlePrint = () => {
         window.open('/stock:' + project_id);
+        window.location.reload();
     }
 
     const handleIndividualPrint = (record) => {
         window.open('/onestock:' + project_id + "-" + record.mat_id);
+        window.location.reload();
     }
 
 
@@ -161,7 +163,7 @@ function ViewStock() {
                     <div className="col-sm-1"></div>
                     <div className="col-sm-10">
                         <h6>Select Project</h6>
-                        <Select placeholder="Select Project" style={{ width: 300 }} onChange={handleProjectChange}>
+                        <Select placeholder="Select Project"  onChange={handleProjectChange}>
                             {projects.map((project, index) => (
                                 <Option value={project.id}>{project.project_name}</Option>
                             ))}
@@ -185,7 +187,7 @@ function ViewStock() {
                             Search Material
                         </h6>
 
-                        <Input style={{ borderRadius: "8px " }} 
+                        <Input style={{ borderRadius: "8px", width: 300 }} 
                             placeholder="Material Name"
                             value={value}
                             onChange={e => {

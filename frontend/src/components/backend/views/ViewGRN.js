@@ -30,7 +30,7 @@ function ViewGRN() {
                         .then(resProj => {
                             setProjectsAll(resProj.data);
 
-                            if (res.data[0].role === "admin") {
+                            if (res.data[0].role === "admin"  || res.data[0].role === "Purchase Officer") {
                                 axios.get(baseUrl.concat("projects"))
                                     .then(res => {
                                         if (res.data.length === 0) {

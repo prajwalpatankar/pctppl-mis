@@ -364,7 +364,7 @@ function DeliveryChallan() {
                         <div className="col-sm-1"></div>
                         <div className="col-sm-3">
                             <h6>Select Project (From)</h6>
-                            <Select placeholder="Select Project From" style={{ width: 300 }} onChange={handleProjectChangeFrom}>
+                            <Select placeholder="Select Project From"  onChange={handleProjectChangeFrom}>
                                 {projects.map((project, index) => (
                                     <Option value={project.id}>{project.project_name}</Option>
                                 ))}
@@ -372,7 +372,7 @@ function DeliveryChallan() {
                         </div>
                         <div className="col-sm-3">
                             <h6>Select Project (To)</h6>
-                            <Select placeholder="Select Project To" style={{ width: 300 }} onChange={handleProjectChangeTo}>
+                            <Select placeholder="Select Project To"  onChange={handleProjectChangeTo}>
                                 {projects.map((project, index) => (
                                     <Option value={project.id}>{project.project_name}</Option>
                                 ))}
@@ -384,14 +384,14 @@ function DeliveryChallan() {
 
 
 
-                    {/* if needed to add another field <Input style={{ borderRadius: "8px " }}  type="text" value={query.grn_id} placeholder="grn_id" name="grn_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp; */}
+                    {/* if needed to add another field <Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={query.grn_id} placeholder="grn_id" name="grn_id" onChange={event => formChangeHandler(event)} className="col-md-2" /> &nbsp; */}
 
 
                     <br /><br /><br /><br />
                     <div className="row">
                         <div className="col-sm-1"></div>
                         <div className="col-sm-10">
-                            <Button type="button" style={{ borderRadius: "10px " }} style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
+                            <Button type="button" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={addHandler}>+ Add Row</Button>
                         </div>
                         <div className="col-sm-1"></div>
                     </div>
@@ -416,8 +416,8 @@ function DeliveryChallan() {
                                         <tr key={index} className="row">
                                             <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select Material</Button></td>
                                             <td className="col-md-4">{inputField.mat_name}</td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" disabled="true" value={inputField.zzmax} /></td>
-                                            <td className="col-md-2"><Input style={{ borderRadius: "8px " }}  type="text" value={inputField.quantity} placeholder={`Available : ${inputField.zzmax}`} name="quantity" onChange={event => changeHandler(index, event)} onBlur={() => blurHandler(inputField.quantity, inputField.zzmax)} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" disabled="true" value={inputField.zzmax} /></td>
+                                            <td className="col-md-2"><Input style={{ borderRadius: "8px", width: 300 }}  type="text" value={inputField.quantity} placeholder={`Available : ${inputField.zzmax}`} name="quantity" onChange={event => changeHandler(index, event)} onBlur={() => blurHandler(inputField.quantity, inputField.zzmax)} /></td>
                                             <td className="col-md-1">{inputField.unit}</td>
                                             <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                         </tr>

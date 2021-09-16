@@ -154,25 +154,24 @@ function NewUser() {
                             <form onSubmit={event => handle_signup(event)}>
                                 <div>
                                     <h6>Username</h6>
-                                    <Input style={{ borderRadius: "8px " }}  type="text" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} /> <br /><br />
+                                    <Input style={{ borderRadius: "8px", width: 300 }}  type="text" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} /> <br /><br />
                                 </div>
                                 <div>
                                     <h6>Password</h6>
-                                    <Input style={{ borderRadius: "8px " }}  type="password" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} /> <br /><br />
+                                    <Input style={{ borderRadius: "8px", width: 300 }}  type="password" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} /> <br /><br />
                                 </div>
                                 <div>
                                     <h6>Assign a Role</h6>
-                                    <Select placeholder="Assign Role" style={{ width: 300 }} onChange={changeRole}>
+                                    <Select placeholder="Assign Role"  onChange={changeRole}>
                                         {rolesList.map((rolez, index) => (
                                             <Option value={rolez.role}>{rolez.role}</Option>
                                         ))}
                                     </Select>
                                 </div> <br /><br />
                                 <div>
-                                    <Button type="submit" onClick={event => handle_signup(event)}> Submit </Button>
+                                    <Button type="primary" style={{ borderRadius: "10px " }} onClick={event => handle_signup(event)}> Submit </Button>
                                 </div>
                             </form> <br /><br /><br /><br /><br /><br />
-                            <img src="assets/img/final_logo_PNG.png" width="200px" alt="logo" /><br /><br /><p>MIS system</p><br /> <br /><br /><br /><br />
                         </div>
 
 

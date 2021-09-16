@@ -143,7 +143,6 @@ class GrnFilter(FilterSet): #filter for date range
 class Goods_Receipt_Note_mst_Viewset(viewsets.ModelViewSet):
     serializer_class = GoodsReceiptNoteMstSerializer
     queryset = Goods_Receipt_Note_mst.objects.all()
-    # filter_class = StockIDFilter
     filterset_fields = ['project_id', 'initialItemRow__mat_id']
 
 class Goods_Receipt_Note_details_Viewset(viewsets.ModelViewSet):
@@ -166,6 +165,7 @@ class Issue_ViewSet(viewsets.ModelViewSet):
 class Delivery_Challan_mst_Viewset(viewsets.ModelViewSet):
     serializer_class = DeliveryChallanMstSerializer
     queryset = Delivery_Challan_mst.objects.all()
+    filterset_fields = ['to_project', 'initialItemRow__mat_id']
     
 class Delivery_Challan_details_Viewset(viewsets.ModelViewSet):
     serializer_class = DeliveryChallanDetailsSerializer

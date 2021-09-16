@@ -189,7 +189,7 @@ function UpdateSupplier() {
                     <span className="col-sm-1"> </span>
                     <span className="col-sm-10">
                         <h6>Search Supplier</h6>
-                        <Search placeholder="Search Supplier" name="searchname" onChange={event => searchChangeHandler(event)} onSearch={onSearchSupp} enterButton style={{ width: 300 }} />
+                        <Search placeholder="Search Supplier" name="searchname" onChange={event => searchChangeHandler(event)} onSearch={onSearchSupp} enterButton  />
 
                     </span>
                     <span className="col-sm-1"> </span>
@@ -209,17 +209,17 @@ function UpdateSupplier() {
                             <div className="col-md-2"></div>
                             <div className="col-md-3">
                                 <h6>Supplier Name</h6>
-                                <Input style={{ borderRadius: "8px " }}  placeholder="Supplier Name" name="supp_name" value={query.supp_name} onChange={formChangeHandler} style={{ width: 300 }} />
+                                <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="Supplier Name" name="supp_name" value={query.supp_name} onChange={formChangeHandler} />
 
                             </div>
                             <div className="col-md-3">
                                 <h6>Address</h6>
-                                <TextArea rows={2} placeholder="Address" name="supp_address" value={query.supp_address} onChange={formChangeHandler} style={{ width: 300 }} />
+                                <TextArea rows={2} placeholder="Address" name="supp_address" value={query.supp_address} onChange={formChangeHandler}  />
 
                             </div>
                             <div className="col-md-3">
                                 <h6>Contact Person</h6>
-                                <Input style={{ borderRadius: "8px " }}  placeholder="Contact Person Name" name="contact_person" value={query.contact_person} onChange={formChangeHandler} style={{ width: 300 }} />
+                                <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="Contact Person Name" name="contact_person" value={query.contact_person} onChange={formChangeHandler} />
 
                             </div>
                             <div className="col-md-1"></div>
@@ -229,13 +229,13 @@ function UpdateSupplier() {
                             <div className="col-md-2"></div>
                             <div className="col-md-3">
                                 <h6>Contact No.</h6>
-                                <Input style={{ borderRadius: "8px " }}  placeholder="Contact Number" name="contact" value={query.contact} onChange={formChangeHandler} style={{ width: 300 }} type="number" />
+                                <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="Contact Number" name="contact" value={query.contact} onChange={formChangeHandler} type="number" />
 
                             </div>
                             <div className="col-md-3">
                                 <h6>State</h6>
-                                <Input style={{ borderRadius: "8px " }}  placeholder="State" name="state" value={query.state} style={{ width: 300 }} disabled="True" />
-                                <Select placeholder="Change State" style={{ width: 300 }} onChange={onSearchState} >
+                                <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="State" name="state" value={query.state} disabled="True" />
+                                <Select placeholder="Change State"  onChange={onSearchState} >
                                     {ind_states.map((state, index) => (
                                         <Option value={state.name}>{state.name}</Option>
                                     ))}
@@ -244,7 +244,7 @@ function UpdateSupplier() {
                             </div>
                             <div className="col-md-3">
                                 <h6>GST No.</h6>
-                                <Input style={{ borderRadius: "8px " }}  placeholder="GST Number" name="gst" value={query.gst} onChange={formChangeHandler} style={{ width: 300 }} />
+                                <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="GST Number" name="gst" value={query.gst} onChange={formChangeHandler} />
 
                             </div>
                             <div className="col-md-1"></div>

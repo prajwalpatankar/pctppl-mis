@@ -253,3 +253,4 @@ class HSN_Serializer(serializers.ModelSerializer):
     class Meta:
         model = HSN
         fields = '__all__'
+

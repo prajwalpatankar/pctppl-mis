@@ -63,12 +63,12 @@ function Menu() {
         return (
             <div>
                 <br /><br /><br /><br /><br />
-                {/* <div className="row">
-                    <div className="col-md-2 col-sm-12"> </div>
+                <div className="row">
+                    <div className="col-md-4 col-sm-12"> </div>
                     <div className="col-md-2 col-sm-12"><h4 className="page-title main-menu">MAIN MENU</h4></div>
-                    <div className="col-md-8 col-sm-12"> </div>
-                </div> */}
-                <h4 className="page-title main-menu">MAIN MENU</h4>
+                    <div className="col-md-6 col-sm-12"> </div>
+                </div>
+                {/* <h4 className="page-title main-menu">MAIN MENU</h4> */}
                 <br />
                 <div className="row">
                     <div className="col-xl-2 col-lg-1"> </div>
@@ -81,22 +81,29 @@ function Menu() {
                                             <h5 className="menu-title">Purchase Requisitions</h5>
                                             <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1req">New Purchase Requisition</Link></p></Button></li>
                                             <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1viewreq">View Purchase Requisition</Link></p></Button></li>
-                                            {/* {adm ? <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1master">Approve Purchase requisitions</Link></p></Button></li> : wp ? <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1reqsite">Approve Purchase requisitions</Link></p></Button></li> : <Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p></p></Button> } */}
-                                            {adm ? <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1master">Approve Purchase requisitions</Link></p></Button></li> : <Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p></p></Button>}
+                                            {/* {adm ? <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1master">Approve Purchase requisitions</Link></p></Button></li> : wp ? <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1reqsite">Approve Purchase requisitions</Link></p></Button></li> : <p></p> } */}
+                                            {
+                                                adm ?
+                                                    <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1master">Approve Purchase requisitions</Link></p></Button></li>
+                                                    :
+                                                    <p></p>
+                                            }
                                         </ul>
                                     </td>
                                 </tr>
-                                {(adm || po) ?
-                                    <tr>
-                                        <td>
-                                            <ul className="menu-list">
-                                                <h5 className="menu-title">Purchase Orders</h5>
-                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1po">New Purchase Order</Link></p></Button></li>
-                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1viewpo">View Purchase Orders</Link></p></Button></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    : <Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p></p></Button>}
+                                {
+                                    (adm || po) ?
+                                        <tr>
+                                            <td>
+                                                <ul className="menu-list">
+                                                    <h5 className="menu-title">Purchase Orders</h5>
+                                                    <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1po">New Purchase Order</Link></p></Button></li>
+                                                    <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1viewpo">View Purchase Orders</Link></p></Button></li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        : <p></p>
+                                }
 
                                 <tr>
                                     <td>
@@ -133,18 +140,21 @@ function Menu() {
                                 </ul>                                
                             </td>
                         </tr> */}
-                                {(adm || po) ?
-                                    <tr>
-                                        <td>
-                                            <ul className="menu-list">
-                                                <h5 className="menu-title">Suppliers</h5>
-                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1supplier">Add New Supplier</Link></p></Button></li>
-                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1supplierUpdate">Update Supplier Details</Link></p></Button></li>
-                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1viewsupplier">View Supplier Details</Link></p></Button></li>
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                    : <Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p></p></Button>}
+                                {
+                                    (adm || po) ?
+                                        <tr>
+                                            <td>
+                                                <ul className="menu-list">
+                                                    <h5 className="menu-title">Suppliers</h5>
+                                                    <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1supplier">Add New Supplier</Link></p></Button></li>
+                                                    <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1supplierUpdate">Update Supplier Details</Link></p></Button></li>
+                                                    <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1viewsupplier">View Supplier Details</Link></p></Button></li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        :
+                                        <p></p>
+                                }
                                 {adm ?
                                     <tr>
                                         <td>
@@ -156,7 +166,9 @@ function Menu() {
                                             </ul>
                                         </td>
                                     </tr>
-                                    : <Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p> </p></Button>}
+                                    :
+                                    <p></p>
+                                }
                             </tbody>
                         </Table>
                     </div>
