@@ -69,7 +69,7 @@ class RolesSerializer(serializers.ModelSerializer):
         model = Roles
         fields = '__all__'  
 
-class MaterialSerializer(serializers.ModelSerializer):
+class MaterialMasterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material_master
         fields = '__all__'  
@@ -242,12 +242,23 @@ class DeliveryChallanMstSerializer(serializers.ModelSerializer):
         for item in initialItemRow:
             Delivery_Challan_details.objects.create(**item, header_ref_id=dc)
         return dc
-        
+
+
+
+class MaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Material
+        fields = '__all__'
+
 
 class Req_Limit_Serializer(serializers.ModelSerializer):
+    mat_name = serializers.CharField(source='mat_id.mat_name')
+    unit = serializers.CharField(source='mat_id.unit')
+    hsn_id = serializers.CharField(source='mat_id.hsn_id')
+
     class Meta:
         model = Req_Limit
-        fields = '__all__'
+        fields = ('id', 'project_id', 'mat_id', 'utilized', 'quantity', 'mat_name', 'unit', 'hsn_id')
 
 class HSN_Serializer(serializers.ModelSerializer):
     class Meta:

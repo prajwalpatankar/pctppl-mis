@@ -40,6 +40,8 @@ function NewProjects() {
                         .then(res => {
                             setProjectsAll(res.data);
                             setProjects(res.data);
+
+                            setR(true);
                         })
                 })
                 .catch(error => {
@@ -47,6 +49,8 @@ function NewProjects() {
                     if (error.response.status === 401) {
                         localStorage.removeItem('token')
                         setloggedin(false);
+
+                        setR(true);
                     }
                 })
             axios.get(baseUrl.concat("user/"))
@@ -58,6 +62,8 @@ function NewProjects() {
                     if (error.response.status === 401) {
                         localStorage.removeItem('token')
                         setloggedin(false);
+
+                        setR(true);
                     }
                 })
         } else {
@@ -65,7 +71,6 @@ function NewProjects() {
             delete axios.defaults.headers.common["Authorization"];
         }
         setTimeout(() => {
-            setR(true);
             return 0;
         }, 50);
     }, [])
@@ -128,6 +133,9 @@ function NewProjects() {
                     location: "",
                     identifier: "",
                 })
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000)
 
             })
             .catch(error => {
@@ -160,11 +168,11 @@ function NewProjects() {
                                 <form onSubmit={event => submitHandler(event)}>
                                     <div>
                                         <h6>Project Name :</h6>
-                                        <Input style={{ borderRadius: "8px", width: 300 }}  type="text" name="project_name" placeholder="Project Name" value={formvalue.project_name} onChange={event => ChangeHandler(event)} /> <br /><br />
+                                        <Input style={{ borderRadius: "8px", width: 300 }} type="text" name="project_name" placeholder="Project Name" value={formvalue.project_name} onChange={event => ChangeHandler(event)} /> <br /><br />
                                     </div>
                                     <div>
                                         <h6>Project Identifier :</h6>
-                                        <Input style={{ borderRadius: "8px", width: 300 }}  type="text" name="identifier" placeholder="4 lettered Project Identifier" value={formvalue.identifier} onChange={event => IdentifierChangeHandler(event)} /> <br /><br />
+                                        <Input style={{ borderRadius: "8px", width: 300 }} type="text" name="identifier" placeholder="4 lettered Project Identifier" value={formvalue.identifier} onChange={event => IdentifierChangeHandler(event)} /> <br /><br />
                                         {formvalue.identifier === "" ?
                                             <p></p>
                                             :
@@ -179,13 +187,13 @@ function NewProjects() {
                                     </div>
                                     <div>
                                         <h6>Location / Address :</h6>
-                                        <Input style={{ borderRadius: "8px", width: 300 }}  type="text" name="location" placeholder="Location" value={formvalue.location} onChange={event => ChangeHandler(event)} /> <br /><br />
+                                        <Input style={{ borderRadius: "8px", width: 300 }} type="text" name="location" placeholder="Location" value={formvalue.location} onChange={event => ChangeHandler(event)} /> <br /><br />
                                     </div>
                                     <div>
                                         <h6>Select Project Manager :</h6>
                                         <Select
                                             showSearch
-                                            
+
                                             placeholder="Select Project Manager"
                                             optionFilterProp="children"
                                             onChange={changePM}
@@ -202,7 +210,7 @@ function NewProjects() {
                                         <h6>Select Store Keeper :</h6>
                                         <Select
                                             showSearch
-                                            
+
                                             placeholder="Select Storekeeper"
                                             optionFilterProp="children"
                                             onChange={changeSK}

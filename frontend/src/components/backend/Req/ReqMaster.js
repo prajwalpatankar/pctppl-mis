@@ -147,7 +147,6 @@ function ReqMaster() {
         setModalDetails(true);
         let values = JSON.parse(JSON.stringify(record));
         let rowValues = JSON.parse(JSON.stringify(record.initialItemRow));
-        console.log(values)
         setQuery(values);
         setRows(rowValues);
     }
@@ -203,27 +202,46 @@ function ReqMaster() {
     // --------------------------------------------------------------------
     // Submission
 
+
+    const quantityUpadater = (origRow, currentRow, reqLimitArray) =>{
+        if (parseFloat(origRow.quantity) !== parseFloat(currentRow.quantity)) {
+            var updateQuant = parseFloat(currentRow.quantity) - parseFloat(origRow.quantity);
+            let limits = reqlimit.filter(function (o){
+                return o.mat_id === currentRow.mat_id
+            })
+            let obj = limits[0];
+            obj.utilized = parseFloat(obj.utilized) + parseFloat(updateQuant);
+            if (parseFloat(obj.utilized) > parseFloat(obj.quantity)) {
+                message.error(`Requisition limit exceeds for ${obj.mat_name}`)
+                return;
+            }
+            reqLimitArray.push(obj);
+        }
+    }
+
     const submitHandler = () => {
         const key = 'updatable';
         message.loading({ content: 'Processing...', key });
         var id = query.id;
         var origRows = query.initialItemRow;
         let reqLimitArray = [];
+        console.log(reqlimit)
         for (var i = 0; i < origRows.length; i++) {
-            if (parseFloat(origRows[i].quantity) !== parseFloat(rows[i].quantity)) {
-                var updateQuant = parseFloat(rows[i].quantity) - parseFloat(origRows[i].quantity);
-                let obj = reqlimit.find(o => o.mat_id === rows[i].mat_id)
-                obj.utilized = parseFloat(obj.utilized) + parseFloat(updateQuant);
-                if (parseFloat(obj.utilized) > parseFloat(obj.quantity)) {
-                    message.error(`Requisition limit exceeds for ${obj.mat_name}`)
-                    return;
-                }
-                reqLimitArray.push(obj);
-                // console.log(obj);
-            }
+            // if (parseFloat(origRows[i].quantity) !== parseFloat(rows[i].quantity)) {
+            //     var updateQuant = parseFloat(rows[i].quantity) - parseFloat(origRows[i].quantity);
+            //     let obj = reqlimit.find(o => o.mat_id === rows[i].mat_id)
+            //     obj.utilized = parseFloat(obj.utilized) + parseFloat(updateQuant);
+            //     if (parseFloat(obj.utilized) > parseFloat(obj.quantity)) {
+            //         message.error(`Requisition limit exceeds for ${obj.mat_name}`)
+            //         return;
+            //     }
+            //     reqLimitArray.push(obj);
+            //     // console.log(obj);
+            // }
+            quantityUpadater(origRows[i], rows[i], reqLimitArray);
         }
         for (var j = 0; j < reqLimitArray.length; j++) {
-            axios.patch(baseUrl.concat("reqlimit/" + reqLimitArray[j].id + "/"), reqLimitArray[j])
+            axios.patch(baseUrl.concat("reqlimit/" + reqLimitArray[j].id + "/"), {utilized: reqLimitArray[j].utilized})
                 .catch(err => {
                     console.log(err)
                 })
@@ -342,7 +360,7 @@ function ReqMaster() {
                                         <td>{r.mat_id}</td>
                                         <td>{r.mat_name}</td>
                                         <td>{r.description}</td>
-                                        <td>{quantChange ? <Input style={{ borderRadius: "8px", width: 300 }} name="quantity" value={r.quantity} onChange={event => handleQuantityChange(index, event)} /> : <p>{r.quantity}</p>}</td>
+                                        <td>{quantChange ? <Input style={{ borderRadius: "8px", width: 220 }} name="quantity" value={r.quantity} onChange={event => handleQuantityChange(index, event)} /> : <p>{r.quantity}</p>}</td>
                                         <td>{r.unit}</td>
                                     </tr>
                                 </tbody>

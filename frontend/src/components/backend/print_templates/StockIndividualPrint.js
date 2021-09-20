@@ -7,22 +7,13 @@ import { Empty } from 'antd';
 const StockIndividualPrint = (props) => {
     const baseUrl = 'http://localhost:8000/';
 
-    // const [grn, setgrn] = useState([{
-    //     grn_id: "",
-    //     po_id: "",
-    //     vehicle_no: "",
-    //     challan_no: "",
-    //     challan_date: "",
-    //     supp_id: "",
-    //     project_id: "",
-    // }]);
-
-    // const [transfers, setTransfers] = useState([{
-    //     from_project: "",
-    // }])
-
     const [grn, setgrn] = useState([]);
     const [transfers, setTransfers] = useState([]);
+    const [stock, setStock] = useState([{
+        quantity: "",
+        recieved: "",
+        unit: "",
+    }]);
 
 
     const [project, setProject] = useState({
@@ -58,16 +49,22 @@ const StockIndividualPrint = (props) => {
                                                 .then(resST => {
                                                     console.log("Transfers : ", resST.data)
                                                     setTransfers(resST.data);
-                                                    if(response.data.length !== 0) {
-                                                        document.title = "Stock Staement - " + response.data[0].initialItemRow[0].mat_name + " -- " + response.data[0].created_date_time.substring(8, 10) + "-" + response.data[0].created_date_time.substring(5, 7) + "-" +  response.data[0].created_date_time.substring(0, 4)
+                                                    if (response.data.length !== 0) {
+                                                        document.title = "Stock Staement - " + response.data[0].initialItemRow[0].mat_name + " -- " + response.data[0].created_date_time.substring(8, 10) + "-" + response.data[0].created_date_time.substring(5, 7) + "-" + response.data[0].created_date_time.substring(0, 4)
                                                     } else if (resST.data.length !== 0) {
-                                                        document.title = "Stock Staement - " + resST.data[0].initialItemRow[0].mat_name + " -- " + resST.data[0].created_date_time.substring(8, 10) + "-" + resST.data[0].created_date_time.substring(5, 7) + "-" +  resST.data[0].created_date_time.substring(0, 4)
-                                                    }    
+                                                        document.title = "Stock Staement - " + resST.data[0].initialItemRow[0].mat_name + " -- " + resST.data[0].created_date_time.substring(8, 10) + "-" + resST.data[0].created_date_time.substring(5, 7) + "-" + resST.data[0].created_date_time.substring(0, 4)
+                                                    }
+                                                    axios.get(baseUrl.concat("stock/?mat_id=" + mat +"&project_id=" + id))
+                                                    .then((resStock) =>{
+                                                        console.log("stock Det ",resStock.data)
+                                                        setStock(resStock.data);
+                                                    })
+                                                    .then(() => {
+                                                        setComplete(true);
+                                                        window.print();
+                                                    })
                                                 })
-                                                .then(() => {
-                                                    setComplete(true);
-                                                    window.print();
-                                                })
+                                                
                                         })
 
 
@@ -168,36 +165,48 @@ const StockIndividualPrint = (props) => {
                                     ))}
                                 </div>
                                 :
-                                transfers.length !== 0 ?
-                                    <div className="print-center">
-                                        <b>
-                                            <tr className="row">
-                                                <td className="col-sm-1 border border-dark">Sr. No.</td>
-                                                <td className="col-sm-4 border border-dark">Recieved From Site</td>
-                                                <td className="col-sm-4 border border-dark">Recieved Date &#38; Time</td>
-                                                <td className="col-sm-2 border border-dark">Quantity</td>
-                                                <td className="col-sm-1 border border-dark">Unit</td>
-                                            </tr>
-                                        </b>
 
-                                        {transfers.map((r, index) => (
-                                            <tr className="row" key="index">
-                                                <td className="col-sm-1 border border-dark">{index + 1}</td>
-                                                <td className="col-sm-4 border border-dark">{ ProjectFinder(r) }</td>
-                                                <td className="col-sm-4 border border-dark">{r.created_date_time.substring(8, 10)}-{r.created_date_time.substring(5, 7)}-{r.created_date_time.substring(0, 4)}&nbsp;&nbsp;&nbsp;{r.created_date_time.substring(11, 19)}<br /></td>
-                                                <td className="col-sm-2 border border-dark"><b>{parseFloat(r.initialItemRow[0].quantity).toFixed(2)}</b></td>
-                                                <td className="col-sm-1 border border-dark">{r.initialItemRow[0].unit}</td>
-                                            </tr>
-                                        ))}
-                                    </div>
-                                    :
-                                    <div>
+                                <div />
+                            }
+                            <br /><br /><br />
+                            {transfers.length !== 0 ?
+                                <div className="print-center">
+                                    <b>
+                                        <tr className="row">
+                                            <td className="col-sm-1 border border-dark">Sr. No.</td>
+                                            <td className="col-sm-4 border border-dark">Recieved From Site</td>
+                                            <td className="col-sm-4 border border-dark">Recieved Date &#38; Time</td>
+                                            <td className="col-sm-2 border border-dark">Quantity</td>
+                                            <td className="col-sm-1 border border-dark">Unit</td>
+                                        </tr>
+                                    </b>
+
+                                    {transfers.map((r, index) => (
+                                        <tr className="row" key="index">
+                                            <td className="col-sm-1 border border-dark">{index + 1}</td>
+                                            <td className="col-sm-4 border border-dark">{ProjectFinder(r)}</td>
+                                            <td className="col-sm-4 border border-dark">{r.created_date_time.substring(8, 10)}-{r.created_date_time.substring(5, 7)}-{r.created_date_time.substring(0, 4)}&nbsp;&nbsp;&nbsp;{r.created_date_time.substring(11, 19)}<br /></td>
+                                            <td className="col-sm-2 border border-dark"><b>{parseFloat(r.initialItemRow[0].quantity).toFixed(2)}</b></td>
+                                            <td className="col-sm-1 border border-dark">{r.initialItemRow[0].unit}</td>
+                                        </tr>
+                                    ))}
+                                </div>
+                                :
+                                <div>
 
 
-                                    </div>
+                                </div>
                             }
 
                             <br /><br /><br />
+                            <tr className="row">
+                                <td ><b>Total Quantity Recieved :</b> {stock[0].recieved} {stock[0].unit}</td>
+                            </tr>
+                            <tr className="row">
+                                <td ><b>Total Quantity Available :</b> {stock[0].quantity} {stock[0].unit}</td>
+                            </tr>
+                            <br /><br /><br />
+
                             <tr className="row">
                                 <td className="col-sm-12 border-bottom border-dark"></td>
                             </tr>

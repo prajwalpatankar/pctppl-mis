@@ -87,7 +87,7 @@ class Stock_mst_viewset(viewsets.ModelViewSet):
 # Material
 class Material_master_Viewset(viewsets.ModelViewSet):
     queryset = Material_master.objects.all()
-    serializer_class = MaterialSerializer
+    serializer_class = MaterialMasterSerializer
     # filterset_fields = ['cat_id','subcat_id','mat_id','desc']
     filter_backends = [filters.SearchFilter]
     search_fields = ['desc', 'subcat_id']
@@ -171,11 +171,15 @@ class Delivery_Challan_details_Viewset(viewsets.ModelViewSet):
     serializer_class = DeliveryChallanDetailsSerializer
     queryset = Delivery_Challan_details.objects.all()
 
+class MaterialViewSet(viewsets.ModelViewSet):
+    queryset=Material.objects.all()
+    serializer_class = MaterialSerializer
+    filterset_fields = ['mat_name']
 
 class ReqLimitViewSet(viewsets.ModelViewSet):
     queryset = Req_Limit.objects.all()
     serializer_class = Req_Limit_Serializer
-    filterset_fields = ['project_id','mat_id', 'mat_name']
+    filterset_fields = ['project_id','mat_id']
 
 class HSNViewset(viewsets.ModelViewSet):
     queryset = HSN.objects.all()

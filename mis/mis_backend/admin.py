@@ -14,6 +14,7 @@ admin.site.register(Roles)
 admin.site.register(Goods_Receipt_Note_mst)
 admin.site.register(Goods_Receipt_Note_details)
 admin.site.register(Supplier)
+admin.site.register(Material)
 # admin.site.register(File_Upload)
 
 @admin.register(Material_master)

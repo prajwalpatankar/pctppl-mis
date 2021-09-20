@@ -275,6 +275,15 @@ function Requisition() {
   // --------------------------------------------------------------------
   // Submission
 
+  const reqLimitUpdator = (i) =>{
+    limitToUpdate[i].utilized = parseFloat(inputFields[i].quantity) + parseFloat(limitToUpdate[i].utilized);
+    axios.patch(baseUrl.concat("reqlimit/" + limitToUpdate[i].id + "/"), {utilized: limitToUpdate[i].utilized})
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
+
   const submitHandler = (e) => {
     e.preventDefault();
     console.log(query)
@@ -293,11 +302,7 @@ function Requisition() {
     axios.post(baseUrl.concat("requisition/"), query)
       .then(response => {
         for (i = 0; i < n; i++) {
-          limitToUpdate[i].utilized = parseFloat(inputFields[i].quantity) + parseFloat(limitToUpdate[i].utilized);
-          axios.patch(baseUrl.concat("reqlimit/" + limitToUpdate[i].id + "/"), limitToUpdate[i])
-            .catch(error => {
-              console.log(error)
-            })
+          reqLimitUpdator(i);
         }
 
         var proj_string = query.req_id.substring(0, 8);

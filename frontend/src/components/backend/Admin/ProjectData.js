@@ -21,16 +21,16 @@ function ProjectData() {
 
     const [projects, setProjects] = useState([]);
     const [visibility, setVisibility] = useState(false);
+    const [dataVisibility, setDataVisibilty] = useState(false);
     const [req, setReq] = useState([]);
     const [query, setQuery] = useState({
         id: "",
         mat_id: "",
-        mat_name: "",
         utilized: "",
         quantity: "",
-        unit: "",
         project_id: "",
     });
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -44,6 +44,9 @@ function ProjectData() {
                             .then(res => {
                                 setProjects(res.data);
                             })
+                            .then(() => {
+                                setR(true);
+                            })
                     }
                 })
                 .catch(error => {
@@ -51,6 +54,8 @@ function ProjectData() {
                     if (error.response.status === 401) {
                         localStorage.removeItem('token')
                         setloggedin(false);
+
+                        setR(true);
                     }
                 })
         } else {
@@ -59,7 +64,6 @@ function ProjectData() {
         }
 
         setTimeout(() => {
-            setR(true);
             return 0;
         }, 50);
     }, [])
@@ -74,7 +78,8 @@ function ProjectData() {
     }
 
     const showModalDetails = (index) => {
-        setModalDetails(true)
+        setCurrentIndex(index);
+        setModalDetails(true);
         setQuery(req[index]);
     }
 
@@ -123,30 +128,43 @@ function ProjectData() {
     // Form change handlers
 
     const onChangeProject = (value, index) => {
+        setDataVisibilty(false);
         axios.get(baseUrl.concat("reqlimit/?project_id=" + value))
             .then(res => {
                 res.data.sort(function (a, b) {
                     return a.mat_id - b.mat_id;
                 });
-                var len = res.data.length;
-                if (len !== 0) {
-                    var lid = res.data[len - 1].mat_id;
-                    nxtLid = parseInt(lid) + 1;
+                // var len = res.data.length;
+                // if (len !== 0) {
+                //     var lid = res.data[len - 1].mat_id;
+                //     nxtLid = parseInt(lid) + 1;
 
-                } else {
-                    nxtLid = 1;
-                }
+                // } else {
+                //     nxtLid = 1;
+                // }
                 setReq(res.data);
+                console.log(res.data)
                 setVisibility(true);
             })
             .then(() => {
-                setNewItem({ ...newItem, project_id: value, mat_id: nxtLid });
+                setDataVisibilty(true);
             })
+        // .then(() => {
+        //     setNewItem({ ...newItem, project_id: value, mat_id: nxtLid });
+        // })
     }
 
     const handleFormChange = (event) => {
         setQuery({ ...query, quantity: event.target.value });
     }
+
+    const changeMatName = (value) => {
+        setQuery({
+            ...query,
+            mat_id: value,
+        })
+    }
+
 
     // --------------------------------------------------------------------
     // Submission
@@ -155,7 +173,7 @@ function ProjectData() {
         e.preventDefault();
         console.log(query);
         var id = query.id;
-        axios.patch(baseUrl.concat("reqlimit/" + id + "/"), query)
+        axios.patch(baseUrl.concat("reqlimit/" + id + "/"), {quantity: query.quantity})
             .then(res => {
                 console.log(res);
                 message.success(`Limit for ${query.mat_name} updated successfully `);
@@ -169,14 +187,11 @@ function ProjectData() {
                         setQuery({
                             ...query,
                             mat_id: "",
-                            mat_name: "",
-                            hsn_id: "",
                             quantity: "",
                             utilized: 0,
-                            unit: "",
                         })
                     })
-                setModalDetailsNew(false);
+                setModalDetails(false);
             })
             .catch(err => {
                 console.log(err);
@@ -214,7 +229,7 @@ function ProjectData() {
                             <div className="col-sm-1"></div>
                             <div className="col-sm-10">
                                 <h6>Select Project</h6>
-                                <Select placeholder="Select Project"  onChange={onChangeProject}>
+                                <Select placeholder="Select Project" onChange={onChangeProject} style={{ width: 200}}>
                                     {projects.map((project, index) => (
                                         <Option value={project.id}>{project.project_name}</Option>
                                     ))}
@@ -244,7 +259,7 @@ function ProjectData() {
                                                     <th className="col-md-2">Action</th>
                                                 </tr>
                                             </thead>
-                                            {req.map((r, index) => (
+                                            {dataVisibility ? req.map((r, index) => (
                                                 <tbody>
                                                     <tr key={index} className="row">
                                                         <td className="col-md-2">{r.mat_id}</td>
@@ -255,7 +270,13 @@ function ProjectData() {
                                                         <td className="col-md-2"><Button type="primary" size="small" onClick={() => showModalDetails(index)}>Change</Button></td>
                                                     </tr>
                                                 </tbody>
-                                            ))}
+                                            ))
+                                                :
+                                                <div>
+                                                    <br /><br /><br />
+                                                    <Spin tip="Loading..." />
+                                                </div>
+                                            }
                                         </table>
                                     </div>
                                 </div>
@@ -332,7 +353,23 @@ function ProjectData() {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.mat_name} name="mat_name" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td>
+                                        <Select
+                                            showSearch
+                                            style ={{ width: 200 }}
+                                            placeholder="Select Material"
+                                            optionFilterProp="children"
+                                            onChange={changeMatName}
+                                            filterOption={(input, option) =>
+                                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                        >
+                                            {/* {allmats.map((m, index) => (
+                                                <Option value={m.id}>{m.mat_name}</Option>
+                                            ))} */}
+                                        </Select>
+                                    </td>
+                                    {/* <td><Input style={{ borderRadius: "8px" }} value={newItem.mat_name} name="mat_name" onChange={event => handleFormChangeNew(event)} type="text" /></td> */}
                                     <td><Input style={{ borderRadius: "8px" }} value={newItem.quantity} name="quantity" onChange={event => handleFormChangeNew(event)} type="text" /></td>
                                     <td><Input style={{ borderRadius: "8px" }} value={newItem.unit} name="unit" onChange={event => handleFormChangeNew(event)} type="text" /></td>
                                     <td><Input style={{ borderRadius: "8px" }} value={newItem.hsn_id} name="hsn_id" onChange={event => handleFormChangeNew(event)} type="text" /></td>

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.base import Model
 from django.db.models.constraints import Deferrable
+from django.db.models.fields.related import ForeignKey
 from django.db.models.lookups import LessThan, LessThanOrEqual
 from django.utils import timezone
 from django.db.models.query import prefetch_related_objects
@@ -37,14 +38,32 @@ class Projects(models.Model):
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
-class Req_Limit(models.Model): 
-    project_id = models.ForeignKey(Projects, on_delete=models.CASCADE)
-    mat_id = models.CharField(default="", max_length=200)
+class Material(models.Model):
+    mat_name = models.CharField(max_length=100)
     hsn_id = models.CharField(max_length=10)
-    mat_name =  models.CharField(max_length=250,default="")
+    unit = models.CharField(max_length=50)
+
+class Req_Limit(models.Model): 
+    project_id = models.ForeignKey(Projects, on_delete=models.CASCADE, verbose_name="Projects")
+    mat_id = models.ForeignKey(Material, on_delete=models.CASCADE, verbose_name="material")
     utilized = models.FloatField(default=0)
     quantity = models.FloatField(default=0)
-    unit = models.CharField(max_length=50,default="N")
+
+
+
+
+# add mat master 
+# fields = mat_id, mat_name, hsn_id
+# 
+# remove cols from req limit 
+# proj, utilized, quantity, unit 
+# 
+# from req limit page, update add feature, common ids for all, 
+
+# add a feaure to add mats to mat master whn added a new material 
+# common mat id for stst 
+# add a dropdown maybe
+
 
 class HSN(models.Model):
     hsn_id = models.CharField(max_length=10)
@@ -135,7 +154,7 @@ class Purchase_Order_details(models.Model):
     mat_id = models.CharField(default="", max_length=200)
     hsn_id = models.CharField(max_length=10)
     mat_name =  models.CharField(max_length=250,default="")
-    quantity = models.IntegerField(default=0)
+    quantity = models.FloatField(default=0)
     unit = models.CharField(max_length=50,default="N")
     item_rate = models.FloatField(default=0)
     discount = models.FloatField(default=0)

@@ -313,7 +313,7 @@ function GoodsReceiptNote() {
     const updatePOID = (record) => {
         message.info("You may now select Materials")
         setVisibility({ ...visibility, po: true })
-        setQuery({ ...query, po_id: record.po_id })
+        setQuery({ ...query, po_id: record.po_id, supp_id: record.supp_id })
         setSearch({ ...searchstates, isSearchVisiblePO: false });
         window.scrollTo({
             top: 0,
@@ -549,12 +549,12 @@ function GoodsReceiptNote() {
                             <Button type="button" style={{ borderRadius: "10px " }} onClick={() => showPO()}>Select PO</Button>
                         </div>
                         <div className="col-sm-3">
-                            <h6>Select Supplier</h6>
+                            {/* <h6>Select Supplier</h6>
                             <Select placeholder="Select Supplier"  onChange={handleSupplierChange}>
                                 {supplier.map((supp, index) => (
                                     <Option value={supp.id}>{supp.supp_name}</Option>
                                 ))}
-                            </Select>
+                            </Select> */}
                         </div>
                         <div className="col-sm-2"></div>
                     </div>

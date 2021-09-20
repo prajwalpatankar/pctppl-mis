@@ -91,6 +91,26 @@ const POPrint = (props) => {
         }, 200);
     }, [props.match.params])
 
+    const totalValueInner = (mats, taxes, i) =>{
+        console.log("taxes : ",taxes);
+        console.log("search : ", mats[i]);
+        let rateArr = taxes.filter(function (o){
+            return o.hsn_id === mats[i].hsn_id
+        })
+        console.log("returned arr : ", rateArr)
+        // rate = taxes.find(({ hsn_id }) => hsn_id === mats[i].hsn_id);
+        rate = rateArr[0];
+        amounts[i]["tax_rate"] = rate["tax_rate"];
+        amounts[i]["taxable_value"] = ( parseFloat(mats[i].quantity) * parseFloat(mats[i].item_rate) ) - parseFloat(mats[i].discount)
+        amounts[i]["cgst"] = amounts[i]["taxable_value"] *  amounts[i]["tax_rate"] * 0.5 / 100;
+        amounts[i]["amount"] = amounts[i]["taxable_value"] + amounts[i]["cgst"] + amounts[i]["cgst"];
+        let taxable = amounts[i]["taxable_value"];
+        let gst = amounts[i]["cgst"];
+        let sum = amounts[i]["amount"];
+        amounts = [...amounts, { tax_rate: "", taxable_value: "", cgst: "", amount: "" }]
+        return {taxable, gst, sum}
+    }
+
 
     const totalValue = (purchase, taxes) => {
         let mats = purchase.initialItemRow;
@@ -98,16 +118,10 @@ const POPrint = (props) => {
         var taxable = 0;
         var gst = 0;
         for (var i = 0; i < mats.length; i++) {
-            rate = taxes.find(({ hsn_id }) => hsn_id === mats[i].hsn_id);
-            console.log(rate.tax_rate)
-            amounts[i]["tax_rate"] = rate["tax_rate"];
-            amounts[i]["taxable_value"] = ( parseFloat(mats[i].quantity) * parseFloat(mats[i].item_rate) ) - parseFloat(mats[i].discount)
-            amounts[i]["cgst"] = amounts[i]["taxable_value"] *  amounts[i]["tax_rate"] * 0.5 / 100;
-            amounts[i]["amount"] = amounts[i]["taxable_value"] + amounts[i]["cgst"] + amounts[i]["cgst"];
-            taxable += amounts[i]["taxable_value"];
-            gst += amounts[i]["cgst"];
-            sum += amounts[i]["amount"];
-            amounts = [...amounts, { tax_rate: "", taxable_value: "", cgst: "", amount: "" }]
+            let obj = totalValueInner(mats, taxes, i,sum,taxable,gst);
+            sum += obj.sum;
+            taxable += obj.taxable;
+            gst =+ obj.gst;
         }
         setBilling(amounts);
         var gross = sum + parseFloat(purchase.transport) + parseFloat(purchase.other_charges);
@@ -115,8 +129,7 @@ const POPrint = (props) => {
         setComplete(true);
         setTimeout(() => {
             window.print();
-        }, 300);
-        
+        }, 300);     
     }
 
     // --------------------------------------------------------------------

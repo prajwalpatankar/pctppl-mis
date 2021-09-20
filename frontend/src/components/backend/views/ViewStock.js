@@ -84,12 +84,10 @@ function ViewStock() {
 
     const handlePrint = () => {
         window.open('/stock:' + project_id);
-        window.location.reload();
     }
 
     const handleIndividualPrint = (record) => {
         window.open('/onestock:' + project_id + "-" + record.mat_id);
-        window.location.reload();
     }
 
 
