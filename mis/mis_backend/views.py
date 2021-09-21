@@ -160,12 +160,13 @@ class Goods_Receipt_Note_details_Viewset(viewsets.ModelViewSet):
 class Issue_ViewSet(viewsets.ModelViewSet):
     serializer_class = IssueSerializer
     queryset = Issue.objects.all()
+    filterset_fields = ['project_id','mat_id']
 
 # Challan
 class Delivery_Challan_mst_Viewset(viewsets.ModelViewSet):
     serializer_class = DeliveryChallanMstSerializer
     queryset = Delivery_Challan_mst.objects.all()
-    filterset_fields = ['to_project', 'initialItemRow__mat_id']
+    filterset_fields = ['from_project', 'to_project', 'initialItemRow__mat_id']
     
 class Delivery_Challan_details_Viewset(viewsets.ModelViewSet):
     serializer_class = DeliveryChallanDetailsSerializer

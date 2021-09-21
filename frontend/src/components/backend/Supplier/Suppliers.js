@@ -138,7 +138,7 @@ function Supplier() {
                     </div>
                     <div className="col-md-3">
                         <h6>Contact Person  </h6>
-                        <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="HSN ID" name="contact_person" value={query.contact_person} onChange={formChangeHandler}  />
+                        <Input style={{ borderRadius: "8px", width: 300 }}  placeholder="Name - Contact Number" name="contact_person" value={query.contact_person} onChange={formChangeHandler}  />
                     </div>
                     <div className="col-md-1"></div>
                 </div>

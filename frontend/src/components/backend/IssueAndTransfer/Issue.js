@@ -189,14 +189,13 @@ function Issue() {
         console.log(query)
         if (quant >= parseFloat(query.quantity) && 0 < parseFloat(query.quantity)) {
             var remaining = parseFloat(quant) - parseFloat(query.quantity);
-            axios.post(baseUrl.concat("issue/"), query)
+            axios.post(baseUrl.concat("issue/"), ({project_id: query.project_id, mat_id: query.mat_id, quantity: query.quantity }))
                 .then(response => {
                     console.log(response)
                     axios.put(baseUrl.concat("stock/" + id + "/"), {
                         quantity: remaining,
                         project_id: query.project_id,
                         mat_id: query.mat_id,
-                        mat_name: query.mat_name,
                         recieved: quant,
                     })
                         .then(response => {
@@ -210,6 +209,7 @@ function Issue() {
 
                 })
                 .catch(error => {
+                    message.error("Server Error")
                     console.log(error.response.status)
                     if (error.response.status === 401) {
                         localStorage.removeItem('token')

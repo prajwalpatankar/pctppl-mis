@@ -4,17 +4,16 @@ from import_export.admin import ImportExportModelAdmin
 
 # Register your models here.
 admin.site.register(Purchase_Requisition_mst)
-admin.site.register(Purchase_Requisition_details)
 admin.site.register(Purchase_Order_mst)
-admin.site.register(Purchase_Order_details)
 admin.site.register(UserModel)
 admin.site.register(Projects)
 admin.site.register(Stock_mst)
 admin.site.register(Roles)
 admin.site.register(Goods_Receipt_Note_mst)
-admin.site.register(Goods_Receipt_Note_details)
 admin.site.register(Supplier)
 admin.site.register(Material)
+admin.site.register(Delivery_Challan_mst)
+admin.site.register(Issue)
 # admin.site.register(File_Upload)
 
 @admin.register(Material_master)

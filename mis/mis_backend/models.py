@@ -187,10 +187,8 @@ class Goods_Receipt_Note_details(models.Model):
 # Issue model
 class Issue(models.Model):
     project_id = models.ForeignKey(Projects, on_delete=models.CASCADE)
-    mat_id = models.CharField(default="", max_length=200)
-    mat_name =  models.CharField(max_length=250,default="")
+    mat_id = models.ForeignKey(Material, on_delete=models.CASCADE)
     quantity = models.FloatField(default=0)
-    unit = models.CharField(max_length=50,default="N")
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 
