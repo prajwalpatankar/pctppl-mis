@@ -11,11 +11,14 @@ function ViewIssues() {
     const [orig_stock, setOrigStock] = useState([]);
     const [stock, setStock] = useState([]);
     const [issueDetails, setIssueDetails] = useState([]);
+    const [transfers, setTransfers] = useState([]);
+    const [transfersInner, setTransfersInner] = useState([]);
     const [projects, setProjects] = useState([]);
     const [value, setValue] = useState('');
 
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);
+    const [rendered, setRendered] = useState(false);
 
     const [visibility, setVisibility] = useState(false);
     const [currentItem, setCurrentItem] = useState({
@@ -90,16 +93,51 @@ function ViewIssues() {
         setVisibility(false);
     }
 
+    const flatten = (ary, mat_id) => {
+        var ret = [];
+        for(var i = 0; i < ary.length; i++) {
+            for( var j=0; j < ary[i].initialItemRow.length; j++){
+                if(ary[i].initialItemRow[j].mat_id === mat_id){
+                    ret.push(ary[i].initialItemRow[j]);
+                    continue;
+                }
+            }
+        }
+        return ret;
+    }
+
     const handleViewDetails = (record) => {
+        setRendered(false);
         setCurrentItem(record);
         axios.get(baseUrl.concat("issue/?project_id=" + record.project_id + "&mat_id=" + record.mat_id))
             .then(response => {
-                if (response.data.length === 0) {
-                    message.error(`Material ${record.mat_name} has not been issued yet`);
-                } else {                    
-                    setIssueDetails(response.data);
-                    setVisibility(true);
-                }
+                axios.get(baseUrl.concat("sitetransfer/?from_proj=" + record.project_id + "&initialItemRow__mat_id=" + record.mat_id))
+                    .then(res => {
+                        if (response.data.length === 0 && res.data.length === 0) {
+                            message.error(`Material ${record.mat_name} has not been issued yet`);
+                        } else {
+                            let flattened = flatten(res.data, record.mat_id);                            
+                            response.data.sort(function (a, b) {
+                                return b.id - a.id;
+                            });
+                            flattened.sort(function (a, b) {
+                                return b.id - a.id;
+                            });
+                            res.data.sort(function (a, b) {
+                                return b.id - a.id;
+                            });
+
+                            setIssueDetails(response.data);
+                            setTransfers(res.data);
+                            setTransfersInner(flattened);
+                        }
+                    })
+                    .then(() =>{
+                        setTimeout(() =>{
+                            setVisibility(true);
+                            setRendered(true);
+                        }, 50)
+                    })
             })
         // open Modal here        
     }
@@ -201,24 +239,39 @@ function ViewIssues() {
                 >
                     <table className="table table-bordered table-hover">
                         <thead>
-                            <tr>
-                                <td>Sr. No.</td>
-                                <td>Date</td>
-                                <td>Time</td>
-                                <td>Quantity Utitlized</td>
-                                <td>Unit</td>
+                            <tr className="table-row-heading">
+                                <td><b>Date</b></td>
+                                <td><b>Time</b></td>
+                                <td><b>Quantity Utitlized</b></td>
+                                <td><b>Unit</b></td>
                             </tr>
                         </thead>
                         <tbody>
-                            {issueDetails.map((item, index) => (
-                                <tr>
-                                    <td>{index + 1}</td>                                    
-                                    <td>{item.created_date_time.substring(8, 10)}-{item.created_date_time.substring(5, 7)}-{item.created_date_time.substring(0, 4)} </td>                                    
-                                    <td>{item.created_date_time.substring(11, 13)}:{item.created_date_time.substring(14, 16)}:{item.created_date_time.substring(17, 19)} </td>
-                                    <td>{item.quantity}</td>
-                                    <td>{currentItem.unit}</td>
-                                </tr>
-                            ))}
+                            {issueDetails.length !== 0 ?
+                                issueDetails.map((item) => (
+                                    <tr className="table-row-light">
+                                        <td>{item.created_date_time.substring(8, 10)}-{item.created_date_time.substring(5, 7)}-{item.created_date_time.substring(0, 4)} </td>
+                                        <td>{item.created_date_time.substring(11, 13)}:{item.created_date_time.substring(14, 16)}:{item.created_date_time.substring(17, 19)} </td>
+                                        <td>{item.quantity}</td>
+                                        <td>{currentItem.unit}</td>
+                                    </tr>
+                                ))
+                                :
+                                <p />
+                            }
+                            {transfers.length !== 0 && rendered ?                            
+                                transfers.map((item, index) => (
+                                    <tr className="table-row-dark">
+                                        <td>{item.created_date_time.substring(8, 10)}-{item.created_date_time.substring(5, 7)}-{item.created_date_time.substring(0, 4)} </td>
+                                        <td>{item.created_date_time.substring(11, 13)}:{item.created_date_time.substring(14, 16)}:{item.created_date_time.substring(17, 19)} </td>
+                                        <td>{transfersInner[index].quantity}</td>
+                                        <td>{currentItem.unit}</td>
+                                    </tr>
+                                ))
+                                :
+                                <br />
+                            }
+
                         </tbody>
                     </table>
                 </Modal>

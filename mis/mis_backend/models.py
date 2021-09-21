@@ -50,21 +50,6 @@ class Req_Limit(models.Model):
     quantity = models.FloatField(default=0)
 
 
-
-
-# add mat master 
-# fields = mat_id, mat_name, hsn_id
-# 
-# remove cols from req limit 
-# proj, utilized, quantity, unit 
-# 
-# from req limit page, update add feature, common ids for all, 
-
-# add a feaure to add mats to mat master whn added a new material 
-# common mat id for stst 
-# add a dropdown maybe
-
-
 class HSN(models.Model):
     hsn_id = models.CharField(max_length=10)
     tax_rate = models.CharField(max_length=6)
@@ -101,11 +86,11 @@ class Material_master(models.Model):
 # Projectwise stock
 class Stock_mst(models.Model): # monthly, overall statements  (FK date)
     project_id = models.ForeignKey(Projects, on_delete=models.CASCADE)
-    mat_id = models.CharField(default="", max_length=200)
+    mat_id = models.ForeignKey(Material, on_delete=models.CASCADE, verbose_name="material")
     mat_name =  models.CharField(max_length=250,default="")
     recieved = models.FloatField(default=0)
     quantity = models.FloatField(default=0)
-    unit = models.CharField(max_length=50,default="N")
+    unit = models.CharField(max_length=50,default="")
     created_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Created Date Time")
     updated_date_time = models.DateTimeField(default=timezone.localtime,verbose_name="Updated Date Time")
 

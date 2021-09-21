@@ -157,6 +157,7 @@ function DeliveryChallan() {
         setVisibility(true)
         axios.get(baseUrl.concat("stock/?project_id=" + value))
             .then(response => {
+                console.log("mats : ", response.data)
                 setMats(response.data)
             })
         setQuery({ ...query, from_project: value });
@@ -244,11 +245,14 @@ function DeliveryChallan() {
                         recieved: current,
                         quantity: current,
                         mat_id: matid,
+                        mat_name: updateQuery.mat_name,
+                        unit: updateQuery.unit
                     })
                         .then(res => {
                             console.log(res)
                         })
                         .catch(err => {
+                            console.log("error here")
                             console.log(err)
                         })
                 } else {
@@ -364,10 +368,6 @@ function DeliveryChallan() {
                 }
 
                 // clearing fields
-                setQuery({
-                    ...query,
-                    initialItemRow: [],
-                })
                 setInputField([
                     {
                         mat_id: "",
@@ -379,11 +379,16 @@ function DeliveryChallan() {
                 ])
 
             })
-            .then(function () {
-                setTimeout(() => {
-                    window.location.reload();
-                }, 300);
-
+            .then(() => {
+                console.log("QUERY:", query)
+                axios.get(baseUrl.concat("stock/?project_id=" + query.from_project))
+                .then(response => {
+                    setMats(response.data)
+                    setQuery({
+                        ...query,
+                        initialItemRow: [],
+                    })
+                })
             })
             .catch(error => {
                 console.log(error.response.status)

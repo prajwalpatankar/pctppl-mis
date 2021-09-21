@@ -9,6 +9,7 @@ const StockIndividualPrint = (props) => {
 
     const [grn, setgrn] = useState([]);
     const [transfers, setTransfers] = useState([]);
+    const [transfersInner, setTransfersInner] = useState([]);
     const [stock, setStock] = useState([{
         quantity: "",
         recieved: "",
@@ -40,7 +41,11 @@ const StockIndividualPrint = (props) => {
                             axios.get(baseUrl.concat("grn/?project_id=" + id + "&initialItemRow__mat_id=" + mat))
                                 .then(response => {
                                     console.log("GRN : ", response.data)
+                                    response.data.sort(function (a, b) {
+                                        return b.id - a.id;
+                                    });
                                     setgrn(response.data)
+
                                     axios.get(baseUrl.concat("projects/" + id + "/"))
                                         .then(res1 => {
                                             setProject(res1.data);
@@ -48,23 +53,32 @@ const StockIndividualPrint = (props) => {
                                             axios.get(baseUrl.concat("sitetransfer/?to_project=" + id + "&initialItemRow__mat_id=" + mat))
                                                 .then(resST => {
                                                     console.log("Transfers : ", resST.data)
+                                                    let flattened = flatten(resST.data, mat);
+                                                    resST.data.sort(function (a, b) {
+                                                        return b.id - a.id;
+                                                    });
                                                     setTransfers(resST.data);
+                                                    setTransfersInner(flattened);
                                                     if (response.data.length !== 0) {
                                                         document.title = "Stock Staement - " + response.data[0].initialItemRow[0].mat_name + " -- " + response.data[0].created_date_time.substring(8, 10) + "-" + response.data[0].created_date_time.substring(5, 7) + "-" + response.data[0].created_date_time.substring(0, 4)
                                                     } else if (resST.data.length !== 0) {
-                                                        document.title = "Stock Staement - " + resST.data[0].initialItemRow[0].mat_name + " -- " + resST.data[0].created_date_time.substring(8, 10) + "-" + resST.data[0].created_date_time.substring(5, 7) + "-" + resST.data[0].created_date_time.substring(0, 4)
+                                                        document.title = "Stock Staement - " + flattened[0].mat_name + " -- " + resST.data[0].created_date_time.substring(8, 10) + "-" + resST.data[0].created_date_time.substring(5, 7) + "-" + resST.data[0].created_date_time.substring(0, 4)
                                                     }
-                                                    axios.get(baseUrl.concat("stock/?mat_id=" + mat +"&project_id=" + id))
-                                                    .then((resStock) =>{
-                                                        console.log("stock Det ",resStock.data)
-                                                        setStock(resStock.data);
-                                                    })
-                                                    .then(() => {
-                                                        setComplete(true);
-                                                        window.print();
-                                                    })
+                                                    axios.get(baseUrl.concat("stock/?mat_id=" + mat + "&project_id=" + id))
+                                                        .then((resStock) => {
+                                                            console.log("stock Det ", resStock.data)
+                                                            setStock(resStock.data);
+                                                        })
+                                                        .then(() => {
+                                                            setTimeout(() => {
+                                                                setComplete(true);
+                                                                window.print();
+                                                                return 0;
+                                                            }, 50);
+
+                                                        })
                                                 })
-                                                
+
                                         })
 
 
@@ -88,6 +102,19 @@ const StockIndividualPrint = (props) => {
             return 0;
         }, 200);
     }, [props.match.params])
+
+    const flatten = (ary, mat_id) => {
+        var ret = [];
+        for (var i = 0; i < ary.length; i++) {
+            for (var j = 0; j < ary[i].initialItemRow.length; j++) {
+                if (ary[i].initialItemRow[j].mat_id === mat_id) {
+                    ret.push(ary[i].initialItemRow[j]);
+                    continue;
+                }
+            }
+        }
+        return ret;
+    }
 
 
     const ProjectFinder = (r) => {
@@ -133,7 +160,7 @@ const StockIndividualPrint = (props) => {
                                 </tr>
                                 :
                                 <tr className="row ">
-                                    <td className="col-sm-12 "><b>Material Name :</b> &nbsp; {transfers[0].initialItemRow[0].mat_name}</td>
+                                    <td className="col-sm-12 "><b>Material Name :</b> &nbsp; {transfersInner[0].mat_name}</td>
                                 </tr>
                             }
                             <br />
@@ -186,7 +213,7 @@ const StockIndividualPrint = (props) => {
                                             <td className="col-sm-1 border border-dark">{index + 1}</td>
                                             <td className="col-sm-4 border border-dark">{ProjectFinder(r)}</td>
                                             <td className="col-sm-4 border border-dark">{r.created_date_time.substring(8, 10)}-{r.created_date_time.substring(5, 7)}-{r.created_date_time.substring(0, 4)}&nbsp;&nbsp;&nbsp;{r.created_date_time.substring(11, 19)}<br /></td>
-                                            <td className="col-sm-2 border border-dark"><b>{parseFloat(r.initialItemRow[0].quantity).toFixed(2)}</b></td>
+                                            <td className="col-sm-2 border border-dark"><b>{parseFloat(transfersInner[index].quantity).toFixed(2)}</b></td>
                                             <td className="col-sm-1 border border-dark">{r.initialItemRow[0].unit}</td>
                                         </tr>
                                     ))}

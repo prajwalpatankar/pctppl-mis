@@ -266,6 +266,9 @@ td{
 }
 
 /* E6E6FA */
+.table-row-heading {
+  background-color: #bcd7f0;
+}
 .table-row-light {
   background-color: #bceaf0;
 }
