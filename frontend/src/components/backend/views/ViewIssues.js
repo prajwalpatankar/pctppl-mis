@@ -92,12 +92,13 @@ function ViewIssues() {
     const handleCancelDetails = () => {
         setVisibility(false);
     }
+    
 
     const flatten = (ary, mat_id) => {
         var ret = [];
         for(var i = 0; i < ary.length; i++) {
-            for( var j=0; j < ary[i].initialItemRow.length; j++){
-                if(ary[i].initialItemRow[j].mat_id === mat_id){
+            for( var j=0; j < ary[i].initialItemRow.length; j++){         
+                if( toString(ary[i].initialItemRow[j].mat_id) === toString(mat_id) ){                   
                     ret.push(ary[i].initialItemRow[j]);
                     continue;
                 }
@@ -113,10 +114,12 @@ function ViewIssues() {
             .then(response => {
                 axios.get(baseUrl.concat("sitetransfer/?from_proj=" + record.project_id + "&initialItemRow__mat_id=" + record.mat_id))
                     .then(res => {
+                        console.log("transfer Response:", res.data, response.data)
                         if (response.data.length === 0 && res.data.length === 0) {
                             message.error(`Material ${record.mat_name} has not been issued yet`);
                         } else {
-                            let flattened = flatten(res.data, record.mat_id);                            
+                            let flattened = flatten(res.data, record.mat_id);
+                            console.log("flattened : ", flattened);                            
                             response.data.sort(function (a, b) {
                                 return b.id - a.id;
                             });
@@ -136,7 +139,7 @@ function ViewIssues() {
                         setTimeout(() =>{
                             setVisibility(true);
                             setRendered(true);
-                        }, 50)
+                        }, 100)
                     })
             })
         // open Modal here        
@@ -259,7 +262,7 @@ function ViewIssues() {
                                 :
                                 <p />
                             }
-                            {transfers.length !== 0 && rendered ?                            
+                            {transfersInner.length !== 0 && transfers.length !== 0 && rendered ?                            
                                 transfers.map((item, index) => (
                                     <tr className="table-row-dark">
                                         <td>{item.created_date_time.substring(8, 10)}-{item.created_date_time.substring(5, 7)}-{item.created_date_time.substring(0, 4)} </td>

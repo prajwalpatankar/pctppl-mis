@@ -40,6 +40,9 @@ function DeliveryChallan() {
     const [visibility, setVisibility] = useState(false);
 
     const [mats, setMats] = useState([]);
+    const [matsOrig, setMatsOrig] = useState([]);
+    const [usedMats, setUsedMats] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
 
 
     useEffect(() => {
@@ -121,9 +124,9 @@ function DeliveryChallan() {
         {
             title: 'Action',
             key: 'action',
-            render: (text, record) => (
+            render: (text, record, index) => (
                 <Space size="middle">
-                    <Button onClick={() => { updatecol(record) }} type="button">Select</Button>
+                    <Button onClick={() => { updatecol(record, index) }} type="button">Select</Button>
                 </Space>
             ),
         },
@@ -134,6 +137,11 @@ function DeliveryChallan() {
     // Dynamic Table ADD/DELETE
 
     const addHandler = () => {
+        var len = inputFields.length;
+        if ((len !== 0) && (inputFields[len - 1].mat_name === "----")) {
+            message.error("Please update existing row before adding another row");
+            return;
+        }
         setInputField([...inputFields, {
             mat_id: "",
             mat_name: "----",
@@ -145,9 +153,19 @@ function DeliveryChallan() {
 
     const deleteRowHandler = (index) => {
         const values = [...inputFields];
+        if (values[index].mat_name !== "----") {
+            const values_updated = [...usedMats];
+            setMats([...mats, values_updated[index]]);
+            setMatsOrig([...mats, values_updated[index]]);
+            values_updated.splice(index, 1);
+            setUsedMats(values_updated);
+        }
         values.splice(index, 1);
         setInputField(values);
         setQuery({ ...query, initialItemRow: values });
+        if (values.length === 0) {
+            setSearch({ ...searchstates, isSearchVisible: false });
+        }
     }
 
     // --------------------------------------------------------------------
@@ -159,6 +177,7 @@ function DeliveryChallan() {
             .then(response => {
                 console.log("mats : ", response.data)
                 setMats(response.data)
+                setMatsOrig(response.data)
             })
         setQuery({ ...query, from_project: value });
     }
@@ -198,9 +217,11 @@ function DeliveryChallan() {
     // --------------------------------------------------------------------
     // Update Rows 
 
-    const updatecol = (record) => {
+    const updatecol = (record, indexrow) => {
+        setUsedMats([...usedMats, record])
         const values = [...inputFields];
         const index = searchstates.idx;
+        let currentValue = { ...inputFields[index] };
         values[index].mat_id = record.mat_id;
         values[index].mat_name = record.mat_name;
         // values[index].quantity = record.quantity;
@@ -209,6 +230,18 @@ function DeliveryChallan() {
         setInputField(values);
         setQuery({ ...query, initialItemRow: values })
         setSearch({ ...searchstates, isSearchVisible: false })
+        var temp_limit = [...mats];
+        temp_limit.splice(indexrow, 1);
+        if (currentValue.mat_name !== "----") {
+            temp_limit.push({
+                mat_id: currentValue.mat_id,
+                mat_name: currentValue.mat_name,
+                quantity: currentValue.zzmax,
+                unit: currentValue.unit,
+            });
+        }
+        setMats(temp_limit);
+        setMatsOrig(temp_limit)
         window.scrollTo({
             top: 0,
             left: 0,
@@ -382,13 +415,14 @@ function DeliveryChallan() {
             .then(() => {
                 console.log("QUERY:", query)
                 axios.get(baseUrl.concat("stock/?project_id=" + query.from_project))
-                .then(response => {
-                    setMats(response.data)
-                    setQuery({
-                        ...query,
-                        initialItemRow: [],
+                    .then(response => {
+                        setMats(response.data)
+                        setMatsOrig(response.data)
+                        setQuery({
+                            ...query,
+                            initialItemRow: [],
+                        })
                     })
-                })
             })
             .catch(error => {
                 console.log(error.response.status)
@@ -499,7 +533,30 @@ function DeliveryChallan() {
                         <br /><br />
                         <div className="row">
                             <div className="col-sm-1"><p> </p></div>
-                            <div className="col-sm-10"><Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={mats} columns={columns1} /></div>
+                            <div className="col-sm-10">
+
+                                <h6>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                    </svg>&nbsp;&nbsp;
+                                    Search Material
+                                </h6>
+                                <Input style={{ borderRadius: "8px", width: 300 }}
+                                    placeholder="Material Name"
+                                    value={searchValue}
+                                    onChange={e => {
+                                        const currValue = e.target.value;
+                                        setSearchValue(currValue);
+                                        const filteredData = matsOrig.filter(entry =>
+                                            entry.mat_name.toLowerCase().match(currValue.toLowerCase())
+                                        );
+                                        setMats(filteredData);
+                                    }}
+                                />
+                                <br /><br />
+
+                                <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={mats} columns={columns1} />
+                            </div>
                             <div className="col-sm-1"><p> </p></div>
                         </div>
                     </div>) : (

@@ -46,9 +46,12 @@ function Requisition() {
 
   const [projects, setProjects] = useState([]);
 
+  const [searchValue, setSearchValue] = useState('');
+
 
 
   const [limiter, setLimiter] = useState([]);
+  const [orig_limiter, setOrigLimiter] = useState([]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -142,7 +145,7 @@ function Requisition() {
   const addHandler = () => {
     var len = inputFields.length;
     if ((len !== 0) && (inputFields[len - 1].mat_name === "----")) {
-      message.error("Please update exissting row before adding another row");
+      message.error("Please update existing row before adding another row");
       return;
     }
     setInputField([...inputFields, {
@@ -161,12 +164,16 @@ function Requisition() {
     if (values[index].mat_name !== "----") {
       const values_updated = [...limitToUpdate];
       setLimiter([...limiter, values_updated[index]]);
+      setOrigLimiter([...limiter, values_updated[index]]);
       values_updated.splice(index, 1);
       setLimitToUpdate(values_updated);
     }
     values.splice(index, 1);
     setInputField(values);
     setQuery({ ...query, initialItemRow: values });
+    if(values.length === 0 ){
+      setSearch({ ...searchstates, isSearchVisible: false });
+    }
   }
 
   // --------------------------------------------------------------------
@@ -186,6 +193,7 @@ function Requisition() {
     axios.get(baseUrl.concat("reqlimit/?project_id=" + value))
       .then(res => {
         setLimiter(res.data);
+        setOrigLimiter(res.data);
       })
     axios.get(baseUrl.concat("requisition/?project_id=" + value))
       .then(res => {
@@ -265,6 +273,7 @@ function Requisition() {
     var temp_limit = limiter;
     temp_limit.splice(indexrow, 1)
     setLimiter(temp_limit);
+    setOrigLimiter(temp_limit);
     window.scrollTo({
       top: 0,
       left: 0,
@@ -275,9 +284,9 @@ function Requisition() {
   // --------------------------------------------------------------------
   // Submission
 
-  const reqLimitUpdator = (i) =>{
+  const reqLimitUpdator = (i) => {
     limitToUpdate[i].utilized = parseFloat(inputFields[i].quantity) + parseFloat(limitToUpdate[i].utilized);
-    axios.patch(baseUrl.concat("reqlimit/" + limitToUpdate[i].id + "/"), {utilized: limitToUpdate[i].utilized})
+    axios.patch(baseUrl.concat("reqlimit/" + limitToUpdate[i].id + "/"), { utilized: limitToUpdate[i].utilized })
       .catch(error => {
         console.log(error)
       })
@@ -342,6 +351,7 @@ function Requisition() {
         axios.get(baseUrl.concat("reqlimit/?project_id=" + query.project_id))
           .then(res => {
             setLimiter(res.data);
+            setOrigLimiter(res.data);
           })
         message.success("Requisition sent successfully", 5)
       })
@@ -379,7 +389,7 @@ function Requisition() {
             <div className="col-sm-1"></div>
             <div className="col-sm-10">
               <h6>Select Project</h6>
-              <Select placeholder="Select Project"  onChange={onChangeProject}>
+              <Select placeholder="Select Project" onChange={onChangeProject}>
                 {projects.map((project, index) => (
                   <Option value={project.id}>{project.project_name}</Option>
                 ))}
@@ -403,27 +413,27 @@ function Requisition() {
               <table className="table table-hover table-bordered ">
                 <thead className="thead-light">
                   <tr className="row">
-                      <th className="col-md-1">Select Material</th>
-                      <th className="col-md-2">Material Name</th>
-                      <th className="col-md-4">Description</th>
-                      <th className="col-md-1">Quantity</th>
-                      <th className="col-md-1">Unit</th>
-                      <th className="col-md-2">Expected Date (YYYY/MM/DD)</th>
-                      <th className="col-md-1">Delete</th>
+                    <th className="col-md-1">Select Material</th>
+                    <th className="col-md-2">Material Name</th>
+                    <th className="col-md-4">Description</th>
+                    <th className="col-md-1">Quantity</th>
+                    <th className="col-md-1">Unit</th>
+                    <th className="col-md-2">Expected Date (YYYY/MM/DD)</th>
+                    <th className="col-md-1">Delete</th>
                   </tr>
                 </thead>
                 {inputFields.map((inputField, index) => (
-                <tbody>
+                  <tbody>
                     <tr key={index} className="row">
-                        <td className="col-md-1"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select</Button></td>
-                        <td className="col-md-2">{inputField.mat_name}</td>
-                        <td className="col-md-4"><Input style={{ borderRadius: "8px" }}  type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
-                        <td className="col-md-1"><Input style={{ borderRadius: "8px" }}  required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
-                        <td className="col-md-1">{inputField.unit}</td>
-                        <td className="col-md-2"><Input style={{ borderRadius: "8px" }}  type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
-                        <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
-                    </tr>               
-                </tbody>
+                      <td className="col-md-1"><Button type="button" style={{ borderRadius: "10px " }} size="small" onClick={() => showMaterial(index)}>Select</Button></td>
+                      <td className="col-md-2">{inputField.mat_name}</td>
+                      <td className="col-md-4"><Input style={{ borderRadius: "8px" }} type="text" value={inputField.description} placeholder="Description" name="description" onChange={event => changeHandler(index, event)} /></td>
+                      <td className="col-md-1"><Input style={{ borderRadius: "8px" }} required={true} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                      <td className="col-md-1">{inputField.unit}</td>
+                      <td className="col-md-2"><Input style={{ borderRadius: "8px" }} type="date" placeholder="Select Date" name="required_date" onChange={event => changeDateHandler(index, event)} /></td>
+                      <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                    </tr>
+                  </tbody>
                 ))}
               </table>
             </div>
@@ -433,7 +443,30 @@ function Requisition() {
               <br /><br />
               <div className="row">
                 <div className="col-sm-1"><p> </p></div>
-                <div className="col-sm-10"><Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={limiter} columns={columns} pagination={false} /></div>
+                <div className="col-sm-10">
+
+                  <h6>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                    </svg>&nbsp;&nbsp;
+                    Search Material
+                  </h6>
+                  <Input style={{ borderRadius: "8px", width: 300 }}
+                    placeholder="Material Name"
+                    value={searchValue}
+                    onChange={e => {
+                      const currValue = e.target.value;
+                      setSearchValue(currValue);
+                      const filteredData = orig_limiter.filter(entry =>
+                        entry.mat_name.toLowerCase().match(currValue.toLowerCase())
+                      );
+                      setLimiter(filteredData);
+                    }}
+                  />
+                  <br /><br />
+
+                  <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={limiter} columns={columns} pagination={false} />
+                </div>
                 <div className="col-sm-1"><p> </p></div>
               </div>
             </div>) : (
@@ -455,7 +488,7 @@ function Requisition() {
         <ViewReq />
         <div className="row">
           <div className="col-sm-10"><p> </p></div>
-          <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+          <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} className="float-right" onClick={refreshHandler}>Refresh</Button></div>
           <div className="col-sm-1"><p> </p></div>
         </div>
         <br /><br /><br /><br />

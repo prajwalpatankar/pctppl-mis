@@ -40,6 +40,8 @@ function Issue() {
     const [quant, setQuant] = useState(0);
 
     const [mats, setMats] = useState([]);
+    const [matsOrig, setMatsOrig] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
     const [id, setId] = useState();
 
 
@@ -129,11 +131,17 @@ function Issue() {
     // Form change handlers
 
     const handleProjectChange = (value, index) => {
-        setQuery({ ...query, project_id: value });
-        // setquant({ ...quant, project_id: value });
+        setQuery({
+            project_id: value,
+            mat_id: "",
+            mat_name: "----",
+            quantity: 0,
+            unit: "---",
+        });
         axios.get(baseUrl.concat("stock/?project_id=" + value))
             .then(response => {
                 setMats(response.data)
+                setMatsOrig(response.data)
             })
     }
 
@@ -189,7 +197,7 @@ function Issue() {
         console.log(query)
         if (quant >= parseFloat(query.quantity) && 0 < parseFloat(query.quantity)) {
             var remaining = parseFloat(quant) - parseFloat(query.quantity);
-            axios.post(baseUrl.concat("issue/"), ({project_id: query.project_id, mat_id: query.mat_id, quantity: query.quantity }))
+            axios.post(baseUrl.concat("issue/"), ({ project_id: query.project_id, mat_id: query.mat_id, quantity: query.quantity }))
                 .then(response => {
                     console.log(response)
                     axios.put(baseUrl.concat("stock/" + id + "/"), {
@@ -203,6 +211,7 @@ function Issue() {
                             axios.get(baseUrl.concat("stock/?project_id=" + query.project_id))
                                 .then(response => {
                                     setMats(response.data)
+                                    setMatsOrig(response.data)
                                     message.success("Material Issue Successful")
                                 })
                         })
@@ -252,7 +261,7 @@ function Issue() {
                         <div className="col-sm-1"></div>
                         <div className="col-sm-10">
                             <h6>Select Project</h6>
-                            <Select placeholder="Select Project"  onChange={handleProjectChange}>
+                            <Select placeholder="Select Project" onChange={handleProjectChange}>
                                 {projects.map((project, index) => (
                                     <Option value={project.id}>{project.project_name}</Option>
                                 ))}
@@ -263,24 +272,22 @@ function Issue() {
 
                     <br /><br />
                     <div className="row print-center ">
-                        <div className="center table-responsive col-lg-10 col-md-12">
+                        <div className="center table-responsive col-lg-8 col-md-12">
                             <table className="table table-hover table-bordered ">
                                 <thead className="thead-light">
                                     <tr className="row">
                                         <th className="col-md-2">Select Material</th>
                                         <th className="col-md-4">Material Name</th>
-                                        <th className="col-md-2">Quantity</th>
-                                        <th className="col-md-2">Unit</th>
-                                        <th className="col-md-2">Delete</th>
+                                        <th className="col-md-3">Quantity</th>
+                                        <th className="col-md-3">Unit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr className="row">
                                         <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial()}>Select Material</Button></td>
                                         <td className="col-md-4">{query.mat_name}</td>
-                                        <td className="col-md-2"><Input style={{ borderRadius: "8px" }}  type="text" value={query.quantity} placeholder="Quantity" name="quantity" onChange={handleformChange} /></td>
-                                        <td className="col-md-2">{query.unit}</td>
-                                        <td className="col-md-2"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler() }}>Delete</Button></td>
+                                        <td className="col-md-3"><Input style={{ borderRadius: "8px" }} type="text" value={query.quantity} placeholder="Quantity" name="quantity" onChange={handleformChange} /></td>
+                                        <td className="col-md-3">{query.unit}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -297,7 +304,30 @@ function Issue() {
                         <br /><br />
                         <div className="row">
                             <div className="col-sm-1"><p> </p></div>
-                            <div className="col-sm-10"><Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={mats} columns={columns} /></div>
+                            <div className="col-sm-10">
+
+                                <h6>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                    </svg>&nbsp;&nbsp;
+                                    Search Material
+                                </h6>
+                                <Input style={{ borderRadius: "8px", width: 300 }}
+                                    placeholder="Material Name"
+                                    value={searchValue}
+                                    onChange={e => {
+                                        const currValue = e.target.value;
+                                        setSearchValue(currValue);
+                                        const filteredData = matsOrig.filter(entry =>
+                                            entry.mat_name.toLowerCase().match(currValue.toLowerCase())
+                                        );
+                                        setMats(filteredData);
+                                    }}
+                                />
+                                <br /><br />
+                                <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={mats} columns={columns} />
+
+                            </div>
                             <div className="col-sm-1"><p> </p></div>
                         </div>
                     </div>) : (
@@ -308,7 +338,7 @@ function Issue() {
                 <br /><br />
                 <div className="row">
                     <div className="col-sm-10"><p> </p></div>
-                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  className="float-right" onClick={refreshHandler}>Refresh</Button></div>
+                    <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} className="float-right" onClick={refreshHandler}>Refresh</Button></div>
                     <div className="col-sm-1"><p> </p></div>
                 </div>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />

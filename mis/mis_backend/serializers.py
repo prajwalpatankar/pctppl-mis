@@ -229,7 +229,6 @@ class DeliveryChallanDetailsSerializer(serializers.ModelSerializer):
 
 class DeliveryChallanMstSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-
     initialItemRow = DeliveryChallanDetailsSerializer(many=True)
     class Meta:
         model = Delivery_Challan_mst
@@ -242,8 +241,6 @@ class DeliveryChallanMstSerializer(serializers.ModelSerializer):
         for item in initialItemRow:
             Delivery_Challan_details.objects.create(**item, header_ref_id=dc)
         return dc
-
-
 
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
