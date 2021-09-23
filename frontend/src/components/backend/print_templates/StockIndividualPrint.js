@@ -8,6 +8,7 @@ const StockIndividualPrint = (props) => {
     const baseUrl = 'http://localhost:8000/';
 
     const [grn, setgrn] = useState([]);
+    const [grnInner, setgrnInner] = useState([]);
     const [transfers, setTransfers] = useState([]);
     const [transfersInner, setTransfersInner] = useState([]);
     const [stock, setStock] = useState([{
@@ -29,28 +30,43 @@ const StockIndividualPrint = (props) => {
             axios.defaults.headers.common["Authorization"] = `JWT ${localStorage.getItem('token')}`;
             axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
                 .then(res => {
-                    var id = props.match.params.id.substring(1);
-                    var mat = id.substring(id.indexOf('-') + 1)
-                    id = id.substring(0, id.indexOf('-'))
+                    var url = props.match.params.id.substring(1);
+                    console.log("url: ", url)
+                    var id = url.substring(0, url.indexOf('-'))
+                    console.log("id: ", id)
+                    var mat = url.substring(url.indexOf('-') + 1, url.indexOf('&') )
+                    console.log("mat: ", mat)
+                    var from_date = url.substring(url.indexOf('&') + 1, url.indexOf('$') )
+                    from_date = from_date.substring(0,10);
+                    console.log(from_date);
+                    var to_date = url.substring(url.indexOf('$') + 1)
+                    to_date = to_date.substring(0,10);
+                    console.log(to_date);
 
                     axios.get(baseUrl.concat("projects"))
                         .then(resProj => {
                             setProjectsAll(resProj.data);
                         })
-                        .then(() => {
-                            axios.get(baseUrl.concat("grn/?project_id=" + id + "&initialItemRow__mat_id=" + mat))
+                        .then(() => {                             
+                            axios.get(baseUrl.concat("grn/?created_date_time_after=" + from_date + "&created_date_time_before=" + to_date + "&project_id=" + id + "&initialItemRow__mat_id=" + mat ))
                                 .then(response => {
                                     console.log("GRN : ", response.data)
+                                    let flattenedGRN = flatten(response.data, mat);
+                                    flattenedGRN.sort(function (a, b) {
+                                        return b.id - a.id;
+                                    });
                                     response.data.sort(function (a, b) {
                                         return b.id - a.id;
                                     });
+
+                                    setgrnInner(flattenedGRN);
                                     setgrn(response.data)
 
                                     axios.get(baseUrl.concat("projects/" + id + "/"))
                                         .then(res1 => {
                                             setProject(res1.data);
 
-                                            axios.get(baseUrl.concat("sitetransfer/?to_project=" + id + "&initialItemRow__mat_id=" + mat))
+                                            axios.get(baseUrl.concat("sitetransfer/?created_date_time_after=" + from_date + "&created_date_time_before=" + to_date + "&to_project=" + id + "&initialItemRow__mat_id=" + mat))
                                                 .then(resST => {
                                                     console.log("Transfers : ", resST.data)
                                                     let flattened = flatten(resST.data, mat);
@@ -156,7 +172,7 @@ const StockIndividualPrint = (props) => {
 
                             {grn.length !== 0 ?
                                 <tr className="row ">
-                                    <td className="col-sm-12 "><b>Material Name :</b> &nbsp; {grn[0].initialItemRow[0].mat_name}</td>
+                                    <td className="col-sm-12 "><b>Material Name :</b> &nbsp; {grnInner[0].mat_name}</td>
                                 </tr>
                                 :
                                 <tr className="row ">
@@ -184,9 +200,9 @@ const StockIndividualPrint = (props) => {
                                             <td className="col-sm-1 border border-dark">{index + 1}</td>
                                             <td className="col-sm-2 border border-dark">{r.grn_id}</td>
                                             <td className="col-sm-2 border border-dark">{r.created_date_time.substring(8, 10)}-{r.created_date_time.substring(5, 7)}-{r.created_date_time.substring(0, 4)}&nbsp;&nbsp;&nbsp;{r.created_date_time.substring(11, 19)}<br /></td>
-                                            <td className="col-sm-2 border border-dark">{parseFloat(r.initialItemRow[0].quantity).toFixed(2)}</td>
-                                            <td className="col-sm-2 border border-dark">{parseFloat(r.initialItemRow[0].rec_quant).toFixed(2)}</td>
-                                            <td className="col-sm-2 border border-dark"><b>{parseFloat(r.initialItemRow[0].accepted).toFixed(2)}</b></td>
+                                            <td className="col-sm-2 border border-dark">{parseFloat(grnInner[index].quantity).toFixed(2)}</td>
+                                            <td className="col-sm-2 border border-dark">{parseFloat(grnInner[index].rec_quant).toFixed(2)}</td>
+                                            <td className="col-sm-2 border border-dark"><b>{parseFloat(grnInner[index].accepted).toFixed(2)}</b></td>
                                             <td className="col-sm-1 border border-dark">{r.initialItemRow[0].unit}</td>
                                         </tr>
                                     ))}

@@ -16,6 +16,10 @@ function ViewStock() {
     const [r, setR] = useState(false);
     const [printValid, setPrintValid] = useState(false);
     const [project_id, setProjectID] = useState(0);
+    const [dates, setDates] = useState({
+        from_date: "",
+        to_date: "",
+    })
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -82,17 +86,27 @@ function ViewStock() {
             })
     }
 
+    const changeDateHandler = (event) => {
+        let tempdate = event.target.value;
+        tempdate = tempdate + "T12:00";
+        setDates({ ...dates, [event.target.name]: tempdate })
+        console.log(dates);
+    }
+
     const handlePrint = () => {
         window.open('/stock:' + project_id);
     }
 
     const handleIndividualPrint = (record) => {
-        window.open('/onestock:' + project_id + "-" + record.mat_id);
+        window.open('/onestock:' + project_id + "-" + record.mat_id + "&" + dates.from_date + "$" + dates.to_date);
     }
 
 
 
-    const columns = [
+
+
+
+    const columnsPrintable = [
         {
             title: 'Material Id',
             dataIndex: 'mat_id',
@@ -123,11 +137,43 @@ function ViewStock() {
             key: 'details',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { handleIndividualPrint(record) }}>Print Details</Button>
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={() => { handleIndividualPrint(record) }}>Print Details</Button>
                 </Space>
             ),
         },
     ];
+
+    
+    const columns = [
+        {
+            title: 'Material Id',
+            dataIndex: 'mat_id',
+            key: 'mat_id',
+        },
+        {
+            title: 'Material Name',
+            dataIndex: 'mat_name',
+            key: 'mat_name',
+        },
+        {
+            title: 'Cumulative recieved',
+            dataIndex: 'recieved',
+            key: 'recieved',
+        },
+        {
+            title: 'Available',
+            dataIndex: 'quantity',
+            key: 'quantity',
+        },
+        {
+            title: 'Unit',
+            dataIndex: 'unit',
+            key: 'unit',
+        },
+    ];
+
+
+
 
     // --------------------------------------------------------------------
     // Print Api
@@ -161,7 +207,7 @@ function ViewStock() {
                     <div className="col-sm-1"></div>
                     <div className="col-sm-10">
                         <h6>Select Project</h6>
-                        <Select placeholder="Select Project"  onChange={handleProjectChange}>
+                        <Select placeholder="Select Project" onChange={handleProjectChange}>
                             {projects.map((project, index) => (
                                 <Option value={project.id}>{project.project_name}</Option>
                             ))}
@@ -185,7 +231,7 @@ function ViewStock() {
                             Search Material
                         </h6>
 
-                        <Input style={{ borderRadius: "8px", width: 300 }} 
+                        <Input style={{ borderRadius: "8px", width: 300 }}
                             placeholder="Material Name"
                             value={value}
                             onChange={e => {
@@ -198,10 +244,23 @@ function ViewStock() {
                             }}
                         />
                     </div>
-                    <p className="col-md-9" />
+                    <p className="col-md-4" />
+                    <div className="col-md-2">
+                        <h6>From Date</h6>
+                        <Input style={{ borderRadius: "8px", width: 300 }} type="date" placeholder="From Date" name="from_date" onChange={event => changeDateHandler(event)} /> &nbsp;
+                    </div>
+                    <div className="col-md-2">
+                        <h6>To Date</h6>
+                        <Input style={{ borderRadius: "8px", width: 300 }} type="date" placeholder="To Date" name="to_date" onChange={event => changeDateHandler(event)} /> &nbsp;
+                    </div>
+                    <p className="col-md-1" />
                 </div>
                 <br />
-                <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={stock} columns={columns} />
+                {(dates.to_date !== "" && dates.from_date !== "") ?
+                    <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={stock} columns={columnsPrintable} />
+                    :
+                    <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={stock} columns={columns} />
+                }
                 <br /><br />
                 {printValid ?
                     <div className="submit-button">
