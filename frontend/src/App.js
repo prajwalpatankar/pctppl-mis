@@ -16,6 +16,7 @@ import GoodsReceiptNote from './components/backend/GRN/GoodsReceiptNote';
 import NewUser from './components/backend/Admin/NewUser';
 import NewProjects from './components/backend/Admin/NewProjects';
 import ProjectData from './components/backend/Admin/ProjectData';
+import UploadRequisitionLimit from './components/backend/Admin/UploadRequisitionLimit';
 
 import Issue from './components/backend/IssueAndTransfer/Issue';
 import DeliveryChallan from './components/backend/IssueAndTransfer/DeliveryChallan';
@@ -80,6 +81,7 @@ function App() {
           <Route path='/1projects' component={NewProjects} />
           <Route path='/1projectData' component={ProjectData} />
           <Route path='/1master' component={ReqMaster} />
+          <Route path='/1uploadreqs' component={UploadRequisitionLimit} />
 
           {/* Views */}
           <Route path='/1viewreq' component={RequisitionView} />

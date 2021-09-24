@@ -46,6 +46,9 @@ class Material(models.Model):
 class Req_Limit(models.Model): 
     project_id = models.ForeignKey(Projects, on_delete=models.CASCADE, verbose_name="Projects")
     mat_id = models.ForeignKey(Material, on_delete=models.CASCADE, verbose_name="material")
+    mat_name =models.CharField(max_length=100)
+    hsn_id = models.CharField(max_length=10)
+    unit = models.CharField(max_length=50)
     utilized = models.FloatField(default=0)
     quantity = models.FloatField(default=0)
 

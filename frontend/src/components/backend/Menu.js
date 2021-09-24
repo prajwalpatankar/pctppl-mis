@@ -142,16 +142,6 @@ function Menu() {
                                     </td>
                                 </tr>
 
-
-
-                                {/* <tr>
-                            <td>
-                                <ul className="menu-list">
-                                    <h5 className="menu-title">Material Master</h5>
-                                    <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1material">Add New Material</Link></p></Button></li>
-                                </ul>                                
-                            </td>
-                        </tr> */}
                                 {
                                     (adm || po) ?
                                         <tr>
@@ -182,7 +172,8 @@ function Menu() {
                                             <ul className="menu-list">
                                                 <h5 className="menu-title">Admin Panel</h5>
                                                 <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1projects">New Project</Link></p></Button></li>
-                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1newuser">New User</Link></p></Button></li>
+                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1newuser">New User</Link></p></Button></li>                                                
+                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1uploadreqs">Add Requisition Limits</Link></p></Button></li>
                                                 <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1projectData">Update Requisition Limit</Link></p></Button></li>
                                             </ul>
                                         </td>

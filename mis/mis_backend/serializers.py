@@ -255,7 +255,7 @@ class Req_Limit_Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = Req_Limit
-        fields = ('id', 'project_id', 'mat_id', 'utilized', 'quantity', 'mat_name', 'unit', 'hsn_id')
+        fields = '__all__'
 
 class HSN_Serializer(serializers.ModelSerializer):
     class Meta:

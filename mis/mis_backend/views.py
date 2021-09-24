@@ -136,24 +136,22 @@ class Purchase_Order_details_Viewset(viewsets.ModelViewSet):
 class GrnFilter(FilterSet): #filter for date range
     created_date_time = DateFromToRangeFilter()
     class Meta:
-        model = Goods_Receipt_Note_details
-        fields  = ['created_date_time', 'mat_id']
+        # model = Goods_Receipt_Note_details
+        # fields  = ['created_date_time', 'mat_id']
+        model = Goods_Receipt_Note_mst 
+        fields  = ['created_date_time', 'project_id', 'initialItemRow__mat_id']
 
 
 class Goods_Receipt_Note_mst_Viewset(viewsets.ModelViewSet):
     serializer_class = GoodsReceiptNoteMstSerializer
     queryset = Goods_Receipt_Note_mst.objects.all()
-    filterset_fields = ['project_id', 'initialItemRow__mat_id']
+    # filterset_fields = ['project_id', 'initialItemRow__mat_id']    
+    filter_class = GrnFilter
 
 class Goods_Receipt_Note_details_Viewset(viewsets.ModelViewSet):
     serializer_class = GoodsReceiptNoteDetailsSerializer
     queryset = Goods_Receipt_Note_details.objects.all()
-    filter_class = GrnFilter
-
-
-
-
-
+    # filter_class = GrnFilter
 
 
 # Material Issue
@@ -163,25 +161,38 @@ class Issue_ViewSet(viewsets.ModelViewSet):
     filterset_fields = ['project_id','mat_id']
 
 # Challan
+class STSTFilter(FilterSet): #filter for date range
+    created_date_time = DateFromToRangeFilter()
+    class Meta:
+        model = Delivery_Challan_mst 
+        fields  = ['created_date_time', 'from_project', 'to_project' , 'initialItemRow__mat_id']
+
 class Delivery_Challan_mst_Viewset(viewsets.ModelViewSet):
     serializer_class = DeliveryChallanMstSerializer
     queryset = Delivery_Challan_mst.objects.all()
-    filterset_fields = ['from_project', 'to_project', 'initialItemRow__mat_id']
+    # filterset_fields = ['from_project', 'to_project', 'initialItemRow__mat_id']
+    filter_class = STSTFilter
     
 class Delivery_Challan_details_Viewset(viewsets.ModelViewSet):
     serializer_class = DeliveryChallanDetailsSerializer
     queryset = Delivery_Challan_details.objects.all()
 
+
+# Materials
 class MaterialViewSet(viewsets.ModelViewSet):
     queryset=Material.objects.all()
     serializer_class = MaterialSerializer
     filterset_fields = ['mat_name']
 
+
+# Requisition Limit
 class ReqLimitViewSet(viewsets.ModelViewSet):
     queryset = Req_Limit.objects.all()
     serializer_class = Req_Limit_Serializer
     filterset_fields = ['project_id','mat_id']
 
+
+# HSN
 class HSNViewset(viewsets.ModelViewSet):
     queryset = HSN.objects.all()
     serializer_class = HSN_Serializer
