@@ -126,6 +126,28 @@ function ProjectData() {
             axios.post(baseUrl.concat("reqlimit/"), newItem)
                 .then(() => {
                     message.success("New Material Added Successfully");
+
+                    axios.get(baseUrl.concat("reqlimit/?project_id=" + newItem.project_id))
+                        .then(res => {
+                            res.data.sort(function (a, b) {
+                                return a.mat_id - b.mat_id;
+                            });
+                            setReq(res.data);
+                            setReqOrig(res.data);
+                            console.log(res.data);
+
+                            setNewItem({ 
+                                ...newItem, 
+                                project_id: value,
+                                mat_id: "",
+                                mat_name: "",
+                                hsn_id: "",
+                                quantity: "",
+                                utilized: 0,
+                                unit: "",                                
+                            });
+                            setVisibility(true);
+                        })
                 })
                 .catch(err => {
                     console.log(err);
@@ -158,7 +180,9 @@ function ProjectData() {
                 // }
                 setReq(res.data);
                 setReqOrig(res.data);
-                console.log(res.data)
+                console.log(res.data);
+
+                setNewItem({ ...newItem, project_id: value });
                 setVisibility(true);
             })
             .then(() => {
@@ -177,7 +201,7 @@ function ProjectData() {
         let filteredReqs = reqOrig.filter(function (o) {
             return o.mat_id === value
         })
-        let matData = allmats.filter( function (o) {
+        let matData = allmats.filter(function (o) {
             return o.id === value;
         })
         console.log(matData)
