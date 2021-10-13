@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, message, Input, Table, Space, Select, Modal, Spin } from 'antd';
 import NotFound from './../../NotFound';
+import { baseUrl } from './../../../constants/Constants';
 import BackFooter from './../BackFooter';
 import jwt_decode from 'jwt-decode';
 import PageNotFound from '../../PageNotFound';
 
 function PurchaseOrder() {
 
-    const baseUrl = "http://localhost:8000/";
+    // const baseUrl = "http://localhost:8000/";
 
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);

@@ -3,9 +3,10 @@ import axios from 'axios';
 import { message } from 'antd';
 import { useHistory } from "react-router-dom";
 import { Spin } from 'antd';
+import { baseUrl } from './../../constants/Constants';
 
 function Login() {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
     const history = useHistory();
 

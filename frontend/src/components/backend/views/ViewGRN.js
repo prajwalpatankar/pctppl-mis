@@ -4,10 +4,11 @@ import { Table, Spin, Button, Space, Modal } from 'antd';
 import BackFooter from '../BackFooter';
 import NotFound from '../../NotFound';
 import jwt_decode from "jwt-decode";
+import { baseUrl } from './../../../constants/Constants';
 
 
 function ViewGRN() {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
 
     const [l, setloggedin] = useState(true);

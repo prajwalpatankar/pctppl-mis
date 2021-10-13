@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, message, Input, Select, Modal, Spin } from 'antd';
 import NotFound from './../../NotFound';
+import { baseUrl } from './../../../constants/Constants';
 import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
 import PageNotFound from '../../PageNotFound';
@@ -11,7 +12,7 @@ function ProjectData() {
     // --------------------------------------------------------------------
     // Base Urls
 
-    const baseUrl = "http://localhost:8000/"
+    // const baseUrl = "http://localhost:8000/"
 
     // --------------------------------------------------------------------
     // states
@@ -33,6 +34,8 @@ function ProjectData() {
     });
 
     const [value, setValue] = useState('');
+    const [allmats, setAllMats] = useState([]);
+    const [matValidation, setMatValidation] = useState(false);
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -45,9 +48,14 @@ function ProjectData() {
                         axios.get(baseUrl.concat("projects"))
                             .then(res => {
                                 setProjects(res.data);
-                            })
-                            .then(() => {
-                                setR(true);
+
+                                axios.get(baseUrl.concat("materials"))
+                                    .then(resMats => {
+                                        setAllMats(resMats.data);
+                                    })
+                                    .then(() => {
+                                        setR(true);
+                                    })
                             })
                     }
                 })
@@ -114,14 +122,19 @@ function ProjectData() {
 
     const addHandler = () => {
         console.log(newItem)
-        axios.post(baseUrl.concat("reqlimit/"), newItem)
-            .then(() => {
-                message.success("New Material Added Successfully");
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        setModalDetailsNew(false);
+        if (matValidation) {
+            axios.post(baseUrl.concat("reqlimit/"), newItem)
+                .then(() => {
+                    message.success("New Material Added Successfully");
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+            setModalDetailsNew(false);
+        } else {
+            message.error("Material Already Exists !")
+        }
+
     }
 
 
@@ -161,10 +174,30 @@ function ProjectData() {
     }
 
     const changeMatName = (value) => {
-        setQuery({
-            ...query,
-            mat_id: value,
+        let filteredReqs = reqOrig.filter(function (o) {
+            return o.mat_id === value
         })
+        let matData = allmats.filter( function (o) {
+            return o.id === value;
+        })
+        console.log(matData)
+        if (filteredReqs.length === 0) {
+            setNewItem({
+                ...newItem,
+                mat_id: value,
+                mat_name: matData[0].mat_name,
+                unit: matData[0].unit,
+                hsn_id: matData[0].hsn_id,
+            })
+            setMatValidation(true);
+        } else {
+            message.error("Material Limit Already exists !")
+            setTimeout(() => {
+                message.info("Please use the Search Material functionality to search for your material");
+            }, 200)
+        }
+        console.log(newItem)
+
     }
 
 
@@ -396,15 +429,15 @@ function ProjectData() {
                                                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
                                         >
-                                            {/* {allmats.map((m, index) => (
+                                            {allmats.map((m, index) => (
                                                 <Option value={m.id}>{m.mat_name}</Option>
-                                            ))} */}
+                                            ))}
                                         </Select>
                                     </td>
                                     {/* <td><Input style={{ borderRadius: "8px" }} value={newItem.mat_name} name="mat_name" onChange={event => handleFormChangeNew(event)} type="text" /></td> */}
                                     <td><Input style={{ borderRadius: "8px" }} value={newItem.quantity} name="quantity" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.unit} name="unit" onChange={event => handleFormChangeNew(event)} type="text" /></td>
-                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.hsn_id} name="hsn_id" onChange={event => handleFormChangeNew(event)} type="text" /></td>
+                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.unit} name="unit" onChange={event => handleFormChangeNew(event)} type="text" disabled /></td>
+                                    <td><Input style={{ borderRadius: "8px" }} value={newItem.hsn_id} name="hsn_id" onChange={event => handleFormChangeNew(event)} type="text" disabled /></td>
                                 </tr>
                             </tbody>
                         </table>

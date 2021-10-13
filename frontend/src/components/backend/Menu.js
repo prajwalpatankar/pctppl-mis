@@ -6,11 +6,12 @@ import BackFooter from './BackFooter';
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
 import { Spin, Button } from 'antd'
+import { baseUrl } from './../../constants/Constants';
 
 
 function Menu() {
 
-    const baseUrl = 'http://localhost:8000/';
+    // // const baseUrl = 'http://localhost:8000/';
 
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);

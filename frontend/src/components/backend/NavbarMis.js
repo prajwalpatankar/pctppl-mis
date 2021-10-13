@@ -6,11 +6,12 @@ import './../../App.css';
 import axios from 'axios';
 import { message, Button } from 'antd';
 import jwt_decode from 'jwt-decode';
+import { baseUrl } from './../../constants/Constants';
 import { useHistory } from "react-router-dom";
 
 
 function  NavbarMis() {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
     const [l,setL] = useState(false);
     const [mob, setMob] = useState(false);
     

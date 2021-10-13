@@ -3,10 +3,11 @@ import axios from 'axios';
 import { Input, Button, Space, Table, Spin, message, Modal } from 'antd';
 import BackFooter from './../BackFooter';
 import NotFound from './../../NotFound';
+import { baseUrl } from './../../../constants/Constants';
 import jwt_decode from "jwt-decode";
 
 function HSN() {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
     const [query, setQuery] = useState({
         hsn_id: "",

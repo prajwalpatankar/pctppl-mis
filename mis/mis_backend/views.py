@@ -126,6 +126,7 @@ class Purchase_Requisition_Viewset_details(viewsets.ModelViewSet):
 class Purchase_Order_mst_Viewset(viewsets.ModelViewSet):
     serializer_class = PurchaseOrderMstSerializer
     queryset = Purchase_Order_mst.objects.all()
+    filterset_fields = ['project_id']
 
 class Purchase_Order_details_Viewset(viewsets.ModelViewSet):
     serializer_class = PurchaseOrderDetailsSerializer

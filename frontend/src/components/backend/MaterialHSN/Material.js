@@ -4,9 +4,10 @@ import { Input, Select, Button, Spin, message } from 'antd';
 import BackFooter from '../BackFooter';
 import NotFound from '../../NotFound';
 import jwt_decode from "jwt-decode";
+import { baseUrl } from './../../../constants/Constants';
 
 function Material() {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
     const [query, setQuery] = useState({
         mat_name: "",

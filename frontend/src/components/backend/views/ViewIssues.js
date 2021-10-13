@@ -4,9 +4,10 @@ import { Input, Select, Table, Spin, Button, Space, message, Modal } from 'antd'
 import BackFooter from '../BackFooter';
 import NotFound from '../../NotFound';
 import jwt_decode from "jwt-decode";
+import { baseUrl } from './../../../constants/Constants';
 
 function ViewIssues() {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
     const [orig_stock, setOrigStock] = useState([]);
     const [stock, setStock] = useState([]);

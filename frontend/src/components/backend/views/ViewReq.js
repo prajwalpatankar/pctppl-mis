@@ -3,13 +3,14 @@ import axios from 'axios';
 import { Table, Spin, Button, Space, Modal } from 'antd';
 import NotFound from '../../NotFound';
 import jwt_decode from "jwt-decode";
+import { baseUrl } from './../../../constants/Constants';
 
 
 
 
 
 function ViewReq() {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
 
     const [l, setloggedin] = useState(true);

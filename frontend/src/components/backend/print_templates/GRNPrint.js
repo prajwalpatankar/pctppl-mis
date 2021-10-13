@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
+import { baseUrl } from './../../../constants/Constants';
 
 
 const GRNPrint = (props) => {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
     const [grn, setgrn] = useState({
         grn_id: "",

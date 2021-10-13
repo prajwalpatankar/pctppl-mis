@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, message, Input, Table, Space, Select, Spin } from 'antd';
 import NotFound from './../../NotFound';
+import { baseUrl } from './../../../constants/Constants';
 import BackFooter from './../BackFooter';
 import jwt_decode from "jwt-decode";
 
@@ -10,7 +11,7 @@ function GoodsReceiptNote() {
     // --------------------------------------------------------------------
     // Base Urls
 
-    const baseUrl = "http://localhost:8000/"
+    // const baseUrl = "http://localhost:8000/"
 
     // --------------------------------------------------------------------
     // states

@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
+import { baseUrl } from './../../../constants/Constants';
 
 const numWords = require('num-words');
 
 const POPrint = (props) => {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
     const [po, setPo] = useState({
         created_date_time: "----------",

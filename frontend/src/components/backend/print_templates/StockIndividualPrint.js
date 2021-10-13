@@ -2,10 +2,11 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
 import { Empty } from 'antd';
+import { baseUrl } from './../../../constants/Constants';
 
 
 const StockIndividualPrint = (props) => {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
     const [grn, setgrn] = useState([]);
     const [grnInner, setgrnInner] = useState([]);

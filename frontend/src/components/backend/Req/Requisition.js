@@ -5,13 +5,14 @@ import { Button, message, Input, Table, Space, Select, Spin } from 'antd';
 import BackFooter from '../BackFooter';
 import jwt_decode from 'jwt-decode';
 import ViewReq from '../views/ViewReq';
+import { baseUrl } from './../../../constants/Constants';
 
 function Requisition() {
 
   // --------------------------------------------------------------------
   // Base Urls
 
-  const baseUrl = "http://localhost:8000/"
+  // const baseUrl = "http://localhost:8000/"
 
   // --------------------------------------------------------------------
   // States

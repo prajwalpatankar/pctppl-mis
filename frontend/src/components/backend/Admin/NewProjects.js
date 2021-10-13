@@ -3,11 +3,12 @@ import axios from 'axios';
 import { Input, Button, message, Select, Spin, Table } from 'antd';
 import BackFooter from './../BackFooter';
 import NotFound from './../../NotFound';
+import { baseUrl } from './../../../constants/Constants';
 import PageNotFound from './../../PageNotFound';
 import jwt_decode from "jwt-decode";
 
 function NewProjects() {
-    const baseUrl = 'http://localhost:8000/';
+    // const baseUrl = 'http://localhost:8000/';
 
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);
