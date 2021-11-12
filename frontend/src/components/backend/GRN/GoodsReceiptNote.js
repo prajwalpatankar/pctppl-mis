@@ -20,7 +20,7 @@ function GoodsReceiptNote() {
     const [r, setR] = useState(false);
 
     const [projects, setProjects] = useState([]);
-    const [supplier, setSupplier] = useState([]);
+    // const [supplier, setSupplier] = useState([]);
 
     const [inputFields, setInputField] = useState([
         {
@@ -82,10 +82,10 @@ function GoodsReceiptNote() {
                             })
                     }
 
-                    axios.get(baseUrl.concat("supplier"))
-                        .then(res => {
-                            setSupplier(res.data);
-                        })
+                    // axios.get(baseUrl.concat("supplier"))
+                    //     .then(res => {
+                    //         setSupplier(res.data);
+                    //     })
                 })
                 .catch(error => {
                     console.log(error.response.status)
@@ -244,10 +244,10 @@ function GoodsReceiptNote() {
             })
     }
 
-    const handleSupplierChange = (value) => {
-        setQuery({ ...query, supp_id: value });
+    // const handleSupplierChange = (value) => {
+    //     setQuery({ ...query, supp_id: value });
 
-    }
+    // }
 
     const formChangeHandler = (event) => {  //for outer form
         setQuery({ ...query, [event.target.name]: event.target.value });

@@ -105,7 +105,7 @@ function ProjectData() {
         unit: "",
         project_id: "",
     })
-    var nxtLid;
+    
     const [ModalDetailsNew, setModalDetailsNew] = useState(false)
 
     const handleCancelDetailsNew = () => {

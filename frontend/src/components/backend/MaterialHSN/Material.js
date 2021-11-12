@@ -98,7 +98,6 @@ function Material() {
     // Antd
 
     const { Option } = Select;
-    const { TextArea } = Input;
 
     // --------------------------------------------------------------------
     // html
