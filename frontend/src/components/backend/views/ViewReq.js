@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, Spin, Button, Space, Modal } from 'antd';
+import { Table, Spin, Button, Space, Modal, Select } from 'antd';
 import NotFound from '../../NotFound';
 import jwt_decode from "jwt-decode";
 import { baseUrl } from './../../../constants/Constants';
@@ -16,6 +16,8 @@ function ViewReq() {
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);
 
+
+    const [projects, setProjects] = useState([]);
     const [projectsAll, setProjectsAll] = useState([]);
     const [reqs, setReqs] = useState([]);
 
@@ -34,9 +36,10 @@ function ViewReq() {
                             setProjectsAll(resProj.data);
 
 
-                            if (res.data[0].role === "admin"  || res.data[0].role === "Purchase Officer") {
+                            if (res.data[0].role === "admin" || res.data[0].role === "Purchase Officer") {
                                 axios.get(baseUrl.concat("projects"))
                                     .then(res => {
+                                        setProjects(res.data);
                                         if (res.data.length === 0) {
                                             setEmpty(true)
                                         }
@@ -44,23 +47,25 @@ function ViewReq() {
                             } else if (res.data[0].role === "Project Manager") {
                                 axios.get(baseUrl.concat("projects/?pm=" + jwt_decode(localStorage.getItem("token")).user_id))
                                     .then(res => {
+                                        setProjects(res.data);
                                         if (res.data.length === 0) {
                                             setEmpty(true)
-                                        } 
+                                        }
                                     })
                             } else {
                                 axios.get(baseUrl.concat("projects/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
                                     .then(res => {
+                                        setProjects(res.data);
                                         if (res.data.length === 0) {
                                             setEmpty(true)
-                                        } 
+                                        }
                                     })
                             }
                             axios.get(baseUrl.concat("requisition"))
                                 .then(res1 => {
                                     res1.data.sort(function (a, b) {
                                         return b.id - a.id;
-                                    });                                   
+                                    });
 
                                     setReqs(res1.data);
                                 })
@@ -101,6 +106,29 @@ function ViewReq() {
         console.log(current_items)
     }
 
+
+    // --------------------------------------------------------------------
+    // Change Handlers
+
+    const handleProjectChange = (value) => {
+        axios.get(baseUrl.concat("requisition/?project_id=" + value))
+            .then(res1 => {
+                res1.data.sort(function (a, b) {
+                    return b.id - a.id;
+                });
+                setReqs(res1.data);
+            })
+            .catch(error => {
+                console.log(error.response.status)
+                if (error.response.status === 401) {
+                    localStorage.removeItem('token')
+                    setloggedin(false);
+                }
+            })
+    }
+
+
+
     // --------------------------------------------------------------------
     // AntD table columns
 
@@ -127,7 +155,7 @@ function ViewReq() {
             key: 'details',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { showModalDetails(record) }}>View Details</Button>
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={() => { showModalDetails(record) }}>View Details</Button>
                 </Space>
             ),
         },
@@ -145,6 +173,10 @@ function ViewReq() {
         },
     ];
 
+    // --------------------------------------------------------------------
+    // AntD 
+
+    const { Option } = Select;
 
 
     // --------------------------------------------------------------------
@@ -164,7 +196,23 @@ function ViewReq() {
             return (
                 <div>
                     <br />
-                    <Table  rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' :  'table-row-dark'} dataSource={reqs} columns={columns} />
+
+                    <div className="row">
+                        <div className="col-sm-1"></div>
+                        <div className="col-sm-10">
+                            <h6>Select Project</h6>
+                            <Select placeholder="Select Project" onChange={handleProjectChange}>
+                                {projects.map((project, index) => (
+                                    <Option value={project.id}>{project.project_name}</Option>
+                                ))}
+                            </Select>
+                        </div>
+                        <div className="col-sm-1"></div>
+                    </div>
+
+
+                    <br />
+                    <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={reqs} columns={columns} />
 
                     <Modal
                         title="Purchase Requisition Details"

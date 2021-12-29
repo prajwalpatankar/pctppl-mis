@@ -485,7 +485,7 @@ function Requisition() {
         <br /><br />
         <br /><br />
 
-        <h5 className="menu-title">Purchase Requisition Status : </h5>
+        <h5 className="menu-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Purchase Requisition Status : </h5>
         <ViewReq />
         <div className="row">
           <div className="col-sm-10"><p> </p></div>
