@@ -1,0 +1,5 @@
+make p status user specific
+pr status fucks up on changing quants
+
+
+individual issue details shows dets from other projs

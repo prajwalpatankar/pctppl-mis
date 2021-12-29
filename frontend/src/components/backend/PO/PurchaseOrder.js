@@ -75,10 +75,10 @@ function PurchaseOrder() {
                     } else if (res.data[0].role === "Store") {
                         setStore(true);
                     } else {
-                        axios.get(baseUrl.concat("projects/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
-                            .then(res => {
-                                setProjects(res.data);
-                            })
+                        axios.get(baseUrl.concat("projects"))
+                        .then(res => {
+                            setProjects(res.data);
+                        })
                     }
                     axios.get(baseUrl.concat("supplier"))
                         .then(res => {

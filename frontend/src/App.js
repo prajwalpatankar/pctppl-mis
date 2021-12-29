@@ -40,6 +40,7 @@ import RequisitionView from './components/backend/Req/RequisitionView';
 import ViewStock from './components/backend/views/ViewStock';
 import ReqMaster from './components/backend/Req/ReqMaster';
 import ViewIssues from './components/backend/views/ViewIssues';
+import ViewMaterial from './components/backend/views/ViewMaterial';
 
 
 
@@ -90,6 +91,7 @@ function App() {
           <Route path='/1viewsupplier' component={ViewSuppliers} />
           <Route path='/1viewissues' component={ViewIssues} />
           <Route path='/1stock' component={ViewStock} />
+          <Route path='/1viewmaterial' component={ViewMaterial} />
 
           {/* Printing */}
 

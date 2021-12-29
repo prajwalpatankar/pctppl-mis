@@ -21,6 +21,8 @@ function DeliveryChallan() {
 
 
     const [projects, setProjects] = useState([]);
+    const [projectsAll, setProjectsAll] = useState([]);
+        
 
     const [inputFields, setInputField] = useState([
         {
@@ -70,6 +72,12 @@ function DeliveryChallan() {
                                 setProjects(res.data);
                             })
                     }
+                })
+                .then(() => {
+                    axios.get(baseUrl.concat("projects"))
+                    .then(res => {
+                        setProjectsAll(res.data);
+                    })
                 })
                 .catch(error => {
                     console.log(error.response.status)
@@ -470,7 +478,7 @@ function DeliveryChallan() {
                         <div className="col-sm-3">
                             <h6>Select Project (To)</h6>
                             <Select placeholder="Select Project To" onChange={handleProjectChangeTo}>
-                                {projects.map((project, index) => (
+                                {projectsAll.map((project, index) => (
                                     <Option value={project.id}>{project.project_name}</Option>
                                 ))}
                             </Select>

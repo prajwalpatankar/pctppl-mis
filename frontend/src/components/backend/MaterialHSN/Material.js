@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Input, Select, Button, Spin, message } from 'antd';
+import ViewMaterial from './../views/ViewMaterial';
 import BackFooter from '../BackFooter';
 import NotFound from '../../NotFound';
 import jwt_decode from "jwt-decode";
@@ -133,6 +134,7 @@ function Material() {
                 <div className="submit-button">
                     <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
                 </div>
+                <ViewMaterial />
                 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                 <BackFooter />
             </div >

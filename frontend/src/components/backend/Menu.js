@@ -162,7 +162,8 @@ function Menu() {
                                     <td>
                                         <ul className="menu-list">
                                             <h5 className="menu-title">Material Master</h5>
-                                            <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1material">Add Material</Link></p></Button></li>                                            
+                                            <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1material">Add Material</Link></p></Button></li>    
+                                            <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1viewmaterial">View Materials</Link></p></Button></li>                                              
                                             <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1hsn">Add / Change HSN</Link></p></Button></li>
                                         </ul>
                                     </td>
