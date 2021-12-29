@@ -111,9 +111,10 @@ function ViewIssues() {
     const handleViewDetails = (record) => {
         setRendered(false);
         setCurrentItem(record);
+        console.log(record);
         axios.get(baseUrl.concat("issue/?project_id=" + record.project_id + "&mat_id=" + record.mat_id))
             .then(response => {
-                axios.get(baseUrl.concat("sitetransfer/?from_proj=" + record.project_id + "&initialItemRow__mat_id=" + record.mat_id))
+                axios.get(baseUrl.concat("sitetransfer/?from_project=" + record.project_id + "&initialItemRow__mat_id=" + record.mat_id))
                     .then(res => {
                         console.log("transfer Response:", res.data, response.data)
                         if (response.data.length === 0 && res.data.length === 0) {
