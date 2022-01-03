@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, message, Input, Table, Space, Select, Modal, Spin } from 'antd';
+import { EditOutlined, CheckSquareFilled } from '@ant-design/icons';
 import NotFound from './../../NotFound';
 import { baseUrl } from './../../../constants/Constants';
 import BackFooter from './../BackFooter';
@@ -24,7 +25,7 @@ function ReqMaster() {
     const [projectsAll, setProjectsAll] = useState([]);
     const [req, setReq] = useState([]);
     const [rows, setRows] = useState([]);
-    const [reqlimit, setReqLimit] = useState([]);
+    // const [reqlimit, setReqLimit] = useState([]);
     const [query, setQuery] = useState({
         id: "",
         mat_id: "",
@@ -130,37 +131,108 @@ function ReqMaster() {
     // --------------------------------------------------------------------
     // Modal
 
-    const [ModalDetails, setModalDetails] = useState(false)
-    const [quantChange, setQuantChange] = useState(false);
+    const [ModalDetails, setModalDetails] = useState(false);
+    const [quantChangeArr, setQuantChangeArr] = useState([]);
+    const [updateCounter, setUpdateCounter] = useState([]);
 
     const handleCancelDetails = () => {
-        setModalDetails(false)
-        setQuantChange(false);
+        setModalDetails(false);
     }
 
 
     const showModalDetails = (record) => {
-        axios.get(baseUrl.concat("reqlimit/?project_id=" + record.project_id))
-            .then(res => {
-                setReqLimit(res.data);
-                console.log(reqlimit)
-            })
+        // create new array, set everything false for all items, and 0 to check unaltered values
+        var falseArray = new Array(record.initialItemRow.length).fill(false);
+        setQuantChangeArr(falseArray);
+        var zeroArray = new Array(record.initialItemRow.length).fill({ count: 0 });
+        setUpdateCounter(zeroArray);
+
+
+
+        // axios.get(baseUrl.concat("reqlimit/?project_id=" + record.project_id))
+        //     .then(res => {
+        //         setReqLimit(res.data);
+        //     })
         setModalDetails(true);
+        // pass by value (copy)
         let values = JSON.parse(JSON.stringify(record));
         let rowValues = JSON.parse(JSON.stringify(record.initialItemRow));
         setQuery(values);
         setRows(rowValues);
     }
 
-    const flipQuant = () => {
-        setQuantChange(!quantChange);
-    }
 
     const handleQuantityChange = (index, event) => {   //inner form 
         const values = [...rows];
         values[index][event.target.name] = event.target.value;
         setRows(values);
     }
+
+    const handleIndividitualQuantityChange = (index, event) => {   //inner form 
+        const values = [...quantChangeArr];
+        values[index] = !values[index]
+        setQuantChangeArr(values);
+    }
+
+    const saveIndividitualQuantityChange = (index, event) => {   //inner form 
+
+        // query.initialItemRow[index] is original item
+        // rows[index] is the changed item
+
+        if (parseFloat(query.initialItemRow[index].quantity) !== parseFloat(rows[index].quantity)) {
+            var difference = parseFloat(rows[index].quantity) - parseFloat(query.initialItemRow[index].quantity);
+            console.log(difference);
+            console.log("changed")
+            axios.get(baseUrl.concat("reqlimit/?project_id=" + query.project_id + "&mat_id=" + query.initialItemRow[index].mat_id))
+                .then(resLimit => {
+
+                    if (parseFloat(resLimit.data[0].utilized) + parseFloat(difference) > resLimit.data[0].quantity) {
+                        message.error("Requisition Quantity not allowed");
+                    }
+                    else {
+
+                        // const prevQuery = {...query};
+                        // prevQuery.initialItemRow[index] = rows[index];
+                        // setQuery(prevQuery);
+
+                        message.success("Please click 'Approve' to save changes");
+
+                        const counter = [...updateCounter];
+                        counter[index] = {
+                            ...resLimit.data[0],
+                            count: 1,
+                            utilized: (parseFloat(resLimit.data[0].utilized) + parseFloat(difference)),
+                        };
+                        setUpdateCounter(counter);
+
+                        const values = [...quantChangeArr];
+                        values[index] = false
+                        setQuantChangeArr(values);
+                    }
+
+                    // axios.patch(baseUrl.concat("reqlimit/" + resLimit.data[0].id +"/"), { ...resLimit.data[0], utilized: (parseFloat(resLimit.data[0].utilized) + parseFloat(difference)) })
+                    // .then(res => {
+                    //     console.log(res)
+                    // })
+                })
+
+        } else {
+            console.log("NC");
+            const values = [...quantChangeArr];
+            values[index] = false
+            setQuantChangeArr(values);
+
+            const counter = [...updateCounter];
+            counter[index] = { count: 0 };
+            setUpdateCounter(counter);
+
+
+        }
+    }
+
+
+
+
 
 
 
@@ -204,50 +276,40 @@ function ReqMaster() {
     // Submission
 
 
-    const quantityUpadater = (origRow, currentRow, reqLimitArray) =>{
-        if (parseFloat(origRow.quantity) !== parseFloat(currentRow.quantity)) {
-            var updateQuant = parseFloat(currentRow.quantity) - parseFloat(origRow.quantity);
-            let limits = reqlimit.filter(function (o){
-                return o.mat_id === currentRow.mat_id
+    const quantityUpadater = (item) => {
+
+        axios.patch(baseUrl.concat("reqlimit/" + item.id + "/"), { utilized: item.utilized })
+            .then(res => {
+                console.log(res)
             })
-            let obj = limits[0];
-            obj.utilized = parseFloat(obj.utilized) + parseFloat(updateQuant);
-            if (parseFloat(obj.utilized) > parseFloat(obj.quantity)) {
-                message.error(`Requisition limit exceeds for ${obj.mat_name}`)
-                return;
-            }
-            reqLimitArray.push(obj);
-        }
+        
     }
 
+
     const submitHandler = () => {
+
+        for(var j=0; j< quantChangeArr.length; j++){
+            if(quantChangeArr[j] === true) {
+                message.error("Please confirm quantity by clicking save");
+                return;
+            }
+        }
+
+
         const key = 'updatable';
         message.loading({ content: 'Processing...', key });
-        var id = query.id;
-        var origRows = query.initialItemRow;
-        let reqLimitArray = [];
-        console.log(reqlimit)
-        for (var i = 0; i < origRows.length; i++) {
-            // if (parseFloat(origRows[i].quantity) !== parseFloat(rows[i].quantity)) {
-            //     var updateQuant = parseFloat(rows[i].quantity) - parseFloat(origRows[i].quantity);
-            //     let obj = reqlimit.find(o => o.mat_id === rows[i].mat_id)
-            //     obj.utilized = parseFloat(obj.utilized) + parseFloat(updateQuant);
-            //     if (parseFloat(obj.utilized) > parseFloat(obj.quantity)) {
-            //         message.error(`Requisition limit exceeds for ${obj.mat_name}`)
-            //         return;
-            //     }
-            //     reqLimitArray.push(obj);
-            //     // console.log(obj);
-            // }
-            quantityUpadater(origRows[i], rows[i], reqLimitArray);
+
+
+        for (var i = 0; i < query.initialItemRow.length; i++) {
+            if (updateCounter[i].count === 1) {
+                quantityUpadater(updateCounter[i])
+            }
         }
-        for (var j = 0; j < reqLimitArray.length; j++) {
-            axios.patch(baseUrl.concat("reqlimit/" + reqLimitArray[j].id + "/"), {utilized: reqLimitArray[j].utilized})
-                .catch(err => {
-                    console.log(err)
-                })
-        }
-        axios.patch(baseUrl.concat("requisition/" + id + "/"), { ...query, initialItemRow: rows, isapproved_master: "Y" })
+
+
+
+
+        axios.patch(baseUrl.concat("requisition/" + query.id + "/"), { ...query, initialItemRow: rows, isapproved_master: "Y" })
             .then(() => {
                 message.success({ content: 'Requisition Aprroved', key, duration: 2 });
                 setModalDetails(false)
@@ -279,6 +341,83 @@ function ReqMaster() {
             })
     }
 
+
+
+
+    // const quantityUpadater11 = (origRow, currentRow, reqLimitArray) => {
+    //     if (parseFloat(origRow.quantity) !== parseFloat(currentRow.quantity)) {
+    //         var updateQuant = parseFloat(currentRow.quantity) - parseFloat(origRow.quantity);
+    //         let limits = reqlimit.filter(function (o) {
+    //             return o.mat_id === currentRow.mat_id
+    //         })
+    //         let obj = limits[0];
+    //         obj.utilized = parseFloat(obj.utilized) + parseFloat(updateQuant);
+    //         if (parseFloat(obj.utilized) > parseFloat(obj.quantity)) {
+    //             message.error(`Requisition limit exceeds for ${obj.mat_name}`)
+    //             return;
+    //         }
+    //         reqLimitArray.push(obj);
+    //     }
+    // }
+
+    // const submitHandler11 = () => {
+    //     const key = 'updatable';
+    //     message.loading({ content: 'Processing...', key });
+    //     var id = query.id;
+    //     var origRows = query.initialItemRow;
+    //     let reqLimitArray = [];
+    //     for (var i = 0; i < origRows.length; i++) {
+    //         // if (parseFloat(origRows[i].quantity) !== parseFloat(rows[i].quantity)) {
+    //         //     var updateQuant = parseFloat(rows[i].quantity) - parseFloat(origRows[i].quantity);
+    //         //     let obj = reqlimit.find(o => o.mat_id === rows[i].mat_id)
+    //         //     obj.utilized = parseFloat(obj.utilized) + parseFloat(updateQuant);
+    //         //     if (parseFloat(obj.utilized) > parseFloat(obj.quantity)) {
+    //         //         message.error(`Requisition limit exceeds for ${obj.mat_name}`)
+    //         //         return;
+    //         //     }
+    //         //     reqLimitArray.push(obj);
+    //         //     // console.log(obj);
+    //         // }
+    //         quantityUpadater(origRows[i], rows[i], reqLimitArray);
+    //     }
+    //     for (var j = 0; j < reqLimitArray.length; j++) {
+    //         axios.patch(baseUrl.concat("reqlimit/" + reqLimitArray[j].id + "/"), { utilized: reqLimitArray[j].utilized })
+    //             .catch(err => {
+    //                 console.log(err)
+    //             })
+    //     }
+    //     axios.patch(baseUrl.concat("requisition/" + id + "/"), { ...query, initialItemRow: rows, isapproved_master: "Y" })
+    //         .then(() => {
+    //             message.success({ content: 'Requisition Aprroved', key, duration: 2 });
+    //             setModalDetails(false)
+    //             axios.get(baseUrl.concat("requisition"))
+    //                 .then(resR => {
+    //                     resR.data.sort(function (a, b) {
+    //                         return b.id - a.id;
+    //                     });
+    //                     let filtered_reqs = resR.data.filter(function (r) {
+    //                         return r.isapproved_master === "N"
+    //                     })
+    //                     setReq(filtered_reqs);
+    //                     setRows([])
+    //                     setQuery({
+    //                         id: "",
+    //                         mat_id: "",
+    //                         mat_name: "",
+    //                         utilized: "",
+    //                         quantity: "",
+    //                         unit: "",
+    //                         project_id: "",
+    //                         initialItemRow: [],
+    //                     });
+    //                 })
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //             message.error({ content: 'Error occured while approving requisition', key, duration: 2 });
+    //         })
+    // }
+
     // --------------------------------------------------------------------
     // Extras
 
@@ -307,7 +446,7 @@ function ReqMaster() {
                             <div className="col-sm-1"></div>
                             <div className="col-sm-10">
                                 <h6>Sort by Project</h6>
-                                <Select placeholder="Select Project"  onChange={onChangeProject}>
+                                <Select placeholder="Select Project" onChange={onChangeProject}>
                                     {projects.map((project, index) => (
                                         <Option value={project.id}>{project.project_name}</Option>
                                     ))}
@@ -337,10 +476,10 @@ function ReqMaster() {
 
 
                     <Modal
+                        width={700}
                         title="Change Item Details"
                         footer={[
                             <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
-                            <Button type="button" style={{ borderRadius: "10px " }} key="changequant" onClick={flipQuant}>Change Quantities</Button>,
                             <Button type="primary" key="submit" onClick={submitHandler}>Approve</Button>,
                         ]}
                         visible={ModalDetails} onCancel={handleCancelDetails}
@@ -353,6 +492,7 @@ function ReqMaster() {
                                     <td>Description</td>
                                     <td>Quantity Limit</td>
                                     <td>Unit</td>
+                                    <td>Action</td>
                                 </tr>
                             </thead>
                             {rows.map((r, index) => (
@@ -361,8 +501,24 @@ function ReqMaster() {
                                         <td>{r.mat_id}</td>
                                         <td>{r.mat_name}</td>
                                         <td>{r.description}</td>
-                                        <td>{quantChange ? <Input style={{ borderRadius: "8px", width: 220 }} name="quantity" value={r.quantity} onChange={event => handleQuantityChange(index, event)} /> : <p>{r.quantity}</p>}</td>
+                                        <td>
+                                            {quantChangeArr[index]
+                                                ?
+                                                <Input style={{ borderRadius: "8px", width: 220 }} name="quantity" value={r.quantity} onChange={event => handleQuantityChange(index, event)} />
+                                                :
+                                                <p>{r.quantity}</p>
+                                            }
+                                        </td>
                                         <td>{r.unit}</td>
+                                        <td>
+                                            {quantChangeArr[index]
+                                                ?
+                                                <Button type="button" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={event => saveIndividitualQuantityChange(index, event)}><CheckSquareFilled /></Button>
+                                                :
+                                                <Button type="button" style={{ borderRadius: "10px" }} onClick={event => handleIndividitualQuantityChange(index, event)}><EditOutlined /></Button>
+                                            }
+                                        </td>
+
                                     </tr>
                                 </tbody>
                             ))}
