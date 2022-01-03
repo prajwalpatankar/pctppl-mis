@@ -16,3 +16,7 @@ Add Material Feature added in Req-Limit Update Section
 +Requisition status is available in user specific mode
 +Requisition status sorted project wise
 -few warnings
+
+# v1.0.4
+
++deleteItem feature added in requisition approval

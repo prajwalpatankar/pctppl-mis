@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, message, Input, Table, Space, Select, Modal, Spin } from 'antd';
-import { EditOutlined, CheckSquareFilled } from '@ant-design/icons';
+import { Button, message, Input, Table, Space, Select, Modal, Spin, notification } from 'antd';
+import { EditOutlined, CheckSquareFilled, DeleteOutlined } from '@ant-design/icons';
 import NotFound from './../../NotFound';
 import { baseUrl } from './../../../constants/Constants';
 import BackFooter from './../BackFooter';
@@ -134,6 +134,7 @@ function ReqMaster() {
     const [ModalDetails, setModalDetails] = useState(false);
     const [quantChangeArr, setQuantChangeArr] = useState([]);
     const [updateCounter, setUpdateCounter] = useState([]);
+    const [deleteWatcher, setDeleteWatcher] = useState([]);
 
     const handleCancelDetails = () => {
         setModalDetails(false);
@@ -141,14 +142,12 @@ function ReqMaster() {
 
 
     const showModalDetails = (record) => {
+        setDeleteWatcher([]);
         // create new array, set everything false for all items, and 0 to check unaltered values
         var falseArray = new Array(record.initialItemRow.length).fill(false);
         setQuantChangeArr(falseArray);
         var zeroArray = new Array(record.initialItemRow.length).fill({ count: 0 });
         setUpdateCounter(zeroArray);
-
-
-
         // axios.get(baseUrl.concat("reqlimit/?project_id=" + record.project_id))
         //     .then(res => {
         //         setReqLimit(res.data);
@@ -231,6 +230,35 @@ function ReqMaster() {
     }
 
 
+    const deleteItem = (index, key) => {
+        const valuesDelete = [...rows];
+        const backupDeletedItem = [...deleteWatcher];        
+        backupDeletedItem.push(valuesDelete[index]);
+        valuesDelete.splice(index,1);
+        setRows(valuesDelete);
+        setDeleteWatcher(backupDeletedItem);
+        message.success("Item Deleted from requisition, Please Click approve to save changes");
+        notification.close(key);
+    }
+
+
+    const deleteItemConfirmation = (index, event) => {
+        const key = `open${Date.now()}`;
+        const btn = (
+            <Button style={{ color: "red" }} size="small" onClick={() => deleteItem(index, key)}>
+                Delete
+            </Button>
+        );
+        notification.open({
+            message: `Delete Item  ?`,
+            description:
+                `Are you sure you want to delete item ${query.initialItemRow[index].mat_name} from the requisition ? `,
+            btn,
+            key,
+            closable: true,
+        });
+    }
+
 
 
 
@@ -275,6 +303,18 @@ function ReqMaster() {
     // --------------------------------------------------------------------
     // Submission
 
+    const quantityDeleter = (item) => {
+        console.log(item)
+        axios.get(baseUrl.concat("reqlimit/?project_id=" + query.project_id + "&mat_id=" + item.mat_id))
+        .then(reqResponse => {
+            axios.patch(baseUrl.concat("reqlimit/" + reqResponse.data[0].id + "/"), { utilized: ( parseFloat(reqResponse.data[0].utilized) - parseFloat(item.quantity) ) })
+            .then(res => {
+                console.log(res);
+            })
+        })
+    }
+
+
 
     const quantityUpadater = (item) => {
 
@@ -282,22 +322,25 @@ function ReqMaster() {
             .then(res => {
                 console.log(res)
             })
-        
+
     }
 
 
     const submitHandler = () => {
 
-        for(var j=0; j< quantChangeArr.length; j++){
-            if(quantChangeArr[j] === true) {
+        for (var j = 0; j < quantChangeArr.length; j++) {
+            if (quantChangeArr[j] === true) {
                 message.error("Please confirm quantity by clicking save");
                 return;
             }
         }
 
-
         const key = 'updatable';
         message.loading({ content: 'Processing...', key });
+
+        for(var k=0; k < deleteWatcher.length; k++){
+            quantityDeleter(deleteWatcher[k]);
+        }
 
 
         for (var i = 0; i < query.initialItemRow.length; i++) {
@@ -305,9 +348,6 @@ function ReqMaster() {
                 quantityUpadater(updateCounter[i])
             }
         }
-
-
-
 
         axios.patch(baseUrl.concat("requisition/" + query.id + "/"), { ...query, initialItemRow: rows, isapproved_master: "Y" })
             .then(() => {
@@ -476,7 +516,7 @@ function ReqMaster() {
 
 
                     <Modal
-                        width={700}
+                        width={740}
                         title="Change Item Details"
                         footer={[
                             <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelDetails}>Go back</Button>,
@@ -513,10 +553,12 @@ function ReqMaster() {
                                         <td>
                                             {quantChangeArr[index]
                                                 ?
-                                                <Button type="button" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={event => saveIndividitualQuantityChange(index, event)}><CheckSquareFilled /></Button>
+                                                <Button type="button" style={{ background: "yellowgreen", color: "white", borderRadius: "10px" }} onClick={event => saveIndividitualQuantityChange(index, event)}><CheckSquareFilled style={{ fontSize: '20px' }} /></Button>
                                                 :
-                                                <Button type="button" style={{ borderRadius: "10px" }} onClick={event => handleIndividitualQuantityChange(index, event)}><EditOutlined /></Button>
+                                                <Button type="button" style={{ borderRadius: "10px" }} onClick={event => handleIndividitualQuantityChange(index, event)}><EditOutlined style={{ fontSize: '20px' }} /></Button>
                                             }
+                                            &nbsp;&nbsp;
+                                            <Button type="button" style={{ color: "red", borderRadius: "10px" }} onClick={event => deleteItemConfirmation(index, event)}><DeleteOutlined style={{ fontSize: '20px' }} /></Button>
                                         </td>
 
                                     </tr>
