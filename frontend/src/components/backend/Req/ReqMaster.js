@@ -592,3 +592,34 @@ function ReqMaster() {
 }
 
 export default ReqMaster;
+// 328320#Pctppl
+
+// pct user : pctppl#328320
+//passphrase : prajwal
+
+/*
+Your identification has been saved in /root/.ssh/id_rsa
+Your public key has been saved in /root/.ssh/id_rsa.pub
+The key fingerprint is:
+SHA256:qNrKAJrfEgjOkLunHqyoVwHNwQq96R04LVk3P8ic3t4 root@ubuntu-cmis-pctppl
+The key's randomart image is:
++---[RSA 3072]----+
+| . +..           |
+|. o = o          |
+| o X + =         |
+|+ O + =.o        |
+|*+ + +..S.       |
+|*+o o.. .        |
+|++ o.  . .       |
+|++=+    . E      |
+|B==oo            |
++----[SHA256]-----+
+
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDHCR2FZ11xhhrozXD0HC6JGRo3PnBR58RdZoWuPjTXpXncz6yTc3nx8x/3YInF5YnRPgQ1hDQ9GH2dOVXJyPY7SSO5Jj/S44/7si+wPg5lXdzgr4/cuJN+5N8q0tPr+dR1AY3ZPH7eSAlv0h6k+UsUcYNq3Vpkt4JrIxENRRTgICYqvOsZ4o4FPdLAioWgQMEbD5FHlastC4bm9EZNUDfZrkPWNOxc5TkmBY9AOvE+yQOirqEawpK3M9bM7ya6Ja5aA1XQRsUR5vG/3XgX5uWQlSSCpj6xQ4guGkkAbfLfXsM8yxT7JzXbV2ooLz49kTbPxLkmjvLgSAAWqQ7pHL+EhkgevTS8bp+b3kzx6SnocrZVx3pBxrL/TpmYEE4D/hU6CW69sw7KqwRIdIHAuZy6lLA4SQSgWIpGC5XtuQOLbyDVUIMGHNnUkuMEoLyJKgvZamRiteAtP84jX4oUHqwLpy5WDPvVEB4yoDy5kXgYM5Q5DGq3Q+g4ft7InrfEE+c= pctppl@ubuntu-cmis-pctppl
+
+
+
+
+
+*/
