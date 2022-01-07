@@ -32,7 +32,7 @@
     "xlsx": "^0.17.2"
   },
   "scripts": {
-    "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
+    "start": "react-scripts start",
     "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build && react-snapshot",
     "test": "DISABLE_ESLINT_PLUGIN=true react-scripts test",
     "eject": "DISABLE_ESLINT_PLUGIN=true react-scripts eject"

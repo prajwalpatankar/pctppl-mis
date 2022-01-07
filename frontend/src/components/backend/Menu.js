@@ -29,7 +29,7 @@ function Menu() {
 
             axios.get(baseUrl.concat("userdata/?user=" + jwt_decode(localStorage.getItem("token")).user_id))
                 .then(res => {
-
+                    console.log(res)
                     if (res.data[0].role === "admin") {
                         setadm(true);
                     } else if (res.data[0].role === "Purchase Officer") {
@@ -40,11 +40,21 @@ function Menu() {
                     setR(true);
                 })
                 .catch(error => {
-                    console.log(error.response.status)
-                    if (error.response.status === 401) {
-                        localStorage.removeItem('token')
+                    if (error.response) {
+                        if (error.response.status === 401) {
+                            localStorage.removeItem('token')
+                            setloggedin(false);
+                            setR(true);
+                        }
+                        console.log(error.response.data);
+                        console.log(error.response.status);
+                        console.log(error.response.headers);
+                    } else if (error.request) {
+                        console.log(error.request);
                         setloggedin(false);
                         setR(true);
+                    } else {
+                        console.log('Error', error.message);
                     }
                 })
 
@@ -162,8 +172,8 @@ function Menu() {
                                     <td>
                                         <ul className="menu-list">
                                             <h5 className="menu-title">Material Master</h5>
-                                            <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1material">Add Material</Link></p></Button></li>    
-                                            <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1viewmaterial">View Materials</Link></p></Button></li>                                              
+                                            <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1material">Add Material</Link></p></Button></li>
+                                            <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1viewmaterial">View Materials</Link></p></Button></li>
                                             <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1hsn">Add / Change HSN</Link></p></Button></li>
                                         </ul>
                                     </td>
@@ -174,7 +184,7 @@ function Menu() {
                                             <ul className="menu-list">
                                                 <h5 className="menu-title">Admin Panel</h5>
                                                 <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1projects">New Project</Link></p></Button></li>
-                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1newuser">New User</Link></p></Button></li>                                                
+                                                <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1newuser">New User</Link></p></Button></li>
                                                 <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1uploadreqs">Add Requisition Limits</Link></p></Button></li>
                                                 <li className="menu-item"><Button type="link" style={{ background: "#7FCDD8", color: "white", borderRadius: "10px" }}><p><Link className="menu-item-a" to="/1projectData">Update Requisition Limit</Link></p></Button></li>
                                             </ul>

@@ -16,6 +16,7 @@ function Login() {
         username: "",
         password: "",
     })
+    
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -26,11 +27,19 @@ function Login() {
                     history.push("/1Menu")
                 })
                 .catch(error => {
-                    console.log(error.response.status)
-                    if (error.response.status === 401) {
-                        localStorage.removeItem('token')
-                        setR(true);
+                    if (error.response) {
+                        if (error.response.status === 401) {
+                            localStorage.removeItem('token')
+                        }
+                        console.log(error.response.data);
+                        console.log(error.response.status);
+                        console.log(error.response.headers);
+                    } else if (error.request) {
+                        console.log(error.request);
+                    } else {
+                        console.log('Error', error.message);
                     }
+                    setR(true);
                 })
 
         } else {
@@ -73,7 +82,19 @@ function Login() {
                         message.error({ content: 'Invalid Username or Password!', key, duration: 2 });
                     }, 100);
                 }
-            });
+            })
+            .catch(error => {
+                message.warning({ content: "SERVER ERROR! PLEASE CONTACT ADMINS", key })
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+            })
     };
 
 
@@ -137,7 +158,7 @@ function Login() {
                     <img src="assets/img/final_logo_PNG.png" width="200px" alt="logo" /><br /><br /><p>MIS system</p><br /> <br /><br /><br /><br />
                 </div> */}
                 <div className="print-center" >
-                    <img src="assets/img/final_logo_JPG1.jpg" alt="pctppl_logo" height="80px" className="logo-login"/>
+                    <img src="assets/img/final_logo_JPG1.jpg" alt="pctppl_logo" height="80px" className="logo-login" />
                 </div>
 
                 <div class="container1">

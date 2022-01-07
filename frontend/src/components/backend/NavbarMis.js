@@ -10,11 +10,11 @@ import { baseUrl } from './../../constants/Constants';
 import { useHistory } from "react-router-dom";
 
 
-function  NavbarMis() {
+function NavbarMis() {
     // const baseUrl = 'http://localhost:8000/';
-    const [l,setL] = useState(false);
+    const [l, setL] = useState(false);
     const [mob, setMob] = useState(false);
-    
+
     const history = useHistory();
 
     useEffect(() => {
@@ -25,8 +25,18 @@ function  NavbarMis() {
                     setL(true)
                 })
                 .catch(error => {
-                    if (error.response.status === 401) {
-                        localStorage.removeItem('token')
+                    if (error.response) {
+                        if (error.response.status === 401) {
+                            localStorage.removeItem('token')
+
+                        }
+                        console.log(error.response.data);
+                        console.log(error.response.status);
+                        console.log(error.response.headers);
+                    } else if (error.request) {
+                        console.log(error.request);
+                    } else {
+                        console.log('Error', error.message);
                     }
                 })
         }
@@ -37,7 +47,7 @@ function  NavbarMis() {
 
     useLayoutEffect(() => {
         window.addEventListener('resize', () => {   //check screensize
-            if(window.innerWidth < 1000) {
+            if (window.innerWidth < 1000) {
                 setMob(true);
             } else {
                 setMob(false);
@@ -89,15 +99,15 @@ function  NavbarMis() {
             );
         }
     } else {
-            return (
-                <div>
-                    {/* <header id="header" className="fixed-top">
+        return (
+            <div>
+                {/* <header id="header" className="fixed-top">
                         <div className="container d-flex align-items-center">
                             <h1 className="logo mr-auto"><Link to="/"><img src="assets/img/final_logo_PNG.png" alt="pctppl_logo"></img></Link></h1>
                         </div>
                     </header> */}
-                </div>
-            );
+            </div>
+        );
         // }
     }
 }

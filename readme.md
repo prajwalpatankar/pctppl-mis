@@ -20,3 +20,9 @@ Add Material Feature added in Req-Limit Update Section
 # v1.0.4
 
 +deleteItem feature added in requisition approval
+
+# v1.1.0
+
++hosting compatibilty
++more exceptions handled
+*First User needs to be assigned role manually through DRF.
