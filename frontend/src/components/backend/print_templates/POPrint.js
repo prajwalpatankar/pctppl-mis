@@ -67,8 +67,8 @@ const POPrint = (props) => {
                                             axios.get(baseUrl.concat("supplier/" + res.data.supp_id))
                                                 .then(res2 => {
                                                     setSupplier(res2.data);
-                                                    totalValue(res.data, response.data);
-
+                                                    totalValue(res.data, response.data); /* eslint-disable */
+                                                                                            // ^ comment necessary to hide a warning
                                                     document.title = "PO - " + res2.data.supp_name + " -- " + res.data.created_date_time.substring(8, 10) + "-" + res.data.created_date_time.substring(5, 7) + "-" +  res.data.created_date_time.substring(0, 4)
 
                                                 })
