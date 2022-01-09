@@ -2,7 +2,7 @@
 // const baseUrl = 'https://pctppl.ml/'
 // const baseUrl = 'https:///'
 
-const baseUrl = 'https://139.59.45.49/'
+const baseUrl = '//139.59.45.49/'
 
 
 
