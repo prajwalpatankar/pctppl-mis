@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import axios from 'axios';
 import { message } from 'antd';
 import { useHistory } from "react-router-dom";
@@ -11,12 +11,13 @@ function Login() {
     const history = useHistory();
 
     const [rendered, setR] = useState(false);
+    const [mob, setMob] = useState(false)
 
     const [formvalue, SetFormvalue] = useState({
         username: "",
         password: "",
     })
-    
+
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -51,6 +52,18 @@ function Login() {
             return 0;
         }, 200);
     }, [history])
+
+    useLayoutEffect(() => {
+        window.addEventListener('resize', () => {   //check screensize
+            if (window.innerWidth < 1000) {
+                console.log("MOB");
+                setMob(true);
+            } else {
+                setMob(false);
+            }
+        });
+    })
+
 
     const ChangeHandler = (e) => {
         SetFormvalue({ ...formvalue, [e.target.name]: e.target.value })
@@ -139,9 +152,46 @@ function Login() {
 
     // }
     if (rendered) {
-        return (
-            <div className="login-page-bg">
-                {/* <div className="container col-md-6 col-xl-3">
+        if (mob) {
+            return (
+                <div className="login-page-bg">
+                    {/* This code has been added later after the initial release */}
+                    <div className="print-center" >
+                        <img src="assets/img/final_logo_JPG1.jpg" alt="pctppl_logo" height="80px" className="logo-login" />
+                    </div>
+
+                    <div class="container1mobile">
+                        <div class="screen">
+                            <div class="screen__content">
+                                <form class="login" onSubmit={event => handle_login(event)}>
+                                    <div class="login__field">
+                                        <i class="login__icon fas fa-user"></i>
+                                        <input type="text" class="login__input" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} />
+                                    </div>
+                                    <div class="login__field">
+                                        <i class="login__icon fas fa-lock"></i>
+                                        <input type="password" class="login__input" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} />
+                                    </div>
+                                    <button class="button login__submit">
+                                        <span class="button__text" onClick={event => handle_login(event)} >Log In</span>
+                                        <i class="button__icon fas fa-chevron-right"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="screen__background">
+                                <span class="screen__background__shape screen__background__shape4"></span>
+                                <span class="screen__background__shape screen__background__shape3"></span>
+                                <span class="screen__background__shape screen__background__shape2"></span>
+                                <span class="screen__background__shape screen__background__shape1"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div className="login-page-bg">
+                    {/* <div className="container col-md-6 col-xl-3">
                     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                     <h3>Sign in</h3>
                     <form onSubmit={event => handle_login(event)}>
@@ -157,38 +207,39 @@ function Login() {
                     </form> <br /><br /><br /><br /><br /><br />
                     <img src="assets/img/final_logo_PNG.png" width="200px" alt="logo" /><br /><br /><p>MIS system</p><br /> <br /><br /><br /><br />
                 </div> */}
-                <div className="print-center" >
-                    <img src="assets/img/final_logo_JPG1.jpg" alt="pctppl_logo" height="80px" className="logo-login" />
-                </div>
+                    <div className="print-center" >
+                        <img src="assets/img/final_logo_JPG1.jpg" alt="pctppl_logo" height="80px" className="logo-login" />
+                    </div>
 
-                <div class="container1">
-                    <div class="screen">
-                        <div class="screen__content">
-                            <form class="login" onSubmit={event => handle_login(event)}>
-                                <div class="login__field">
-                                    <i class="login__icon fas fa-user"></i>
-                                    <input type="text" class="login__input" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} />
-                                </div>
-                                <div class="login__field">
-                                    <i class="login__icon fas fa-lock"></i>
-                                    <input type="password" class="login__input" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} />
-                                </div>
-                                <button class="button login__submit">
-                                    <span class="button__text" onClick={event => handle_login(event)} >Log In</span>
-                                    <i class="button__icon fas fa-chevron-right"></i>
-                                </button>
-                            </form>
-                        </div>
-                        <div class="screen__background">
-                            <span class="screen__background__shape screen__background__shape4"></span>
-                            <span class="screen__background__shape screen__background__shape3"></span>
-                            <span class="screen__background__shape screen__background__shape2"></span>
-                            <span class="screen__background__shape screen__background__shape1"></span>
+                    <div class="container1">
+                        <div class="screen">
+                            <div class="screen__content">
+                                <form class="login" onSubmit={event => handle_login(event)}>
+                                    <div class="login__field">
+                                        <i class="login__icon fas fa-user"></i>
+                                        <input type="text" class="login__input" name="username" placeholder="Username" value={formvalue.username} onChange={event => ChangeHandler(event)} />
+                                    </div>
+                                    <div class="login__field">
+                                        <i class="login__icon fas fa-lock"></i>
+                                        <input type="password" class="login__input" name="password" placeholder="Password" value={formvalue.password} onChange={event => ChangeHandler(event)} />
+                                    </div>
+                                    <button class="button login__submit">
+                                        <span class="button__text" onClick={event => handle_login(event)} >Log In</span>
+                                        <i class="button__icon fas fa-chevron-right"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="screen__background">
+                                <span class="screen__background__shape screen__background__shape4"></span>
+                                <span class="screen__background__shape screen__background__shape3"></span>
+                                <span class="screen__background__shape screen__background__shape2"></span>
+                                <span class="screen__background__shape screen__background__shape1"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
     } else {
         return (
             <div className="print-center">

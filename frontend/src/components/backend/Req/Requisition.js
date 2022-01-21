@@ -175,6 +175,12 @@ function Requisition() {
     if(values.length === 0 ){
       setSearch({ ...searchstates, isSearchVisible: false });
     }
+
+    setSearch({
+      mat: "",
+      isSearchVisible: false,
+      idx: "",
+    })
   }
 
   // --------------------------------------------------------------------
@@ -260,21 +266,21 @@ function Requisition() {
   // Update Rows 
 
   const updatecol = (record, indexrow) => {
+    var temp_orig_limiter = [...orig_limiter];
+    temp_orig_limiter.splice(orig_limiter.findIndex(item => item.id === record.id), 1);
+    setOrigLimiter(temp_orig_limiter);
+    setLimiter(temp_orig_limiter);
+    setSearchValue('');
     setLimitToUpdate([...limitToUpdate, record])
     const values = [...inputFields];
     const index = searchstates.idx;
     values[index].mat_id = record.mat_id;
     values[index].hsn_id = record.hsn_id;
-    // values[index].mat_name = record.desc;  //check once later
     values[index].mat_name = record.mat_name
     values[index].unit = record.unit;
     setInputField(values);
     setQuery({ ...query, initialItemRow: values })
     setSearch({ ...searchstates, isSearchVisible: false })
-    var temp_limit = limiter;
-    temp_limit.splice(indexrow, 1)
-    setLimiter(temp_limit);
-    setOrigLimiter(temp_limit);
     window.scrollTo({
       top: 0,
       left: 0,

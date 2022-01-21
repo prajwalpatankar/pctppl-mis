@@ -20,6 +20,7 @@ function PurchaseOrder() {
             mat_id: "",
             hsn_id: "",
             mat_name: "----",
+            description: "",
             quantity: "",
             unit: "---",
             item_rate: "",
@@ -428,9 +429,9 @@ function PurchaseOrder() {
         setModalDetails({ ...ModalDetails, details: false })
     }
 
-    const handleCancelPO = () => {
-        setModalDetails({ ...ModalDetails, po: false })
-    }
+    // const handleCancelPO = () => {
+    //     setModalDetails({ ...ModalDetails, po: false })
+    // }
 
     const showModalDetails = (record) => {
         setModalDetails({ ...ModalDetails, details: true })
@@ -450,6 +451,7 @@ function PurchaseOrder() {
                 mat_id: record.mat_id,
                 hsn_id: record.hsn_id,
                 mat_name: record.mat_name,
+                description: record.description,
                 quantity: record.quantity,
                 unit: record.unit,
                 item_rate: "",
@@ -460,6 +462,7 @@ function PurchaseOrder() {
                 mat_id: record.mat_id,
                 hsn_id: record.hsn_id,
                 mat_name: record.mat_name,
+                description: record.description,
                 quantity: record.quantity,
                 unit: record.unit,
                 item_rate: "",
@@ -474,6 +477,7 @@ function PurchaseOrder() {
 
     // const { Search } = Input;
     const { Option } = Select;
+    const { TextArea } = Input;
     // const { TextArea } = Input;
 
 
@@ -535,17 +539,17 @@ function PurchaseOrder() {
                                 <div className="col-sm-1"></div>
                                 <div className="col-sm-3">
                                     <h6>Payment Terms</h6>
-                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} />
+                                    <TextArea style={{ borderRadius: "8px", width: 300 }} rows={4} type="text" value={query.payment_terms} placeholder="Payment Terms" name="payment_terms" onChange={event => formChangeHandler(event)} />
 
                                 </div>
                                 <div className="col-sm-3">
                                     <h6>Other Terms</h6>
-                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} />
+                                    <TextArea style={{ borderRadius: "8px", width: 300 }} rows={4} type="text" value={query.other_terms} placeholder="Other Terms" name="other_terms" onChange={event => formChangeHandler(event)} />
 
                                 </div>
                                 <div className="col-sm-3">
                                     <h6>Delivery Schedule</h6>
-                                    <Input style={{ borderRadius: "8px", width: 300 }} type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} />
+                                    <TextArea style={{ borderRadius: "8px", width: 300 }} rows={4} type="text" value={query.delivery_schedule} placeholder="Delivery Schedule" name="delivery_schedule" onChange={event => formChangeHandler(event)} />
 
                                 </div>
                                 <div className="col-sm-2"></div>
@@ -577,7 +581,8 @@ function PurchaseOrder() {
                                         <thead className="thead-light">
                                             <tr className="row">
                                                 {/* <th className="col-md-2">Select Material</th> */}
-                                                <th className="col-md-4">Material Name</th>
+                                                <th className="col-md-2">Material Name</th>
+                                                <th className="col-md-2">Specifications</th>
                                                 <th className="col-md-2">Rate</th>
                                                 <th className="col-md-2">Discount</th>
                                                 <th className="col-md-2">Quantity</th>
@@ -590,12 +595,13 @@ function PurchaseOrder() {
                                             <tbody>
                                                 <tr key={index} className="row">
                                                     {/* <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial(index)}>Select Material</Button></td> */}
-                                                    <td className="col-md-4">{inputField.mat_name}</td>
-                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px" }} type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px" }} type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
-                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px" }} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
-                                                    <td className="col-md-1">{inputField.unit}</td>
-                                                    <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px " }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
+                                                    <td className="col-md-2"><p style={{ marginTop: "10px" }}>{inputField.mat_name}</p></td>
+                                                    <td className="col-md-2"><TextArea style={{ borderRadius: "8px" }}  type="text" value={inputField.description} placeholder="Specification" name="description" onChange={event => changeHandler(index, event)} /></td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", marginTop: "10px" }} type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", marginTop: "10px" }} type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
+                                                    <td className="col-md-2"><Input style={{ borderRadius: "8px", marginTop: "10px" }} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
+                                                    <td className="col-md-1"><p style={{ marginTop: "10px" }}>{inputField.unit}</p></td>
+                                                    <td className="col-md-1"><Button danger="true" style={{ borderRadius: "10px", marginTop: "10px" }} size="small" type="button" onClick={() => { deleteRowHandler(index) }}>Delete</Button></td>
                                                 </tr>
                                             </tbody>
                                         ))}
@@ -692,8 +698,8 @@ function PurchaseOrder() {
                             </table>
                         </Modal>
 
-
-                        <Modal
+                        {/* Not sure why the following modal exists, forgot to remove maybe */}
+                        {/* <Modal
                             title="Purchase Order Details"
                             footer={[
                                 <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelPO}>Go back</Button>,
@@ -720,7 +726,7 @@ function PurchaseOrder() {
                                     ))}
                                 </tbody>
                             </table>
-                        </Modal>
+                        </Modal> */}
                         <div className="row">
                             <div className="col-sm-10"><p> </p></div>
                             <div className="col-sm-1"><Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} className="float-right" onClick={refreshHandler}>Refresh</Button></div>

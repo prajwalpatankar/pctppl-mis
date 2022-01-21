@@ -12,6 +12,7 @@ import Menu from './components/backend/Menu';
 import Requisition from './components/backend/Req/Requisition';
 import PurchaseOrder from './components/backend/PO/PurchaseOrder';
 import GoodsReceiptNote from './components/backend/GRN/GoodsReceiptNote';
+import CashGrn from './components/backend/GRN/CashGrn';
 
 import NewUser from './components/backend/Admin/NewUser';
 import NewProjects from './components/backend/Admin/NewProjects';
@@ -35,6 +36,7 @@ import StockIndividualPrint from './components/backend/print_templates/StockIndi
 
 import ViewPO from './components/backend/views/ViewPO';
 import ViewGRN from './components/backend/views/ViewGRN';
+import ViewCashGrn from './components/backend/views/ViewCashGrn';
 import ViewSuppliers from './components/backend/views/ViewSuppliers';
 import RequisitionView from './components/backend/Req/RequisitionView';
 import ViewStock from './components/backend/views/ViewStock';
@@ -70,6 +72,7 @@ function App() {
           <Route path='/1req' component={Requisition} />
           <Route path='/1po' component={PurchaseOrder} />
           <Route path='/1grn' component={GoodsReceiptNote} />
+          <Route path='/1cashgrn' component={CashGrn} />
           <Route path='/1issue' component={Issue} />
           <Route path='/1delivery' component={DeliveryChallan} />
           <Route path='/1material' component={Material} />
@@ -88,6 +91,7 @@ function App() {
           <Route path='/1viewreq' component={RequisitionView} />
           <Route path='/1viewpo' component={ViewPO} />
           <Route path='/1viewgrn' component={ViewGRN} />
+          <Route path='/1viewcashgrn' component={ViewCashGrn} />
           <Route path='/1viewsupplier' component={ViewSuppliers} />
           <Route path='/1viewissues' component={ViewIssues} />
           <Route path='/1stock' component={ViewStock} />

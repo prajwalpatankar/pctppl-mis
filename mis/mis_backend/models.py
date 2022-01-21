@@ -142,6 +142,7 @@ class Purchase_Order_details(models.Model):
     mat_id = models.CharField(default="", max_length=200)
     hsn_id = models.CharField(max_length=10)
     mat_name =  models.CharField(max_length=250,default="")
+    description = models.CharField(max_length=250,default="")
     quantity = models.FloatField(default=0)
     unit = models.CharField(max_length=50,default="N")
     item_rate = models.FloatField(default=0)

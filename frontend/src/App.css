@@ -405,16 +405,18 @@ button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 114vh;
-  margin-top: -100px;
+	/* min-height: 114vh; */
+  margin-top: 5%;
+  padding-bottom: 25%;
 }
 
 .container1mobile {
   display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 114vh;
-  margin-top: -100px;
+	/* min-height: 114vh; */
+  margin-top: 5%;
+  padding-bottom: 65%;
 }
 
 .screen {		

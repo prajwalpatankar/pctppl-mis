@@ -69,7 +69,7 @@ const POPrint = (props) => {
                                                     setSupplier(res2.data);
                                                     totalValue(res.data, response.data); /* eslint-disable */
                                                                                             // ^ comment necessary to hide a warning
-                                                    document.title = "PO - " + res2.data.supp_name + " -- " + res.data.created_date_time.substring(8, 10) + "-" + res.data.created_date_time.substring(5, 7) + "-" +  res.data.created_date_time.substring(0, 4)
+                                                    document.title = "PO - " + res1.data.identifier + " - " + res2.data.supp_name + " -- " + res.data.created_date_time.substring(8, 10) + "-" + res.data.created_date_time.substring(5, 7) + "-" +  res.data.created_date_time.substring(0, 4)
 
                                                 })
 
@@ -222,7 +222,7 @@ const POPrint = (props) => {
                         {rows.map((r, index) => (
                             <tr className="row" key="index">
                                 <td className="col-sm-1 border border-dark">{r.mat_id}<br />{r.hsn_id}</td>
-                                <td className="col-sm-3 border border-dark">{r.mat_name}</td>
+                                <td className="col-sm-3 border border-dark">{r.mat_name}<br />{r.description}</td>
                                 <td className="col-sm-1 border border-dark">{r.unit}</td>
                                 <td className="col-sm-1 border border-dark">{parseFloat(r.quantity).toFixed(2)}</td>
                                 <td className="col-sm-1 border border-dark">{parseFloat(r.item_rate).toFixed(2)}</td>
@@ -246,13 +246,13 @@ const POPrint = (props) => {
                         </tr>
 
                         <tr className="row">
-                            <td className="col-sm-8 border-left border-dark"><b>Transport     :</b></td>
-                            <td className="col-sm-2 border border-dark"> </td>
+                            <td className="col-sm-8 border-left border-dark"> </td>
+                            <td className="col-sm-2 border border-dark"><b>Transport</b></td>
                             <td className="col-sm-2 border border-dark">{ parseFloat(po.transport).toFixed(2)}</td>
                         </tr>
                         <tr className="row">
-                            <td className="col-sm-8 border-left border-bottom border-dark"><b>Other Charges :</b></td>
-                            <td className="col-sm-2 border border-dark"> </td>
+                            <td className="col-sm-8 border-left border-bottom border-dark"> </td>
+                            <td className="col-sm-2 border border-dark"><b>Other Charges</b></td>
                             <td className="col-sm-2 border border-dark">{ parseFloat(po.other_charges).toFixed(2)}</td>
                         </tr>
                         <b>

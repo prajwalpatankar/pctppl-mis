@@ -26,3 +26,10 @@ Add Material Feature added in Req-Limit Update Section
 +hosting compatibilty
 +more exceptions handled
 *First User needs to be assigned role manually through DRF.
+
+# v1.1.1
+
++Cash GRN
++added field "description" in PO details
++few tweaks in PO interface and PO Print
+

@@ -140,7 +140,7 @@ class GrnFilter(FilterSet): #filter for date range
         # model = Goods_Receipt_Note_details
         # fields  = ['created_date_time', 'mat_id']
         model = Goods_Receipt_Note_mst 
-        fields  = ['created_date_time', 'project_id', 'initialItemRow__mat_id']
+        fields  = ['created_date_time', 'po_id', 'project_id', 'initialItemRow__mat_id']
 
 
 class Goods_Receipt_Note_mst_Viewset(viewsets.ModelViewSet):
