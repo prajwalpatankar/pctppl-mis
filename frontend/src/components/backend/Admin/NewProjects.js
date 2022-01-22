@@ -135,7 +135,7 @@ function NewProjects() {
                     identifier: "",
                 })
                 setTimeout(() => {
-                    window.location.reload();
+                    window.location.reload(false);
                 }, 1000)
 
             })

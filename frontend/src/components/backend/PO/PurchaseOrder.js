@@ -359,7 +359,7 @@ function PurchaseOrder() {
     }
 
     const refreshHandler = () => {
-        window.location.reload();
+        window.location.reload(false);
     }
 
 

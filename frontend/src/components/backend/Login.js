@@ -88,7 +88,7 @@ function Login() {
                     setTimeout(() => {
                         message.success({ content: 'Verified', key, duration: 2 });
                         history.push('/1Menu');
-                        window.location.reload();
+                        window.location.reload(false);
                     }, 100);
                 } else {
                     setTimeout(() => {

@@ -240,7 +240,7 @@ function Issue() {
     // Extras
 
     const refreshHandler = () => {
-        window.location.reload();
+        window.location.reload(false);
     }
 
 
