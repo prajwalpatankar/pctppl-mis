@@ -4,38 +4,46 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { useEffect } from 'react';
 import axios from 'axios';
 
+//mains
 import NavbarMis from './components/backend/NavbarMis';
 import PageNotFound from './components/PageNotFound';
 import Login from './components/backend/Login';
 import Menu from './components/backend/Menu';
 
-import Requisition from './components/backend/Req/Requisition';
-import PurchaseOrder from './components/backend/PO/PurchaseOrder';
-import GoodsReceiptNote from './components/backend/GRN/GoodsReceiptNote';
-import CashGrn from './components/backend/GRN/CashGrn';
-
+//admin panel
 import NewUser from './components/backend/Admin/NewUser';
 import NewProjects from './components/backend/Admin/NewProjects';
 import ProjectData from './components/backend/Admin/ProjectData';
 import UploadRequisitionLimit from './components/backend/Admin/UploadRequisitionLimit';
 
+//creates
+import Requisition from './components/backend/Req/Requisition';
+import PurchaseOrder from './components/backend/PO/PurchaseOrder';
+import GoodsReceiptNote from './components/backend/GRN/GoodsReceiptNote';
+import CashGrn from './components/backend/GRN/CashGrn';
+
 import Issue from './components/backend/IssueAndTransfer/Issue';
 import DeliveryChallan from './components/backend/IssueAndTransfer/DeliveryChallan';
 
 import Supplier from './components/backend/Supplier/Suppliers';
-import UpdateSupplier from './components/backend/Supplier/UpdateSupplier';
 
 import Material from './components/backend/MaterialHSN/Material';
 import HSN from './components/backend/MaterialHSN/HSN';
 
+//updates
+import UpdateSupplier from './components/backend/Supplier/UpdateSupplier';
+import UpdatePO from './components/backend/PO/UpdatePO';
+
+//Prints
 import RequisitionPrint from './components/backend/print_templates/RequisitionPrint';
 import POPrint from './components/backend/print_templates/POPrint';
 import GRNPrint from './components/backend/print_templates/GRNPrint';
 import StockOverallPrint from './components/backend/print_templates/StockOverallPrint';
 import StockIndividualPrint from './components/backend/print_templates/StockIndividualPrint';
 
-import ViewPO from './components/backend/views/ViewPO';
+//views
 import ViewGRN from './components/backend/views/ViewGRN';
+import ViewPO from './components/backend/views/ViewPO';
 import ViewCashGrn from './components/backend/views/ViewCashGrn';
 import ViewSuppliers from './components/backend/views/ViewSuppliers';
 import RequisitionView from './components/backend/Req/RequisitionView';
@@ -104,6 +112,9 @@ function App() {
           <Route path='/grn:id' component={GRNPrint} />
           <Route path='/stock:id' component={StockOverallPrint} />
           <Route path='/onestock:id' component={StockIndividualPrint} />
+
+          {/* Updateion */}
+          <Route path='/updatepo' component={UpdatePO} />
 
           <Route component={PageNotFound} />
         </Switch>

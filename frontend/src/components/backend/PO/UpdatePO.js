@@ -6,14 +6,16 @@ import { baseUrl } from './../../../constants/Constants';
 import BackFooter from './../BackFooter';
 import jwt_decode from 'jwt-decode';
 import PageNotFound from '../../PageNotFound';
+import { EditOutlined } from '@ant-design/icons';
 
-function PurchaseOrder() {
+function UpdatePO() {
 
     // const baseUrl = "http://localhost:8000/";
 
     const [l, setloggedin] = useState(true);
     const [r, setR] = useState(false);
     const [store, setStore] = useState(false);
+    const [po, setPo] = useState([]);
 
     const [inputFields, setInputField] = useState([
         {
@@ -43,13 +45,8 @@ function PurchaseOrder() {
 
     const [suppliers, setSuppliers] = useState([]);
     const [projects, setProjects] = useState([]);
-
-    // const [materials, setMaterials] = useState([]); //initially set materials empty
-    // const [subcategories, setSubCategories] = useState([]);
-    // const [categories, setCategories] = useState([]);
+    const [projectsAll, setProjectsAll] = useState([]);
     const [reqs, setReqs] = useState([]);
-    // const [pos, setPos] = useState([]);
-
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -62,29 +59,42 @@ function PurchaseOrder() {
                     //         setQuery({ ...query, made_by: res.data.username })
                     //     })
 
-                    if (res.data[0].role === "admin") {
-                        axios.get(baseUrl.concat("projects"))
-                            .then(res => {
-                                setProjects(res.data);
-                            })
+                    axios.get(baseUrl.concat("projects"))
+                        .then(res => {
+                            setProjectsAll(res.data);
+                        })
+                        .then(() => {
+                            axios.get(baseUrl.concat("po"))
+                                .then(resPO => {
+                                    setPo(resPO.data);
+                                })
 
-                    } else if (res.data[0].role === "Project Manager") {
-                        axios.get(baseUrl.concat("projects/?pm=" + jwt_decode(localStorage.getItem("token")).user_id))
-                            .then(res => {
-                                setProjects(res.data);
-                            })
-                    } else if (res.data[0].role === "Store") {
-                        setStore(true);
-                    } else {
-                        axios.get(baseUrl.concat("projects"))
-                        .then(res => {
-                            setProjects(res.data);
+                            if (res.data[0].role === "admin") {
+                                axios.get(baseUrl.concat("projects"))
+                                    .then(res => {
+                                        setProjects(res.data);
+                                    })
+
+                            } else if (res.data[0].role === "Project Manager") {
+                                axios.get(baseUrl.concat("projects/?pm=" + jwt_decode(localStorage.getItem("token")).user_id))
+                                    .then(res => {
+                                        setProjects(res.data);
+                                    })
+                            } else if (res.data[0].role === "Store") {
+                                setStore(true);
+                            } else {
+                                axios.get(baseUrl.concat("projects"))
+                                    .then(res => {
+                                        setProjects(res.data);
+                                    })
+                            }
+                            axios.get(baseUrl.concat("supplier"))
+                                .then(res => {
+                                    setSuppliers(res.data);
+                                })
                         })
-                    }
-                    axios.get(baseUrl.concat("supplier"))
-                        .then(res => {
-                            setSuppliers(res.data);
-                        })
+
+
                 })
                 .catch(error => {
                     if (error.response.status === 401) {
@@ -92,6 +102,9 @@ function PurchaseOrder() {
                         setloggedin(false);
                     }
                 })
+
+
+
 
         } else {
             setloggedin(false);
@@ -103,41 +116,47 @@ function PurchaseOrder() {
         }, 50);
     }, [])
 
+    // --------------------------------------------------------------------
+    // AntD table columns
 
+    const columns = [
+        {
+            title: 'Project',
+            dataIndex: 'project_id',
+            key: 'project_id',
+            render: (text, record) => <p>{(projectsAll.find(p => p.id === text)).project_name}</p>,
+        },
+        {
+            title: 'PO Id',
+            dataIndex: 'po_id',
+            key: 'po_id',
+        },
+        {
+            title: 'Date',
+            dataIndex: 'created_date_time',
+            key: 'created_date_time',
+            render: (text) => <p>{text.substring(8, 10)}-{text.substring(5, 7)}-{text.substring(0, 4)}</p>,
+        },
+        {
+            title: 'Details',
+            key: 'details',
+            render: (text, record) => (
+                <Space size="middle">
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={() => { showModalDetails(record) }}>View Details</Button>
+                </Space>
+            ),
+        },
+        {
+            title: 'Edit PO',
+            key: 'edit_po',
+            render: (text, record) => (
+                <Space size="middle">
+                    <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }} onClick={() => { updateFormRows(record) }}><EditOutlined style={{ fontSize: '20px' }} /></Button>
+                </Space>
+            ),
+        },
+    ];
 
-    // const [searchstates, setSearch] = useState({
-    //     mat: "",
-    //     isSearchVisible: false,
-    //     idx: "",
-    // })
-
-
-    // const columns = [
-    //     {
-    //         title: 'Material Name',
-    //         dataIndex: 'desc',
-    //         key: 'desc',
-    //     },
-    //     {
-    //         title: 'Unit',
-    //         dataIndex: 'unit',
-    //         key: 'unit',
-    //     },
-    //     {
-    //         title: 'HSN / SAC Code',
-    //         dataIndex: 'hsan_id',
-    //         key: 'hsan_id',
-    //     },
-    //     {
-    //         title: 'Action',
-    //         key: 'action',
-    //         render: (text, record) => (
-    //             <Space size="middle">
-    //                 <Button onClick={() => { updatecol(record) }} type="button">Select</Button>
-    //             </Space>
-    //         ),
-    //     },
-    // ];
 
     const columns1 = [
         {
@@ -173,40 +192,29 @@ function PurchaseOrder() {
         },
     ];
 
+        // --------------------------------------------------------------------
+    // Updating ROws of the form
 
-    // const columspo = [
-    //     {
-    //         title: 'Project Name',
-    //         dataIndex: 'project_name',
-    //         key: 'project_name',
-    //     },
-    //     {
-    //         title: 'Supplier',
-    //         dataIndex: 'supp_id',
-    //         key: 'supp_id',
-    //     },
-    //     {
-    //         title: 'Details',
-    //         key: 'details',
-    //         render: (text, record) => (
-    //             <Space size="middle">
-    //                 <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={() => { showModalPO(record) }}>View Details</Button>
-    //             </Space>
-    //         ),
-    //     },
-    //     {
-    //         title: 'Action',
-    //         key: 'action',
-    //         render: (text, record) => (
-    //             <Space size="middle">
-    //                 <Button type="link" style={{ background: "#027c86", color: "white", borderRadius: "10px" }}  onClick={handlePrint}>Print</Button>
-    //             </Space>
-    //         ),
-    //     },
-    // ];
+    const updateFormRows = (record) => {
+        window.scrollTo({
+            top: 500,
+            left: 0,
+            behavior: 'smooth'
+        });
+        setQuery(record);
+        setInputField(record.initialItemRow);
+        axios.get(baseUrl.concat("requisition/?project_id=" + record.project_id + "&completed=N&isaprroved_master=Y"))
+            .then(res => {
+                res.data.sort(function (a, b) {
+                    return b.id - a.id;
+                });
+                setReqs(res.data)
+            })
+    }
 
 
-
+    // --------------------------------------------------------------------
+    // Handling Form chanegs
 
     const onChangeSupplier = (value) => {
         setQuery({ ...query, supp_id: value });
@@ -260,20 +268,8 @@ function PurchaseOrder() {
         setQuery({ ...query, initialItemRow: values })
     }
 
-
-    const markCompleted = (record, index) => {
-        record.completed = "Y";
-        axios.patch(baseUrl.concat("requisition/" + record.id + "/"), record)
-            .then(res => {
-                message.success("Purchase Requisition Granted");
-            })
-        const values = [...reqs];
-        values.splice(index, 1);
-        setReqs(values);
-    }
-
-
-
+    // --------------------------------------------------------------------
+    // Submission
 
     const submitHandler = (e) => {
         e.preventDefault();
@@ -283,24 +279,14 @@ function PurchaseOrder() {
             return;
         }
         console.log(query)
-        axios.post(baseUrl.concat("po/"), query)
+        axios.put(baseUrl.concat("po/" + query.id + "/"), query)
             .then(response => {
                 message.info("Please mark Requisition as completed if necessary")
                 message.success("Purchase Order Made successfully", 5)
                 console.log(response)
-
-                var proj_string = query.po_id.substring(0, 8);
-                var id_string = query.po_id.substring(8);
-                id_string = parseInt(id_string) + 1;
-                var len = 5 - id_string.toString().length
-                while (len !== 0) {
-                    proj_string = proj_string + 0;
-                    len--;
-                }
-                id_string = proj_string + id_string;
                 setQuery({
                     ...query,
-                    po_id: id_string,
+                    po_id: "",
                     initialItemRow: [],
                     contact_person: "",
                     payment_terms: "",
@@ -334,22 +320,22 @@ function PurchaseOrder() {
     }
 
 
-    // This function is not necessary for POs
-    // const addHandler = () => {
-    //     var len = inputFields.length;
-    //     if ((len !== 0) && (inputFields[len - 1].mat_name === "----")) {
-    //         message.error("Please update exissting row before adding another row");
-    //         return;
-    //     }
-    //     setInputField([...inputFields, {
-    //         mat_id: "",
-    //         hsn_id: "", 
-    //         mat_name: "----",
-    //         quantity: "",
-    //         unit: "---",
-    //         item_rate: "",
-    //     }])
-    // }
+    // --------------------------------------------------------------------
+    // Mark Requisition complete
+
+    const markCompleted = (record, index) => {
+        record.completed = "Y";
+        axios.patch(baseUrl.concat("requisition/" + record.id + "/"), record)
+            .then(res => {
+                message.success("Purchase Requisition Granted");
+            })
+        const values = [...reqs];
+        values.splice(index, 1);
+        setReqs(values);
+    }
+
+    // --------------------------------------------------------------------
+    // Dynamic Rows
 
     const deleteRowHandler = (index) => {
         const values = [...inputFields];
@@ -361,60 +347,6 @@ function PurchaseOrder() {
     const refreshHandler = () => {
         window.location.reload(false);
     }
-
-
-    // const showMaterial = (index) => {
-    //     if (searchstates.isSearchVisible) {
-    //         setSearch({ ...searchstates, isSearchVisible: false });
-    //     } else {
-    //         setSearch({ ...searchstates, isSearchVisible: true, idx: index });
-    //     }
-    // }
-
-    // const searchChangeHandler = (event) => {
-    //     setSearch({ ...searchstates, [event.target.name]: event.target.value });
-    // }
-
-    // const onSearchMat = () => {
-    //     const searchval = searchstates.mat;
-    //     axios.get(baseUrl.concat("material-master/?search=" + searchval))
-    //         .then(res => {
-    //             setMaterials(res.data);
-    //         })
-    // }
-
-    // const onSearchCat = (value) => {
-    //     axios.get(baseUrl.concat("material-sub-category/?search=" + value))
-    //         .then(res => {
-    //             setSubCategories(res.data);
-    //         })
-    // }
-
-    // const onSearchSubCat = (value) => {
-    //     axios.get(baseUrl.concat("material-master/?search=" + value))
-    //         .then(res => {
-    //             setMaterials(res.data);
-    //         })
-    // }
-
-    // const updatecol = (record) => {
-    //     const values = [...inputFields];
-    //     const index = searchstates.idx;
-    //     values[index].mat_id = record.mat_id;
-    // values[index].hsn_id = record.hsn_id;                        
-    //     values[index].mat_name = record.desc;  //check once later
-    //     values[index].unit = record.unit;
-    //     setInputField(values);
-    //     setQuery({ ...query, initialItemRow: values })
-    //     setSearch({ ...searchstates, isSearchVisible: false })
-
-    //     window.scrollTo({
-    //         top: 0,
-    //         left: 0,
-    //         behavior: 'smooth'
-    //     });
-    // }
-
 
     // --------------------------------------------------------------------
     // Modal
@@ -429,21 +361,12 @@ function PurchaseOrder() {
         setModalDetails({ ...ModalDetails, details: false })
     }
 
-    // const handleCancelPO = () => {
-    //     setModalDetails({ ...ModalDetails, po: false })
-    // }
 
     const showModalDetails = (record) => {
         setModalDetails({ ...ModalDetails, details: true })
         setItem(record.initialItemRow)
         console.log(current_items)
     }
-
-    // const showModalPO = (record) => {
-    //     setModalDetails({ ...ModalDetails, po: true })
-    //     setItem(record.initialItemRow)
-    //     console.log(current_items)
-    // }
 
     const selectMaterial = (record) => {
         if (inputFields.length === 1 && inputFields[0].mat_name === "----") {
@@ -497,14 +420,17 @@ function PurchaseOrder() {
 
 
                         <br /><br /><br /><br />
-                        <h4 className="page-title">New Purchase Requisition</h4>
+                        <h4 className="page-title">Update Purchase Requisition</h4>
                         <br /><br />
+                        <Table rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'} dataSource={po} columns={columns} />
+                        <br /><br />
+
                         <form onSubmit={submitHandler}>
                             <div className="row">
                                 <div className="col-sm-1"></div>
                                 <div className="col-sm-3">
                                     <h6>Select Project</h6>
-                                    <Select  placeholder="Select Project" onChange={onChangeProject}>
+                                    <Select placeholder="Select Project" onChange={onChangeProject} value={query.project_id} style={{ width: "200px" }} >
                                         {projects.map((project, index) => (
                                             <Option value={project.id}>{project.project_name}</Option>
                                         ))}
@@ -514,7 +440,7 @@ function PurchaseOrder() {
                                     <h6>Select Supplier</h6>
                                     <Select
                                         showSearch
-                                        
+                                        value={query.supp_id} style={{ width: "200px" }}
                                         placeholder="Select Supplier"
                                         optionFilterProp="children"
                                         filterOption={(input, option) =>
@@ -596,7 +522,7 @@ function PurchaseOrder() {
                                                 <tr key={index} className="row">
                                                     {/* <td className="col-md-2"><Button type="button" style={{ borderRadius: "10px " }} onClick={() => showMaterial(index)}>Select Material</Button></td> */}
                                                     <td className="col-md-2"><p style={{ marginTop: "10px" }}>{inputField.mat_name}</p></td>
-                                                    <td className="col-md-2"><TextArea style={{ borderRadius: "8px" }}  type="text" value={inputField.description} placeholder="Specification" name="description" onChange={event => changeHandler(index, event)} /></td>
+                                                    <td className="col-md-2"><TextArea style={{ borderRadius: "8px" }} type="text" value={inputField.description} placeholder="Specification" name="description" onChange={event => changeHandler(index, event)} /></td>
                                                     <td className="col-md-2"><Input style={{ borderRadius: "8px", marginTop: "10px" }} type="number" value={inputField.item_rate} placeholder="Rate" name="item_rate" onChange={event => changeHandler(index, event)} step="0.01" /></td>
                                                     <td className="col-md-2"><Input style={{ borderRadius: "8px", marginTop: "10px" }} type="number" value={inputField.discount} placeholder="Discount" name="discount" onChange={event => changeHandler(index, event)} step="0.01" /></td>
                                                     <td className="col-md-2"><Input style={{ borderRadius: "8px", marginTop: "10px" }} type="text" value={inputField.quantity} placeholder="Quantity" name="quantity" onChange={event => changeHandler(index, event)} /></td>
@@ -615,7 +541,7 @@ function PurchaseOrder() {
 
                             <br /><br />
                             <div className="submit-button">
-                                <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Submit</Button>
+                                <Button type="submit" style={{ background: "dodgerblue", color: "white", borderRadius: "10px " }} onClick={submitHandler}>Update</Button>
                             </div>
                         </form>
                         <br /><br />
@@ -698,35 +624,7 @@ function PurchaseOrder() {
                             </table>
                         </Modal>
 
-                        {/* Not sure why the following modal exists, forgot to remove maybe */}
-                        {/* <Modal
-                            title="Purchase Order Details"
-                            footer={[
-                                <Button type="button" style={{ borderRadius: "10px " }} key="back" onClick={handleCancelPO}>Go back</Button>,
-                            ]}
-                            visible={ModalDetails.po} onCancel={handleCancelPO}
-                        >
-                            <table className="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <td>Material Name</td>
-                                        <td>Quantity</td>
-                                        <td>Unit</td>
-                                        <td>Rate</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {current_items.map((item, index) => (
-                                        <tr>
-                                            <td>{item.mat_name}</td>
-                                            <td>{item.quantity}</td>
-                                            <td>{item.unit}</td>
-                                            <td>{item.item_rate}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </Modal> */}
+
                         <br /><br /><br /><br /><br />
                         <div className="row">
                             <div className="col-sm-10"><p> </p></div>
@@ -758,4 +656,4 @@ function PurchaseOrder() {
 }
 
 
-export default PurchaseOrder;
+export default UpdatePO;

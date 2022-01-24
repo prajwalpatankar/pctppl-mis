@@ -182,6 +182,59 @@ class PurchaseOrderMstSerializer(serializers.ModelSerializer):
             Purchase_Order_details.objects.create(**item, header_ref_id=po)
         return po
 
+    def update(self, instance, validated_data):
+        object = Purchase_Order_mst.objects.get(id=validated_data['id'])
+        initialItemRow = validated_data.pop('initialItemRow')
+
+        instance.po_id = validated_data.get('po_id', instance.po_id)
+        instance.project_id = validated_data.get('project_id', instance.project_id)
+        instance.complete = validated_data.get('complete', instance.complete)
+        instance.contact_person = validated_data.get('contact_person', instance.contact_person)
+        instance.payment_terms = validated_data.get('payment_terms', instance.payment_terms)
+        instance.other_terms = validated_data.get('other_terms', instance.other_terms)
+        instance.delivery_schedule = validated_data.get('delivery_schedule', instance.delivery_schedule)
+        instance.transport = validated_data.get('transport', instance.transport)
+        instance.other_charges = validated_data.get('other_charges', instance.other_charges)
+        instance.made_by = validated_data.get('made_by', instance.made_by)
+        instance.created_date_time = validated_data.get('created_date_time', instance.created_date_time)
+        instance.updated_date_time = validated_data.get('updated_date_time', instance.updated_date_time)
+        instance.save()
+
+        updated_data = []
+
+        for init in initialItemRow:
+            if "id" in init.keys():
+                if Purchase_Order_details.objects.filter(id=init['id']).exists():
+                    det = Purchase_Order_details.objects.get(id=init['id'])
+                    det.mat_id = init.get('mat_id',det.mat_id)
+                    det.hsn_id = init.get('hsn_id',det.hsn_id)
+                    det.mat_name = init.get('mat_name',det.mat_name)
+                    det.quantity = init.get('quantity',det.quantity)
+                    det.description = init.get('description',det.description)
+                    det.unit = init.get('unit',det.unit)
+                    det.item_rate = init.get('item_rate',det.item_rate)
+                    det.discount = init.get('discount',det.discount)
+                    det.complete = init.get('complete',det.complete)
+                    det.save()
+                    updated_data.append(det.id)
+                else:
+                    continue
+            else:
+                det = Purchase_Order_details.objects.create(**init, header_ref_id=instance)
+                updated_data.append(det.id)
+
+        det = Purchase_Order_details.objects.filter(header_ref_id=object.id)
+        det_id = [d.id for d in det]
+
+        for d in det_id:
+            if d in updated_data:
+                continue
+            else:
+                det_record = Purchase_Order_details.objects.get(id=d)
+                print(det_record)
+                det_record.save()
+        return instance
+
 
 class GoodsReceiptNoteDetailsSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
